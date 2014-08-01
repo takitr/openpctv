@@ -1,0 +1,10 @@
+PKG_NAME=libgd
+PKG_VERSION=2.1.0
+PKG_URL="https://bitbucket.org/libgd/gd-libgd/downloads/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain libpng libjpeg-turbo libiconv freetype fontconfig expat bzip2"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_PRIORITY=optional
+PKG_SECTION=libs
+PKG_SHORTDESC="GD Graphics Library"
+PKG_LONGDESC="GD is a graphics library. It allows your code to quickly draw images complete with lines, arcs, text, multiple colours, cut and paste from other images, flood fills, and write out the result as a PNG file."

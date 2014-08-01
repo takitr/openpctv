@@ -9,9 +9,9 @@ else
 fi
 
 if pkg_uses $1 xorg; then
-  XORG_CONFIG="--with-x --with-xcb --enable-opengl"
+  XORG_CONFIG="--with-x --with-xcb"
 else
-  XORG_CONFIG="--without-x --without-xcb --disable-opengl"
+  XORG_CONFIG="--without-x --without-xcb"
 fi
 
 if [ "$CONSOLE" = yes ]; then
@@ -43,6 +43,12 @@ if pkg_uses $1 vdpau; then
   LDFLAGS="$LDFLAGS -lvdpau"
 else
   VDPAU_CONFIG="--disable-vdpau"
+fi
+
+if pkg_uses $1 mesa; then
+  OPENGL_CONFIG="--enable-opengl"
+else
+  OPENGL_CONFIG="--disable-opengl"
 fi
 
 cd $BUILD/$1*
@@ -106,7 +112,8 @@ do_configure \
             $SDL_CONFIG \
             $VAAPI_CONFIG \
             $VDPAU_CONFIG \
-            $VDR_CONFIG
+            $VDR_CONFIG \
+            $OPENGL_CONFIG
 make -j3
 make_install
 

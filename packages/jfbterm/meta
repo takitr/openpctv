@@ -1,0 +1,10 @@
+PKG_NAME=jfbterm
+PKG_VERSION=0.4.7
+PKG_URL="http://ftp.jaist.ac.jp/pub/Linux/Momonga/5/Everything/SOURCES/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_REV=1
+#PKG_DEPENDS="ncurses"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=utils
+PKG_SHORTDESC="The J Framebuffer Terminal/Multilingual Enhancement with UTF-8 support"

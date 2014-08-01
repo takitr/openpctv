@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+mkdir -p $INSTALL/usr/share/bterm
+unxz -c $ROOT/$PACKAGES/${PKG_NAME}/config/unifont.bgf.xz > $INSTALL/usr/share/bterm/unifont.bgf
+do_install usr/bin/bterm
+do_install usr/share

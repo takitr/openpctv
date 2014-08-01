@@ -1,12 +1,13 @@
 PKG_NAME=mali400
-PKG_URL_PROTO=git
-PKG_URL_REV=d343311
-PKG_VERSION=r${PKG_URL_REV}
-PKG_URL="https://github.com/linux-sunxi/sunxi-mali.git"
-
+#PKG_URL_PROTO=git
+#PKG_URL_REV=d343311
+#PKG_VERSION=r${PKG_URL_REV}
+#PKG_URL="https://github.com/linux-sunxi/sunxi-mali.git"
+PKG_VERSION=20140326
+PKG_URL="$SFNET_SRCS/openpctv/sources/mali400-rd343311.tar.xz"
 PKG_REV=1
 PKG_ARCH=arm
-PKG_BUILD_DEPENDS="toolchain"
+PKG_BUILD_DEPENDS="toolchain libXrandr"
 PKG_RUN_DEPENDS="$TARGET_LIBC"
 #PKG_DEPENDS="xorg-server libdri2 libdrm"
 PKG_DEPENDS="libdri2 libdrm libump"

@@ -10,7 +10,7 @@ mkdir -p .install/usr/lib/
 # ATTENTION: must match kernel module mali.ko
 #mali_rev=r2p4
 #mali_rev=r3p1
-mali_rev=r3p0
+mali_rev=r3p2-01rel1
 
 # Output
 if [ $USE_xorg ] ; then

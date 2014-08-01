@@ -1,4 +1,4 @@
-PKG_URL_REV=1f255d6
-PKG_VERSION=sunxi-3.4+${PKG_URL_REV}
+PKG_URL_REV=d76db13
+PKG_VERSION=sunxi-3.4.91+${PKG_URL_REV}
 PKG_URL_PROTO=git
-PKG_URL="https://github.com/mmplayer/linux-sunxi"
+PKG_URL="https://github.com/cubieboard/linux-sunxi"

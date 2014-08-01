@@ -1,0 +1,1 @@
+PKG_DEPENDS="xorg-server libdri2 libdrm mali400 libump"

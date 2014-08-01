@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-26 10:57+0800\n"
+"POT-Creation-Date: 2014-08-01 13:44+0800\n"
 "PO-Revision-Date: 2014-07-08 17:58+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
@@ -506,34 +506,30 @@ msgid "I do not want to install now."
 msgstr "我现在不想要安装。"
 
 #: packages/setup/scripts/install-drivers:139
-msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
-msgstr "支持大多数的设备，例如DVBWorld，Tevii，Prof等"
-
-#: packages/setup/scripts/install-drivers:140
 msgid "Support all the TBS devices"
 msgstr "支持TBS全系列的设备"
 
-#: packages/setup/scripts/install-drivers:141
+#: packages/setup/scripts/install-drivers:140
 msgid "Support all the DVBSky devices"
 msgstr "支持DVBSky全系列的设备"
 
-#: packages/setup/scripts/install-drivers:142
+#: packages/setup/scripts/install-drivers:141
 msgid "Support all the TBS DVB-C devices"
 msgstr "支持TBS DVB-C全系列的设备"
 
-#: packages/setup/scripts/install-drivers:143
+#: packages/setup/scripts/install-drivers:142
 msgid "Support all the TBS ATSC devices"
 msgstr "支持TBS ATSC全系列的设备"
 
-#: packages/setup/scripts/install-drivers:144
+#: packages/setup/scripts/install-drivers:143
 msgid "Support all the DVBSky DVB-C devices"
 msgstr "支持DVBSky DVB-C全系列的设备"
 
-#: packages/setup/scripts/install-drivers:145
+#: packages/setup/scripts/install-drivers:144
 msgid "Support the TBS QBOX I DVB-S2 devices"
 msgstr "支持TBS QBOX I DVB-S2设备"
 
-#: packages/setup/scripts/install-drivers:146
+#: packages/setup/scripts/install-drivers:145
 #, fuzzy
 msgid "Support the DVB3221 DVB-C device"
 msgstr "支持DVBSky DVB-C全系列的设备"
@@ -1165,3 +1161,6 @@ msgid ""
 msgstr ""
 "你想从fastsatfinder.com更新卫星转发器参数吗？如果不升级的话，你的转发器参数可"
 "能不是最新的。"
+
+#~ msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
+#~ msgstr "支持大多数的设备，例如DVBWorld，Tevii，Prof等"

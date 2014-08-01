@@ -4,7 +4,7 @@ PKG_URL=$SFNET_SRCS/openpctv/sources/xine-lib-${PKG_VERSION}.tar.xz
 PKG_REV=2
 PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC"
-PKG_DEPENDS="zlib ffmpeg freetype alsa-lib libglu"
+PKG_DEPENDS="zlib ffmpeg freetype alsa-lib"
 
 PKG_USE="uclibc vaapi vdpau xorg sdl vdr mesa"
 PKG_USE_NAME_vdr="VDR"

@@ -19,7 +19,7 @@ done
 NAME=`echo ${PKG_NAME} | sed s/vdr-//`
 mkdir -p $INSTALL/etc/vdr/plugins.d
 echo "PLUGIN=${NAME}" > $INSTALL/etc/vdr/plugins.d/50_$NAME
-echo "ENABLED=no" >> $INSTALL/etc/vdr/plugins.d/50_$NAME
+echo "ENABLED=yes" >> $INSTALL/etc/vdr/plugins.d/50_$NAME
 
 mkdir -p $INSTALL/etc/vdr/plugins/epgsearch
 cp $PACKAGES/${PKG_NAME}/config/*.conf $INSTALL/etc/vdr/plugins/epgsearch

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-26 20:28+0800\n"
+"POT-Creation-Date: 2014-08-01 13:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -481,34 +481,30 @@ msgid "I do not want to install now."
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:139
-msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:140
 msgid "Support all the TBS devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:141
+#: packages/setup/scripts/install-drivers:140
 msgid "Support all the DVBSky devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:142
+#: packages/setup/scripts/install-drivers:141
 msgid "Support all the TBS DVB-C devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:143
+#: packages/setup/scripts/install-drivers:142
 msgid "Support all the TBS ATSC devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:144
+#: packages/setup/scripts/install-drivers:143
 msgid "Support all the DVBSky DVB-C devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:145
+#: packages/setup/scripts/install-drivers:144
 msgid "Support the TBS QBOX I DVB-S2 devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:146
+#: packages/setup/scripts/install-drivers:145
 msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 

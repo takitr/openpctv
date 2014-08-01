@@ -1,0 +1,25 @@
+diff -uNr a/linux/drivers/media/platform/m2m-deinterlace.c b/linux/drivers/media/platform/m2m-deinterlace.c
+--- a/linux/drivers/media/platform/m2m-deinterlace.c	2014-08-01 12:58:06.805957911 +0800
++++ b/linux/drivers/media/platform/m2m-deinterlace.c	2014-08-01 13:16:36.459460369 +0800
+@@ -338,8 +338,7 @@
+ 	ctx->xt->dir = DMA_MEM_TO_MEM;
+ 	ctx->xt->src_sgl = false;
+ 	ctx->xt->dst_sgl = true;
+-	flags = DMA_CTRL_ACK | DMA_PREP_INTERRUPT |
+-		DMA_COMPL_SKIP_DEST_UNMAP | DMA_COMPL_SKIP_SRC_UNMAP;
++	flags = DMA_CTRL_ACK | DMA_PREP_INTERRUPT;
+ 
+ 	tx = dmadev->device_prep_interleaved_dma(chan, ctx->xt, flags);
+ 	if (tx == NULL) {
+diff -uNr a/linux/drivers/media/platform/timblogiw.c b/linux/drivers/media/platform/timblogiw.c
+--- a/linux/drivers/media/platform/timblogiw.c	2014-08-01 12:55:38.109220547 +0800
++++ b/linux/drivers/media/platform/timblogiw.c	2014-08-01 12:56:17.277414775 +0800
+@@ -566,7 +566,7 @@
+ 
+ 	desc = dmaengine_prep_slave_sg(fh->chan,
+ 		buf->sg, sg_elems, DMA_DEV_TO_MEM,
+-		DMA_PREP_INTERRUPT | DMA_COMPL_SKIP_SRC_UNMAP);
++		DMA_PREP_INTERRUPT);
+ 	if (!desc) {
+ 		spin_lock_irq(&fh->queue_lock);
+ 		list_del_init(&vb->queue);

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+do_autoconf
+do_configure
+make LIBS="-lm -liconv"
+
+sed -i 's/(INSTALL_DATA) \$(srcdir)/(INSTALL_DATA) -D \$(srcdir)/g' Makefile
+make_install
+
+mv .install/etc/jfbterm.conf.sample .install/etc/jfbterm.conf

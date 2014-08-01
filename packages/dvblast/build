@@ -5,6 +5,6 @@
 cd $BUILD/$1*
 
 export PREFIX=/usr
-make
+make LDLIBS="$LDLIBS -liconv"
 make_install
 

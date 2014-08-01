@@ -7,6 +7,10 @@ $SCRIPTS/build linux
 get_meta $1
 cd $PKG_BUILD_DIR
 
+make clean
+
+#cp $ROOT/$PACKAGES/$1/config/config v4l/.config
+make unapply-patches
 echo "make KDIR=$(kernel_path) KERNELRELEASE=$(kernel_version) SRCDIR=$(kernel_path)  OUTDIR=$(kernel_path)"
 echo "make install DESTDIR=$install_dir KERNELRELEASE=$(kernel_version)"
 make \

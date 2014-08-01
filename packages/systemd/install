@@ -7,7 +7,7 @@ cd $PKG_BUILD_DIR
 
 do_install bin
 do_install lib
-#do_install etc/dbus-1
+do_install etc/dbus-1
 do_install etc/modules-load.d
 do_install etc/sysctl.d
 do_install etc/tmpfiles.d

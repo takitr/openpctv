@@ -1,0 +1,12 @@
+diff -uNr a/src/Makefile.in b/src/Makefile.in
+--- a/src/Makefile.in	2014-07-30 07:11:22.505572849 +0800
++++ b/src/Makefile.in	2014-07-30 07:12:39.017952253 +0800
+@@ -218,7 +218,7 @@
+ LDFLAGS = @LDFLAGS@
+ LIBICONV = @LIBICONV@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@
++LIBS = @LIBS@ @LIBICONV@
+ LTLIBICONV = @LTLIBICONV@
+ LTLIBOBJS = @LTLIBOBJS@
+ MAKEINFO = @MAKEINFO@

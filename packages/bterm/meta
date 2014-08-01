@@ -1,0 +1,9 @@
+PKG_NAME=bterm
+PKG_VERSION=0.1.18
+PKG_URL="http://ftp.de.debian.org/debian/pool/main/b/bogl/bogl_${PKG_VERSION}.orig.tar.gz"
+PKG_REV=1
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_BUILD_DEPENDS="toolchain libgd"
+PKG_PRIORITY=optional
+PKG_SECTION=utils
+PKG_SHORTDESC="Ben's Own Graphics Library - graphical terminal"

@@ -1,0 +1,20 @@
+diff -uNr a/cli/Makefile.in b/cli/Makefile.in
+--- a/cli/Makefile.in	2014-07-30 06:31:39.361755477 +0800
++++ b/cli/Makefile.in	2014-07-30 06:32:16.105937681 +0800
+@@ -213,13 +213,13 @@
+ top_srcdir = @top_srcdir@
+ wavpack_SOURCES = wavpack.c utils.c md5.c
+ wavpack_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/include
+-wavpack_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM)
++wavpack_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM) $(ICONV)
+ wvunpack_SOURCES = wvunpack.c utils.c md5.c
+ wvunpack_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/include
+-wvunpack_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM)
++wvunpack_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM) $(ICONV)
+ wvgain_SOURCES = wvgain.c utils.c
+ wvgain_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/include
+-wvgain_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM)
++wvgain_LDADD = $(AM_LDADD) $(top_builddir)/src/.libs/libwavpack.la $(LIBM) $(ICONV)
+ noinst_HEADERS = \
+ 	utils.h \
+ 	md5.h
