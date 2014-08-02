@@ -15,8 +15,8 @@ if [ -x ${exec_prefix}/bin/showiframe ]; then
 	fi
 fi
 
-ps augxw | grep irxevent | grep -v grep >/dev/null || irxevent -d /etc/lirc/lircrc.enigma2pc
-ps augxw | grep irexec | grep -v grep >/dev/null || irexec -d /etc/lirc/lircrc.enigma2pc
+#ps augxw | grep irxevent | grep -v grep >/dev/null || irxevent -d /etc/lirc/lircrc.enigma2pc
+#ps augxw | grep irexec | grep -v grep >/dev/null || irexec -d /etc/lirc/lircrc.enigma2pc
 
 # hook to execute scripts always before enigma2 start
 if [ -x ${exec_prefix}/bin/enigma2_pre_start.sh ]; then

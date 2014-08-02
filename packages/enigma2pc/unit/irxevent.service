@@ -1,0 +1,13 @@
+[Unit]
+Description=irxevent
+Wants=xorg.service
+After=xorg.service eventlircd.service
+
+[Service]
+Environment=DISPLAY=:0.0
+ExecStart=/usr/bin/irxevent /etc/lirc/lircrc.enigma2pc
+RestartSec=1
+Restart=on-failure
+
+[Install]
+WantedBy=enigma2pc.target

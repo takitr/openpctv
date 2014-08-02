@@ -1,0 +1,10 @@
+PKG_NAME=xmodmap
+PKG_VERSION=1.0.8
+PKG_URL="$XORG_SRCS/app/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain libX11"
+PKG_RUN_DEPENDS="$TARGET_LIBC libX11"
+PKG_PRIORITY=optional
+PKG_SECTION=x11
+PKG_SHORTDESC="Edit and display the keyboard modifier map and keymap table"
+PKG_LONGDESC="The xmodmap program is used to edit and display the keyboard modifier map and keymap table that are used by client applications to convert event keycodes into keysyms."
