@@ -30,7 +30,7 @@ SECURITY=""
 PASSPHRASE=""
 
 # set to "" to disable NTP
-TIMESERVERS="0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org"
+TIMESERVERS="stdtime.gov.hk nist1-pa.ustiming.org time-c.nist.gov time-d.nist.gov nist1-macon.macon.ga.us nist1-lnk.binary.net wwv.nist.gov utcnist.colorado.edu nist1-lv.ustiming.org nist-time-server.eoni.com"
 
 # Services to be started at boot time
 TELNET_SERVER="false"

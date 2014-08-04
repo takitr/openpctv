@@ -13,6 +13,9 @@ LDFLAGS="$LDFLAGS -fPIC"
 MAKEFLAGS=-j1
 
 cd $PKG_BUILD_DIR
+cd FFdecsa
+make COMPILER=$CXX
+cd ..
 make \
   VDRDIR="$ROOT/$BUILD/vdr-${VDR_VERSION}" \
   LIBDIR="." \

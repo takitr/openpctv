@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+  mkdir -p $INSTALL/usr/sbin
+    cp ntpd/ntpd $INSTALL/usr/sbin/
+    cp ntpdate/ntpdate $INSTALL/usr/sbin/

@@ -8,7 +8,7 @@ export CFLAGS="$TARGET_CFLAGS"
 export CPPFLAGS="$TARGET_CPPFLAGS"
 export PREFIX="/usr"
 
-make PREFIX=/usr CC=$TARGET_CC AR=$TARGET_AR
+make PREFIX=/usr CC=$TARGET_CC AR=$TARGET_AR LIBICONV='-liconv'
 sed -i 's#^PREFIX :=.*#PREFIX := /usr#' Makefile
-make install CC=$CC LDCONFIG=true PREFIX="/usr" DESTDIR="./.install"
+make install CC=$CC LDCONFIG=true PREFIX="/usr" DESTDIR="./.install" LIBICONV='-liconv'
 strip_bins .install

@@ -7,6 +7,7 @@ After=xorg.service eventlircd.service
 Environment=DISPLAY=:0.0 SDL_MOUSE_RELATIVE=0 HOME=/root
 EnvironmentFile=/etc/profile
 ExecStart=/usr/bin/runenigma2
+StandardOutput=null
 Restart=always
 # KillSignal=SIGKILL
 
