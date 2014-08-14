@@ -10,6 +10,12 @@ else
   XORG_MESA="--disable-glx --disable-dri"
 fi
 
+if pkg_uses $1 glamor; then
+  XORG_GLAMOR="--enable-glamor"
+else
+  XORG_GLAMOR="--disable-glamor"
+fi
+
 cd $PKG_BUILD_DIR
 
 do_autoconf
@@ -19,6 +25,7 @@ GCC_NO_GOLD=1 GCC_NO_LTO=1 \
 do_configure \
             --enable-largefile \
             --disable-strict-compilation \
+            --disable-silent-rules \
             --disable-debug \
             --disable-docs \
             --disable-devel-docs \
@@ -41,7 +48,10 @@ do_configure \
             --disable-xdmcp \
             --disable-xdm-auth-1 \
             --enable-dri2 \
+            --enable-dri3 \
             --enable-gestures \
+            --enable-visibility \
+            --disable-sparkle \
             --enable-xinerama \
             --enable-xf86vidmode \
             --enable-xace \
@@ -79,7 +89,8 @@ do_configure \
             --with-fontrootdir=$XORG_PATH_FONTS \
             --with-default-font-path="$XORG_PATH_FONTS/misc,built-ins" \
             --with-sha1=libgcrypt \
-            $XORG_MESA
+            $XORG_MESA \
+            $XORG_GLAMOR
 
 make V=1 -j3
 make_install

@@ -1,6 +1,10 @@
 PKG_NAME=vdr-zaphistory
-PKG_VERSION=0.9.5
-PKG_URL="$DISTRO_SRCS/vdr-zaphistory-${PKG_VERSION}.tar.bz2"
+#PKG_VERSION=0.9.5
+#PKG_URL="$DISTRO_SRCS/vdr-zaphistory-${PKG_VERSION}.tar.bz2"
+PKG_URL_PROTO=git
+PKG_URL_REV=111b0cc
+PKG_URL="git://projects.vdr-developer.org/vdr-plugin-zaphistory.git"
+PKG_VERSION=0.9.6+r${PKG_URL_REV}
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC vdr"

@@ -1,6 +1,6 @@
 PKG_NAME=vdr-osdpip
-PKG_VERSION=0.1.0
-PKG_URL="$DISTRO_SRCS/vdr-osdpip-${PKG_VERSION}.tar.bz2"
+PKG_VERSION=0.1.2
+PKG_URL="http://projects.vdr-developer.org/git/vdr-plugin-osdpip.git/snapshot/vdr-plugin-osdpip-${PKG_VERSION}.tar.bz2"
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain ffmpeg"
 PKG_RUN_DEPENDS="$TARGET_LIBC vdr ffmpeg"

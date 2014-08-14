@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-02 22:39+0800\n"
+"POT-Creation-Date: 2014-08-14 11:02+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -396,7 +396,7 @@ msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:114
+#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:116
 msgid "Reboot"
 msgstr ""
 
@@ -501,10 +501,6 @@ msgid "Support all the DVBSky DVB-C devices"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:144
-msgid "Support the TBS QBOX I DVB-S2 devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:145
 msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 
@@ -1032,19 +1028,23 @@ msgstr ""
 msgid "Auto scan channels"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:110
-msgid "Start VDR with rpihddevice frontend"
-msgstr ""
-
 #: packages/setup/scripts/setup.sh:111
 msgid "Start XBMC pvr with VDR backend"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:112
-msgid "Install OpenPCTV to your hard disk"
+msgid "Start VDR frontend"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:113
+msgid "Start Enigam2 frontend"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:114
+msgid "Install OpenPCTV to your hard disk"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:115
 msgid "Exit to login shell"
 msgstr ""
 

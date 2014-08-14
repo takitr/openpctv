@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-01 13:44+0800\n"
+"POT-Creation-Date: 2014-08-11 23:01+0800\n"
 "PO-Revision-Date: 2014-07-08 17:58+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
@@ -412,7 +412,7 @@ msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr "你想在這台機器上運行SoftCAM(OScam)嗎？"
 
 #: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:114
+#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:116
 msgid "Reboot"
 msgstr "重新啟動"
 
@@ -526,10 +526,6 @@ msgid "Support all the DVBSky DVB-C devices"
 msgstr "支持DVBSky DVB-C全系列的設備"
 
 #: packages/setup/scripts/install-drivers:144
-msgid "Support the TBS QBOX I DVB-S2 devices"
-msgstr "支持TBS QBOX I DVB-S2設備"
-
-#: packages/setup/scripts/install-drivers:145
 #, fuzzy
 msgid "Support the DVB3221 DVB-C device"
 msgstr "支持DVBSky DVB-C全系列的設備"
@@ -1079,19 +1075,24 @@ msgstr "DiSEqC配置"
 msgid "Auto scan channels"
 msgstr "自動掃瞄頻道"
 
-#: packages/setup/scripts/setup.sh:110
-msgid "Start VDR with rpihddevice frontend"
-msgstr "啟動帶有rpihddevice的VDR"
-
 #: packages/setup/scripts/setup.sh:111
 msgid "Start XBMC pvr with VDR backend"
 msgstr "啟動帶有VDR後台的XBMC"
 
 #: packages/setup/scripts/setup.sh:112
+#, fuzzy
+msgid "Start VDR frontend"
+msgstr "啟動帶有rpihddevice的VDR"
+
+#: packages/setup/scripts/setup.sh:113
+msgid "Start Enigam2 frontend"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:114
 msgid "Install OpenPCTV to your hard disk"
 msgstr "將OpenPCTV安裝到你的硬碟"
 
-#: packages/setup/scripts/setup.sh:113
+#: packages/setup/scripts/setup.sh:115
 msgid "Exit to login shell"
 msgstr "退出並登錄shell"
 
@@ -1161,6 +1162,9 @@ msgid ""
 msgstr ""
 "你想從fastsatfinder.com更新衛星轉發器參數嗎？如果不升級的話，你的轉發器參數可"
 "能不是最新的。"
+
+#~ msgid "Support the TBS QBOX I DVB-S2 devices"
+#~ msgstr "支持TBS QBOX I DVB-S2設備"
 
 #~ msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
 #~ msgstr "支持大多數的設備，例如DVBWorld，Tevii，Prof等"

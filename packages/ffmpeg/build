@@ -68,8 +68,8 @@ do_gcc_strip_gold
             --target-os=linux \
             --extra-cflags="$CFLAGS" \
             --cpu=$TARGET_CPU \
-            --disable-static \
-            --enable-shared \
+            --enable-static \
+            --disable-shared \
             --enable-gpl \
             --disable-ffserver \
             --enable-ffmpeg \
@@ -108,3 +108,6 @@ do_gcc_strip_gold
 
 make -j3
 make_install
+
+do_strip .install/usr/lib/*.a
+strip_bins .install/usr/bin

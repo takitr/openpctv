@@ -1,6 +1,10 @@
 PKG_NAME=vdr-ttxtsubs
-PKG_VERSION=0.2.3
-PKG_URL="http://projects.vdr-developer.org/attachments/download/659/vdr-ttxtsubs-${PKG_VERSION}.tar.gz"
+#PKG_VERSION=0.3.0
+#PKG_URL="http://projects.vdr-developer.org/attachments/download/659/vdr-ttxtsubs-${PKG_VERSION}.tar.gz"
+PKG_URL_PROTO=git
+PKG_URL_REV=fb164d8
+PKG_URL="git://projects.vdr-developer.org/vdr-plugin-ttxtsubs.git"
+PKG_VERSION=0.3.0+r${PKG_URL_REV}
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC vdr"

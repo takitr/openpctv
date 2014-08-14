@@ -52,4 +52,21 @@ if [ -x /usr/bin/enigma2 ]; then
   fi
 fi
 
+default_item="--default-item \"$tztime\""
+
+echo "Creating timezone list, please wait ..."
+echo "dialog --clear --no-cancel --colors --title \"Change the Timezone\" $default_item --menu \"Here is the Timezone list, currently selected is based on your choice of global locale.\" 50 80 40 \\" > /tmp/menufile
+grep -v ^# /usr/share/zoneinfo/zone.tab | while read line; do
+  TZ=$(echo $line | awk '{print $3}')
+  CODE=$(echo $line | awk '{print $1}')
+  COORDINATES=$(echo $line | awk '{print $2}')
+  echo "\"$TZ\" \"Country Code:\Z5$CODE\Zn Coordinates:\Z5$COORDINATES\Zn\" \\" >> /tmp/menufile
+done
+echo "2> /tmp/tmpfile" >> /tmp/menufile
+. /tmp/menufile
+
+tztime=$(cat /tmp/tmpfile)
+
+rm /tmp/tmpfile /tmp/menufile
+
 cp /usr/share/zoneinfo/$tztime /etc/localtime

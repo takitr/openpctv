@@ -17,6 +17,7 @@ do_configure \
   --disable-uuid \
   --disable-nls \
   --enable-symlink-install \
+  --sbindir=/sbin
 
 make
 make_install

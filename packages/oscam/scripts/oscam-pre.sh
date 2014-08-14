@@ -9,7 +9,10 @@ if (grep -v -q "systemd.unit" /proc/cmdline && test X$target = "Xenigma2pc.targe
   target=enigma2pc
   for i in 10 9 8 7 6 5 4 3 2 1; do
     if [ -c /dev/dvb/adapter0/dvr0 -a -c /dev/dvb/adapter0/frontend0 ]; then
-       [ $(lsmod | grep -c dvbsoftwareca) -eq 0 ] && modprobe dvbsoftwareca
+       if [ $(lsmod | grep -c dvbsoftwareca) -eq 0 ]; then
+         [ -c /dev/dvb/adapter0/ca0 ] && rm /dev/dvb/adapter0/ca0
+         modprobe dvbsoftwareca
+       fi
        sleep 0.1
        break
     else

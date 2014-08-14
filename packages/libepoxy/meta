@@ -1,0 +1,11 @@
+PKG_NAME=libepoxy
+PKG_URL_PROTO=git
+PKG_URL_REV=b2ae054
+PKG_VERSION=1.3-r${PKG_URL_REV}
+PKG_URL="https://github.com/anholt/libepoxy"
+PKG_REV=1
+PKG_DEPENDS_TARGET="toolchain mesa"
+PKG_PRIORITY=optional
+PKG_SECTION=libs
+PKG_SHORTDESC="libepoxy: a library for handling OpenGL function pointer management for you."
+PKG_LONGDESC="Epoxy is a library for handling OpenGL function pointer management for you."

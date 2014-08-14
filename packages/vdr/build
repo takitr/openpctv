@@ -27,13 +27,13 @@ PLUGINLIBDIR=/usr/lib/vdr
 VIDEODIR=/video
 CONFDIR=/etc/vdr
 LOCDIR=/usr/share/locale
-LIBS += -lintl
+LIBS += -lintl -liconv
 DVBDIR=$SYSROOT_PREFIX/usr
 REMOTE=LIRC
 LIRC_DEVICE=/var/run/lirc/lircd
 EOF
 
-[ "$TARGET_LIBC" = "uclibc" ] && echo 'LIBS += -liconv' >> Make.config
+#[ "$TARGET_LIBC" = "uclibc" ] && echo 'LIBS += -liconv' >> Make.config
 
 #for ext in $ACTIVE_EXTENSIONS; do
 #  EXTNAME=`echo $ext | tr a-z A-Z`

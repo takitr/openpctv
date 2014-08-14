@@ -158,16 +158,3 @@ index f35c79c..0345437 100644
        <home>FirstPage</home>
        <end>LastPage</end>
        <!-- PVR windows -->
-diff --git a/userdata/RssFeeds.xml b/userdata/RssFeeds.xml
-index c74d461..e8f1674 100644
---- a/userdata/RssFeeds.xml
-+++ b/userdata/RssFeeds.xml
-@@ -3,6 +3,7 @@
-   <!-- RSS feeds. To have multiple feeds, just add a feed to the set. You can also have multiple sets. 	!-->
-   <!-- To use different sets in your skin, each must be called from skin with a unique id.             	!-->
-   <set id="1">
-+    <feed updateinterval="30">http://www.geexbox.org/feed/</feed>
-     <feed updateinterval="30">http://feeds.xbmc.org/xbmc</feed>
-   </set>
- </rssfeeds>
-

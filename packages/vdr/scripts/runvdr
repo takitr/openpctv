@@ -45,6 +45,13 @@ fi
 #       /etc/vdr/setup.conf
 #fi
 
+. /etc/audio
+cat > /etc/asound.conf <<EOF
+#defaults.pcm.card $ALSA_CARD
+#defaults.pcm.device $ALSA_DEVICE
+#defaults.ctl.card $ALSA_CARD
+EOF
+
 sync
 
 if [ X$E2EPG = "Xyes" -a -f /usr/bin/epgen -a -f /usr/bin/epgtrans ]; then

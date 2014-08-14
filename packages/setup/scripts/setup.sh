@@ -107,8 +107,10 @@ echo "${DIALOG} --clear --no-cancel --backtitle \"${DISTRIB_ID} $(gettext "confi
 [ -f $RUN_CAM ] && echo "CAM \"$(gettext "Select a software emulated CAM")\" \\" >> $MENUTMP
 [ -f $RUN_DISEQC ] && echo "DiSEqC \"$(gettext "DiSEqC configuration")\" \\" >> $MENUTMP
 [ -f $RUN_CHANNELS ] && echo "Scan \"$(gettext "Auto scan channels")\" \\" >> $MENUTMP
-grep -q BCM2708 /proc/cpuinfo && echo "VDR \"$(gettext "Start VDR with rpihddevice frontend")\" \\" >> $MENUTMP
-[ X$ARCH = "Xarm" ] && echo "XBMC \"$(gettext "Start XBMC pvr with VDR backend")\" \\" >> $MENUTMP
+#grep -q BCM2708 /proc/cpuinfo && echo "VDR \"$(gettext "Start VDR with rpihddevice frontend")\" \\" >> $MENUTMP
+[ -x /usr/bin/runxbmc ] && echo "XBMC \"$(gettext "Start XBMC pvr with VDR backend")\" \\" >> $MENUTMP
+[ -x /usr/bin/runvdr ] && echo "VDR \"$(gettext "Start VDR frontend")\" \\" >> $MENUTMP
+[ -x /usr/bin/runenigma2 ] && echo "Enigma2 \"$(gettext "Start Enigam2 frontend")\" \\" >> $MENUTMP
 [ X$ARCH != "Xarm" -a -f $RUN_INSTALLER ] && echo "Install \"$(gettext "Install OpenPCTV to your hard disk")\" \\" >> $MENUTMP
 echo "Exit \"$(gettext "Exit to login shell")\" \\" >> $MENUTMP
 echo "Reboot \"$(gettext "Reboot") ${DISTRIB_ID}\" 2> $DIALOGOUT" >> $MENUTMP
@@ -161,6 +163,8 @@ case "$(cat $DIALOGOUT)" in
 		MainMenu
 		;;
     VDR)	systemctl start vdr
+		;;
+    Enigma2)	systemctl start enigma2pc
 		;;
     XBMC)	systemctl start getty\@ttymxc0
 		systemctl start vdr-backend

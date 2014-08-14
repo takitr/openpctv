@@ -143,6 +143,25 @@ pcm.dmixer {
     }
  }
 EOF
+elif grep -q 'sun7i' /proc/cpuinfo; then
+  cat > /etc/asound.conf <<EOF
+pcm.dmixer {
+  type dmix
+  ipc_key 1024
+  slave {
+    pcm "hw:1,0"
+    period_size 3000
+    buffer_size 24000
+    rate 48000
+    format S16_LE
+  }
+}
+
+pcm.sunxihdmi {
+  type plug
+  slave.pcm dmixer
+}
+EOF
 else
   cat > /etc/asound.conf <<EOF
 #defaults.pcm.card $ALSA_CARD
