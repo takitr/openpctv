@@ -1,0 +1,5682 @@
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx18/cx18-alsa-main.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx18/cx18-alsa-main.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx18/cx18-alsa-main.c	2014-08-15 11:43:45.211640446 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx18/cx18-alsa-main.c	2014-08-15 11:44:01.899723198 +0800
+@@ -145,6 +145,7 @@
+ 	/* This is a no-op for us.  We'll use the cx->instance */
+ 
+ 	/* (2) Create a card instance */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	ret = snd_card_create(SNDRV_DEFAULT_IDX1, /* use first available id */
+ 			      SNDRV_DEFAULT_STR1, /* xid from end of shortname*/
+ 			      THIS_MODULE, 0, &sc);
+@@ -153,7 +154,17 @@
+ 			      __func__, ret);
+ 		goto err_exit;
+ 	}
+-
++#else
++	ret = snd_card_new(&cx->pci_dev->dev,
++			   SNDRV_DEFAULT_IDX1, /* use first available id */
++			   SNDRV_DEFAULT_STR1, /* xid from end of shortname*/
++			   THIS_MODULE, 0, &sc);
++	if (ret) {
++		CX18_ALSA_ERR("%s: snd_card_new() failed with err %d\n",
++			      __func__, ret);
++		goto err_exit;
++	}
++#endif
+ 	/* (3) Create a main component */
+ 	ret = snd_cx18_card_create(v4l2_dev, sc, &cxsc);
+ 	if (ret) {
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx23885/cx23885-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx23885/cx23885-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx23885/cx23885-alsa.c	2014-08-15 11:43:45.215640466 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx23885/cx23885-alsa.c	2014-08-15 11:44:01.899723198 +0800
+@@ -488,9 +488,14 @@
+ 			"for analog TV Audio\n", __func__);
+ 		return NULL;
+ 	}
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
+ 			THIS_MODULE, sizeof(struct cx23885_audio_dev), &card);
++#else
++	err = snd_card_new(&dev->pci->dev,
++			   SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
++			THIS_MODULE, sizeof(struct cx23885_audio_dev), &card);
++#endif
+ 	if (err < 0)
+ 		goto error;
+ 
+@@ -499,9 +504,9 @@
+ 	chip->pci = dev->pci;
+ 	chip->card = card;
+ 	spin_lock_init(&chip->lock);
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &dev->pci->dev);
+-
++#endif
+ 	err = snd_cx23885_pcm(chip, 0, "CX23885 Digital");
+ 	if (err < 0)
+ 		goto error;
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx25821/cx25821-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx25821/cx25821-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx25821/cx25821-alsa.c	2014-08-15 11:43:45.211640446 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx25821/cx25821-alsa.c	2014-08-15 11:44:01.899723198 +0800
+@@ -674,8 +674,15 @@
+ 		return -ENOENT;
+ 	}
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[devno], id[devno], THIS_MODULE,
+ 			sizeof(struct cx25821_audio_dev), &card);
++
++#else
++	err = snd_card_new(&dev->pci->dev, index[devno], id[devno],
++			   THIS_MODULE,
++			   sizeof(struct cx25821_audio_dev), &card);
++#endif
+ 	if (err < 0) {
+ 		pr_info("DEBUG ERROR: cannot create snd_card_new in %s\n",
+ 			__func__);
+@@ -712,8 +719,9 @@
+ 		goto error;
+ 	}
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &chip->pci->dev);
+-
++#endif
+ 	strcpy(card->shortname, "cx25821");
+ 	sprintf(card->longname, "%s at 0x%lx irq %d", chip->dev->name,
+ 		chip->iobase, chip->irq);
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx88/cx88-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx88/cx88-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/cx88/cx88-alsa.c	2014-08-15 11:43:45.215640466 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/cx88/cx88-alsa.c	2014-08-15 11:44:01.899723198 +0800
+@@ -852,9 +852,9 @@
+ 
+ 	chip->irq = pci->irq;
+ 	synchronize_irq(chip->irq);
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &pci->dev);
+-
++#endif
+ 	*rchip = chip;
+ 	*core_ptr = core;
+ 
+@@ -877,8 +877,13 @@
+ 		return (-ENOENT);
+ 	}
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[devno], id[devno], THIS_MODULE,
+ 			      sizeof(snd_cx88_card_t), &card);
++#else
++	err = snd_card_new(&pci->dev, index[devno], id[devno], THIS_MODULE,
++			   sizeof(snd_cx88_card_t), &card);
++#endif
+ 	if (err < 0)
+ 		return err;
+ 
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/ivtv/ivtv-alsa-main.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/ivtv/ivtv-alsa-main.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/ivtv/ivtv-alsa-main.c	2014-08-15 11:43:45.219640486 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/ivtv/ivtv-alsa-main.c	2014-08-15 11:44:01.903723217 +0800
+@@ -145,6 +145,7 @@
+ 	/* This is a no-op for us.  We'll use the itv->instance */
+ 
+ 	/* (2) Create a card instance */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	ret = snd_card_create(SNDRV_DEFAULT_IDX1, /* use first available id */
+ 			      SNDRV_DEFAULT_STR1, /* xid from end of shortname*/
+ 			      THIS_MODULE, 0, &sc);
+@@ -153,7 +154,17 @@
+ 			      __func__, ret);
+ 		goto err_exit;
+ 	}
+-
++#else
++	ret = snd_card_new(&itv->pdev->dev,
++			   SNDRV_DEFAULT_IDX1, /* use first available id */
++			   SNDRV_DEFAULT_STR1, /* xid from end of shortname*/
++			   THIS_MODULE, 0, &sc);
++	if (ret) {
++		IVTV_ALSA_ERR("%s: snd_card_new() failed with err %d\n",
++			      __func__, ret);
++		goto err_exit;
++	}
++#endif
+ 	/* (3) Create a main component */
+ 	ret = snd_ivtv_card_create(v4l2_dev, sc, &itvsc);
+ 	if (ret) {
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/saa7134/saa7134-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/saa7134/saa7134-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/pci/saa7134/saa7134-alsa.c	2014-08-15 11:43:45.227640525 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/pci/saa7134/saa7134-alsa.c	2014-08-15 11:44:01.903723217 +0800
+@@ -1070,8 +1070,13 @@
+ 	if (!enable[devnum])
+ 		return -ENODEV;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[devnum], id[devnum], THIS_MODULE,
+ 			      sizeof(snd_card_saa7134_t), &card);
++#else
++	err = snd_card_new(&dev->pci->dev, index[devnum], id[devnum],
++			   THIS_MODULE, sizeof(snd_card_saa7134_t), &card);
++#endif
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -1113,8 +1118,9 @@
+ 	if ((err = snd_card_saa7134_pcm(chip, 0)) < 0)
+ 		goto __nodev;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &chip->pci->dev);
+-
++#endif
+ 	/* End of "creation" */
+ 
+ 	strcpy(card->shortname, "SAA7134");
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/radio/radio-si476x.c s2-liplianin-v39+rc8bc280/linux/drivers/media/radio/radio-si476x.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/radio/radio-si476x.c	2014-08-15 11:43:45.207640426 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/radio/radio-si476x.c	2014-08-15 11:45:16.892095065 +0800
+@@ -44,7 +44,7 @@
+ 
+ #define FREQ_MUL (10000000 / 625)
+ 
+-#define SI476X_PHDIV_STATUS_LINK_LOCKED(status) (0b10000000 & (status))
++#define SI476X_PHDIV_STATUS_LINK_LOCKED(status) (0x80 & (status))
+ 
+ #define DRIVER_NAME "si476x-radio"
+ #define DRIVER_CARD "SI476x AM/FM Receiver"
+@@ -268,8 +268,8 @@
+  *
+  * @tune_freq: Tune chip to a specific frequency
+  * @seek_start: Star station seeking
+- * @rsq_status: Get Recieved Signal Quality(RSQ) status
+- * @rds_blckcnt: Get recived RDS blocks count
++ * @rsq_status: Get Received Signal Quality(RSQ) status
++ * @rds_blckcnt: Get received RDS blocks count
+  * @phase_diversity: Change phase diversity mode of the tuner
+  * @phase_div_status: Get phase diversity mode status
+  * @acf_status: Get the status of Automatically Controlled
+@@ -1018,16 +1018,6 @@
+ 	return retval;
+ }
+ 
+-static int si476x_radio_g_chip_ident(struct file *file, void *fh,
+-				     struct v4l2_dbg_chip_ident *chip)
+-{
+-	if (chip->match.type == V4L2_CHIP_MATCH_HOST &&
+-	    v4l2_chip_match_host(&chip->match))
+-		return 0;
+-	return -EINVAL;
+-}
+-
+-
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ static int si476x_radio_g_register(struct file *file, void *fh,
+ 				   struct v4l2_dbg_register *reg)
+@@ -1203,7 +1193,6 @@
+ 	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+ 
+-	.vidioc_g_chip_ident		= si476x_radio_g_chip_ident,
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ 	.vidioc_g_register		= si476x_radio_g_register,
+ 	.vidioc_s_register		= si476x_radio_s_register,
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/cx231xx/cx231xx-audio.c s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/cx231xx/cx231xx-audio.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/cx231xx/cx231xx-audio.c	2014-08-15 11:43:45.239640585 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/cx231xx/cx231xx-audio.c	2014-08-15 11:44:01.903723217 +0800
+@@ -665,8 +665,13 @@
+ 	cx231xx_info("cx231xx-audio.c: probing for cx231xx "
+ 		     "non standard usbaudio\n");
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[devnr], "Cx231xx Audio", THIS_MODULE,
+ 			      0, &card);
++#else
++	err = snd_card_new(&dev->udev->dev, index[devnr], "Cx231xx Audio",
++			   THIS_MODULE, 0, &card);
++#endif
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -682,7 +687,9 @@
+ 	pcm->info_flags = 0;
+ 	pcm->private_data = dev;
+ 	strcpy(pcm->name, "Conexant cx231xx Capture");
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &dev->udev->dev);
++#endif
+ 	strcpy(card->driver, "Cx231xx-Audio");
+ 	strcpy(card->shortname, "Cx231xx Audio");
+ 	strcpy(card->longname, "Conexant cx231xx Audio");
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/em28xx/em28xx-audio.c s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/em28xx/em28xx-audio.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/em28xx/em28xx-audio.c	2014-08-15 11:43:45.247640624 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/em28xx/em28xx-audio.c	2014-08-15 11:44:34.059882671 +0800
+@@ -654,8 +654,13 @@
+ 			 "Rechberger\n");
+ 	printk(KERN_INFO "em28xx-audio.c: Copyright (C) 2007-2011 Mauro Carvalho Chehab\n");
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[devnr], "Em28xx Audio", THIS_MODULE, 0,
+ 			      &card);
++#else
++	err = snd_card_new(&dev->udev->dev, index[devnr], "Em28xx Audio",
++			   THIS_MODULE, 0, &card);
++#endif
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -670,8 +675,9 @@
+ 	pcm->info_flags = 0;
+ 	pcm->private_data = dev;
+ 	strcpy(pcm->name, "Empia 28xx Capture");
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &dev->udev->dev);
++#endif
+ 	strcpy(card->driver, "Em28xx-Audio");
+ 	strcpy(card->shortname, "Em28xx Audio");
+ 	strcpy(card->longname, "Empia Em28xx Audio");
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c.orig s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c.orig
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c.orig	2014-08-15 11:43:45.247640624 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c.orig	1970-01-01 08:00:00.000000000 +0800
+@@ -1,1413 +0,0 @@
+-/*
+- *
+- *
+- *  Copyright (C) 2005 Mike Isely <isely@pobox.com>
+- *  Copyright (C) 2004 Aurelien Alleaume <slts@free.fr>
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License
+- *
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- *
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/version.h>
+-#include "pvrusb2-context.h"
+-#include "pvrusb2-hdw.h"
+-#include "pvrusb2.h"
+-#include "pvrusb2-debug.h"
+-#include "pvrusb2-v4l2.h"
+-#include "pvrusb2-ioread.h"
+-#include <linux/videodev2.h>
+-#include <linux/module.h>
+-#include <media/v4l2-dev.h>
+-#include <media/v4l2-common.h>
+-#include <media/v4l2-ioctl.h>
+-
+-struct pvr2_v4l2_dev;
+-struct pvr2_v4l2_fh;
+-struct pvr2_v4l2;
+-
+-struct pvr2_v4l2_dev {
+-	struct video_device devbase; /* MUST be first! */
+-	struct pvr2_v4l2 *v4lp;
+-	struct pvr2_context_stream *stream;
+-	/* Information about this device: */
+-	enum pvr2_config config; /* Expected stream format */
+-	int v4l_type; /* V4L defined type for this device node */
+-	enum pvr2_v4l_type minor_type; /* pvr2-understood minor device type */
+-};
+-
+-struct pvr2_v4l2_fh {
+-	struct pvr2_channel channel;
+-	struct pvr2_v4l2_dev *pdi;
+-	enum v4l2_priority prio;
+-	struct pvr2_ioread *rhp;
+-	struct file *file;
+-	struct pvr2_v4l2 *vhead;
+-	struct pvr2_v4l2_fh *vnext;
+-	struct pvr2_v4l2_fh *vprev;
+-	wait_queue_head_t wait_data;
+-	int fw_mode_flag;
+-	/* Map contiguous ordinal value to input id */
+-	unsigned char *input_map;
+-	unsigned int input_cnt;
+-};
+-
+-struct pvr2_v4l2 {
+-	struct pvr2_channel channel;
+-	struct pvr2_v4l2_fh *vfirst;
+-	struct pvr2_v4l2_fh *vlast;
+-
+-	struct v4l2_prio_state prio;
+-
+-	/* streams - Note that these must be separately, individually,
+-	 * allocated pointers.  This is because the v4l core is going to
+-	 * manage their deletion - separately, individually...  */
+-	struct pvr2_v4l2_dev *dev_video;
+-	struct pvr2_v4l2_dev *dev_radio;
+-};
+-
+-static int video_nr[PVR_NUM] = {[0 ... PVR_NUM-1] = -1};
+-module_param_array(video_nr, int, NULL, 0444);
+-MODULE_PARM_DESC(video_nr, "Offset for device's video dev minor");
+-static int radio_nr[PVR_NUM] = {[0 ... PVR_NUM-1] = -1};
+-module_param_array(radio_nr, int, NULL, 0444);
+-MODULE_PARM_DESC(radio_nr, "Offset for device's radio dev minor");
+-static int vbi_nr[PVR_NUM] = {[0 ... PVR_NUM-1] = -1};
+-module_param_array(vbi_nr, int, NULL, 0444);
+-MODULE_PARM_DESC(vbi_nr, "Offset for device's vbi dev minor");
+-
+-static struct v4l2_capability pvr_capability ={
+-	.driver         = "pvrusb2",
+-	.card           = "Hauppauge WinTV pvr-usb2",
+-	.bus_info       = "usb",
+-	.version        = V4L2_VERSION,
+-	.capabilities   = (V4L2_CAP_VIDEO_CAPTURE |
+-			   V4L2_CAP_TUNER | V4L2_CAP_AUDIO | V4L2_CAP_RADIO |
+-			   V4L2_CAP_READWRITE),
+-};
+-
+-static struct v4l2_fmtdesc pvr_fmtdesc [] = {
+-	{
+-		.index          = 0,
+-		.type           = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+-		.flags          = V4L2_FMT_FLAG_COMPRESSED,
+-		.description    = "MPEG1/2",
+-		// This should really be V4L2_PIX_FMT_MPEG, but xawtv
+-		// breaks when I do that.
+-		.pixelformat    = 0, // V4L2_PIX_FMT_MPEG,
+-	}
+-};
+-
+-#define PVR_FORMAT_PIX  0
+-#define PVR_FORMAT_VBI  1
+-
+-static struct v4l2_format pvr_format [] = {
+-	[PVR_FORMAT_PIX] = {
+-		.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+-		.fmt    = {
+-			.pix        = {
+-				.width          = 720,
+-				.height             = 576,
+-				// This should really be V4L2_PIX_FMT_MPEG,
+-				// but xawtv breaks when I do that.
+-				.pixelformat    = 0, // V4L2_PIX_FMT_MPEG,
+-				.field          = V4L2_FIELD_INTERLACED,
+-				.bytesperline   = 0,  // doesn't make sense
+-						      // here
+-				//FIXME : Don't know what to put here...
+-				.sizeimage          = (32*1024),
+-				.colorspace     = 0, // doesn't make sense here
+-				.priv           = 0
+-			}
+-		}
+-	},
+-	[PVR_FORMAT_VBI] = {
+-		.type   = V4L2_BUF_TYPE_VBI_CAPTURE,
+-		.fmt    = {
+-			.vbi        = {
+-				.sampling_rate = 27000000,
+-				.offset = 248,
+-				.samples_per_line = 1443,
+-				.sample_format = V4L2_PIX_FMT_GREY,
+-				.start = { 0, 0 },
+-				.count = { 0, 0 },
+-				.flags = 0,
+-			}
+-		}
+-	}
+-};
+-
+-
+-
+-/*
+- * This is part of Video 4 Linux API. These procedures handle ioctl() calls.
+- */
+-static int pvr2_querycap(struct file *file, void *priv, struct v4l2_capability *cap)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	memcpy(cap, &pvr_capability, sizeof(struct v4l2_capability));
+-	strlcpy(cap->bus_info, pvr2_hdw_get_bus_info(hdw),
+-			sizeof(cap->bus_info));
+-	strlcpy(cap->card, pvr2_hdw_get_desc(hdw), sizeof(cap->card));
+-	return 0;
+-}
+-
+-static int pvr2_g_priority(struct file *file, void *priv, enum v4l2_priority *p)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_v4l2 *vp = fh->vhead;
+-
+-	*p = v4l2_prio_max(&vp->prio);
+-	return 0;
+-}
+-
+-static int pvr2_s_priority(struct file *file, void *priv, enum v4l2_priority prio)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_v4l2 *vp = fh->vhead;
+-
+-	return v4l2_prio_change(&vp->prio, &fh->prio, prio);
+-}
+-
+-static int pvr2_g_std(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int ret;
+-
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_STDCUR), &val);
+-	*std = val;
+-	return ret;
+-}
+-
+-static int pvr2_s_std(struct file *file, void *priv, v4l2_std_id std)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	return pvr2_ctrl_set_value(
+-		pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_STDCUR), std);
+-}
+-
+-static int pvr2_querystd(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int ret;
+-
+-	ret = pvr2_ctrl_get_value(
+-		pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_STDDETECT), &val);
+-	*std = val;
+-	return ret;
+-}
+-
+-static int pvr2_enum_input(struct file *file, void *priv, struct v4l2_input *vi)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct pvr2_ctrl *cptr;
+-	struct v4l2_input tmp;
+-	unsigned int cnt;
+-	int val;
+-
+-	cptr = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_INPUT);
+-
+-	memset(&tmp, 0, sizeof(tmp));
+-	tmp.index = vi->index;
+-	if (vi->index >= fh->input_cnt)
+-		return -EINVAL;
+-	val = fh->input_map[vi->index];
+-	switch (val) {
+-	case PVR2_CVAL_INPUT_TV:
+-	case PVR2_CVAL_INPUT_DTV:
+-	case PVR2_CVAL_INPUT_RADIO:
+-		tmp.type = V4L2_INPUT_TYPE_TUNER;
+-		break;
+-	case PVR2_CVAL_INPUT_SVIDEO:
+-	case PVR2_CVAL_INPUT_COMPOSITE:
+-		tmp.type = V4L2_INPUT_TYPE_CAMERA;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	cnt = 0;
+-	pvr2_ctrl_get_valname(cptr, val,
+-			tmp.name, sizeof(tmp.name) - 1, &cnt);
+-	tmp.name[cnt] = 0;
+-
+-	/* Don't bother with audioset, since this driver currently
+-	   always switches the audio whenever the video is
+-	   switched. */
+-
+-	/* Handling std is a tougher problem.  It doesn't make
+-	   sense in cases where a device might be multi-standard.
+-	   We could just copy out the current value for the
+-	   standard, but it can change over time.  For now just
+-	   leave it zero. */
+-	*vi = tmp;
+-	return 0;
+-}
+-
+-static int pvr2_g_input(struct file *file, void *priv, unsigned int *i)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	unsigned int idx;
+-	struct pvr2_ctrl *cptr;
+-	int val;
+-	int ret;
+-
+-	cptr = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_INPUT);
+-	val = 0;
+-	ret = pvr2_ctrl_get_value(cptr, &val);
+-	*i = 0;
+-	for (idx = 0; idx < fh->input_cnt; idx++) {
+-		if (fh->input_map[idx] == val) {
+-			*i = idx;
+-			break;
+-		}
+-	}
+-	return ret;
+-}
+-
+-static int pvr2_s_input(struct file *file, void *priv, unsigned int inp)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	if (inp >= fh->input_cnt)
+-		return -EINVAL;
+-	return pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_INPUT),
+-			fh->input_map[inp]);
+-}
+-
+-static int pvr2_enumaudio(struct file *file, void *priv, struct v4l2_audio *vin)
+-{
+-	/* pkt: FIXME: We are returning one "fake" input here
+-	   which could very well be called "whatever_we_like".
+-	   This is for apps that want to see an audio input
+-	   just to feel comfortable, as well as to test if
+-	   it can do stereo or sth. There is actually no guarantee
+-	   that the actual audio input cannot change behind the app's
+-	   back, but most applications should not mind that either.
+-
+-	   Hopefully, mplayer people will work with us on this (this
+-	   whole mess is to support mplayer pvr://), or Hans will come
+-	   up with a more standard way to say "we have inputs but we
+-	   don 't want you to change them independent of video" which
+-	   will sort this mess.
+-	 */
+-
+-	if (vin->index > 0)
+-		return -EINVAL;
+-	strncpy(vin->name, "PVRUSB2 Audio", 14);
+-	vin->capability = V4L2_AUDCAP_STEREO;
+-	return 0;
+-}
+-
+-static int pvr2_g_audio(struct file *file, void *priv, struct v4l2_audio *vin)
+-{
+-	/* pkt: FIXME: see above comment (VIDIOC_ENUMAUDIO) */
+-	vin->index = 0;
+-	strncpy(vin->name, "PVRUSB2 Audio", 14);
+-	vin->capability = V4L2_AUDCAP_STEREO;
+-	return 0;
+-}
+-
+-static int pvr2_s_audio(struct file *file, void *priv, const struct v4l2_audio *vout)
+-{
+-	if (vout->index)
+-		return -EINVAL;
+-	return 0;
+-}
+-
+-static int pvr2_g_tuner(struct file *file, void *priv, struct v4l2_tuner *vt)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	if (vt->index != 0)
+-		return -EINVAL; /* Only answer for the 1st tuner */
+-
+-	pvr2_hdw_execute_tuner_poll(hdw);
+-	return pvr2_hdw_get_tuner_status(hdw, vt);
+-}
+-
+-static int pvr2_s_tuner(struct file *file, void *priv, const struct v4l2_tuner *vt)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	if (vt->index != 0)
+-		return -EINVAL;
+-
+-	return pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_AUDIOMODE),
+-			vt->audmode);
+-}
+-
+-static int pvr2_s_frequency(struct file *file, void *priv, const struct v4l2_frequency *vf)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	unsigned long fv;
+-	struct v4l2_tuner vt;
+-	int cur_input;
+-	struct pvr2_ctrl *ctrlp;
+-	int ret;
+-
+-	ret = pvr2_hdw_get_tuner_status(hdw, &vt);
+-	if (ret != 0)
+-		return ret;
+-	ctrlp = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_INPUT);
+-	ret = pvr2_ctrl_get_value(ctrlp, &cur_input);
+-	if (ret != 0)
+-		return ret;
+-	if (vf->type == V4L2_TUNER_RADIO) {
+-		if (cur_input != PVR2_CVAL_INPUT_RADIO)
+-			pvr2_ctrl_set_value(ctrlp, PVR2_CVAL_INPUT_RADIO);
+-	} else {
+-		if (cur_input == PVR2_CVAL_INPUT_RADIO)
+-			pvr2_ctrl_set_value(ctrlp, PVR2_CVAL_INPUT_TV);
+-	}
+-	fv = vf->frequency;
+-	if (vt.capability & V4L2_TUNER_CAP_LOW)
+-		fv = (fv * 125) / 2;
+-	else
+-		fv = fv * 62500;
+-	return pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw,PVR2_CID_FREQUENCY),fv);
+-}
+-
+-static int pvr2_g_frequency(struct file *file, void *priv, struct v4l2_frequency *vf)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int cur_input;
+-	struct v4l2_tuner vt;
+-	int ret;
+-
+-	ret = pvr2_hdw_get_tuner_status(hdw, &vt);
+-	if (ret != 0)
+-		return ret;
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_FREQUENCY),
+-			&val);
+-	if (ret != 0)
+-		return ret;
+-	pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_INPUT),
+-			&cur_input);
+-	if (cur_input == PVR2_CVAL_INPUT_RADIO)
+-		vf->type = V4L2_TUNER_RADIO;
+-	else
+-		vf->type = V4L2_TUNER_ANALOG_TV;
+-	if (vt.capability & V4L2_TUNER_CAP_LOW)
+-		val = (val * 2) / 125;
+-	else
+-		val /= 62500;
+-	vf->frequency = val;
+-	return 0;
+-}
+-
+-static int pvr2_enum_fmt_vid_cap(struct file *file, void *priv, struct v4l2_fmtdesc *fd)
+-{
+-	/* Only one format is supported : mpeg.*/
+-	if (fd->index != 0)
+-		return -EINVAL;
+-
+-	memcpy(fd, pvr_fmtdesc, sizeof(struct v4l2_fmtdesc));
+-	return 0;
+-}
+-
+-static int pvr2_g_fmt_vid_cap(struct file *file, void *priv, struct v4l2_format *vf)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val;
+-
+-	memcpy(vf, &pvr_format[PVR_FORMAT_PIX], sizeof(struct v4l2_format));
+-	val = 0;
+-	pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_HRES),
+-			&val);
+-	vf->fmt.pix.width = val;
+-	val = 0;
+-	pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_VRES),
+-			&val);
+-	vf->fmt.pix.height = val;
+-	return 0;
+-}
+-
+-static int pvr2_try_fmt_vid_cap(struct file *file, void *priv, struct v4l2_format *vf)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int lmin, lmax, ldef;
+-	struct pvr2_ctrl *hcp, *vcp;
+-	int h = vf->fmt.pix.height;
+-	int w = vf->fmt.pix.width;
+-
+-	hcp = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_HRES);
+-	vcp = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_VRES);
+-
+-	lmin = pvr2_ctrl_get_min(hcp);
+-	lmax = pvr2_ctrl_get_max(hcp);
+-	pvr2_ctrl_get_def(hcp, &ldef);
+-	if (w == -1)
+-		w = ldef;
+-	else if (w < lmin)
+-		w = lmin;
+-	else if (w > lmax)
+-		w = lmax;
+-	lmin = pvr2_ctrl_get_min(vcp);
+-	lmax = pvr2_ctrl_get_max(vcp);
+-	pvr2_ctrl_get_def(vcp, &ldef);
+-	if (h == -1)
+-		h = ldef;
+-	else if (h < lmin)
+-		h = lmin;
+-	else if (h > lmax)
+-		h = lmax;
+-
+-	memcpy(vf, &pvr_format[PVR_FORMAT_PIX],
+-			sizeof(struct v4l2_format));
+-	vf->fmt.pix.width = w;
+-	vf->fmt.pix.height = h;
+-	return 0;
+-}
+-
+-static int pvr2_s_fmt_vid_cap(struct file *file, void *priv, struct v4l2_format *vf)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct pvr2_ctrl *hcp, *vcp;
+-	int ret = pvr2_try_fmt_vid_cap(file, fh, vf);
+-
+-	if (ret)
+-		return ret;
+-	hcp = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_HRES);
+-	vcp = pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_VRES);
+-	pvr2_ctrl_set_value(hcp, vf->fmt.pix.width);
+-	pvr2_ctrl_set_value(vcp, vf->fmt.pix.height);
+-	return 0;
+-}
+-
+-static int pvr2_streamon(struct file *file, void *priv, enum v4l2_buf_type i)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct pvr2_v4l2_dev *pdi = fh->pdi;
+-	int ret;
+-
+-	if (!fh->pdi->stream) {
+-		/* No stream defined for this node.  This means
+-		   that we're not currently allowed to stream from
+-		   this node. */
+-		return -EPERM;
+-	}
+-	ret = pvr2_hdw_set_stream_type(hdw, pdi->config);
+-	if (ret < 0)
+-		return ret;
+-	return pvr2_hdw_set_streaming(hdw, !0);
+-}
+-
+-static int pvr2_streamoff(struct file *file, void *priv, enum v4l2_buf_type i)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	if (!fh->pdi->stream) {
+-		/* No stream defined for this node.  This means
+-		   that we're not currently allowed to stream from
+-		   this node. */
+-		return -EPERM;
+-	}
+-	return pvr2_hdw_set_streaming(hdw, 0);
+-}
+-
+-static int pvr2_queryctrl(struct file *file, void *priv,
+-		struct v4l2_queryctrl *vc)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct pvr2_ctrl *cptr;
+-	int val;
+-
+-	if (vc->id & V4L2_CTRL_FLAG_NEXT_CTRL) {
+-		cptr = pvr2_hdw_get_ctrl_nextv4l(
+-				hdw, (vc->id & ~V4L2_CTRL_FLAG_NEXT_CTRL));
+-		if (cptr)
+-			vc->id = pvr2_ctrl_get_v4lid(cptr);
+-	} else {
+-		cptr = pvr2_hdw_get_ctrl_v4l(hdw, vc->id);
+-	}
+-	if (!cptr) {
+-		pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-				"QUERYCTRL id=0x%x not implemented here",
+-				vc->id);
+-		return -EINVAL;
+-	}
+-
+-	pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-			"QUERYCTRL id=0x%x mapping name=%s (%s)",
+-			vc->id, pvr2_ctrl_get_name(cptr),
+-			pvr2_ctrl_get_desc(cptr));
+-	strlcpy(vc->name, pvr2_ctrl_get_desc(cptr), sizeof(vc->name));
+-	vc->flags = pvr2_ctrl_get_v4lflags(cptr);
+-	pvr2_ctrl_get_def(cptr, &val);
+-	vc->default_value = val;
+-	switch (pvr2_ctrl_get_type(cptr)) {
+-	case pvr2_ctl_enum:
+-		vc->type = V4L2_CTRL_TYPE_MENU;
+-		vc->minimum = 0;
+-		vc->maximum = pvr2_ctrl_get_cnt(cptr) - 1;
+-		vc->step = 1;
+-		break;
+-	case pvr2_ctl_bool:
+-		vc->type = V4L2_CTRL_TYPE_BOOLEAN;
+-		vc->minimum = 0;
+-		vc->maximum = 1;
+-		vc->step = 1;
+-		break;
+-	case pvr2_ctl_int:
+-		vc->type = V4L2_CTRL_TYPE_INTEGER;
+-		vc->minimum = pvr2_ctrl_get_min(cptr);
+-		vc->maximum = pvr2_ctrl_get_max(cptr);
+-		vc->step = 1;
+-		break;
+-	default:
+-		pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-				"QUERYCTRL id=0x%x name=%s not mappable",
+-				vc->id, pvr2_ctrl_get_name(cptr));
+-		return -EINVAL;
+-	}
+-	return 0;
+-}
+-
+-static int pvr2_querymenu(struct file *file, void *priv, struct v4l2_querymenu *vm)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	unsigned int cnt = 0;
+-	int ret;
+-
+-	ret = pvr2_ctrl_get_valname(pvr2_hdw_get_ctrl_v4l(hdw, vm->id),
+-			vm->index,
+-			vm->name, sizeof(vm->name) - 1,
+-			&cnt);
+-	vm->name[cnt] = 0;
+-	return ret;
+-}
+-
+-static int pvr2_g_ctrl(struct file *file, void *priv, struct v4l2_control *vc)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int ret;
+-
+-	ret = pvr2_ctrl_get_value(pvr2_hdw_get_ctrl_v4l(hdw, vc->id),
+-			&val);
+-	vc->value = val;
+-	return ret;
+-}
+-
+-static int pvr2_s_ctrl(struct file *file, void *priv, struct v4l2_control *vc)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	return pvr2_ctrl_set_value(pvr2_hdw_get_ctrl_v4l(hdw, vc->id),
+-			vc->value);
+-}
+-
+-static int pvr2_g_ext_ctrls(struct file *file, void *priv,
+-					struct v4l2_ext_controls *ctls)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct v4l2_ext_control *ctrl;
+-	unsigned int idx;
+-	int val;
+-	int ret;
+-
+-	ret = 0;
+-	for (idx = 0; idx < ctls->count; idx++) {
+-		ctrl = ctls->controls + idx;
+-		ret = pvr2_ctrl_get_value(
+-				pvr2_hdw_get_ctrl_v4l(hdw, ctrl->id), &val);
+-		if (ret) {
+-			ctls->error_idx = idx;
+-			return ret;
+-		}
+-		/* Ensure that if read as a 64 bit value, the user
+-		   will still get a hopefully sane value */
+-		ctrl->value64 = 0;
+-		ctrl->value = val;
+-	}
+-	return 0;
+-}
+-
+-static int pvr2_s_ext_ctrls(struct file *file, void *priv,
+-		struct v4l2_ext_controls *ctls)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct v4l2_ext_control *ctrl;
+-	unsigned int idx;
+-	int ret;
+-
+-	ret = 0;
+-	for (idx = 0; idx < ctls->count; idx++) {
+-		ctrl = ctls->controls + idx;
+-		ret = pvr2_ctrl_set_value(
+-				pvr2_hdw_get_ctrl_v4l(hdw, ctrl->id),
+-				ctrl->value);
+-		if (ret) {
+-			ctls->error_idx = idx;
+-			return ret;
+-		}
+-	}
+-	return 0;
+-}
+-
+-static int pvr2_try_ext_ctrls(struct file *file, void *priv,
+-		struct v4l2_ext_controls *ctls)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	struct v4l2_ext_control *ctrl;
+-	struct pvr2_ctrl *pctl;
+-	unsigned int idx;
+-
+-	/* For the moment just validate that the requested control
+-	   actually exists. */
+-	for (idx = 0; idx < ctls->count; idx++) {
+-		ctrl = ctls->controls + idx;
+-		pctl = pvr2_hdw_get_ctrl_v4l(hdw, ctrl->id);
+-		if (!pctl) {
+-			ctls->error_idx = idx;
+-			return -EINVAL;
+-		}
+-	}
+-	return 0;
+-}
+-
+-static int pvr2_cropcap(struct file *file, void *priv, struct v4l2_cropcap *cap)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int ret;
+-
+-	if (cap->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	ret = pvr2_hdw_get_cropcap(hdw, cap);
+-	cap->type = V4L2_BUF_TYPE_VIDEO_CAPTURE; /* paranoia */
+-	return ret;
+-}
+-
+-static int pvr2_g_crop(struct file *file, void *priv, struct v4l2_crop *crop)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int val = 0;
+-	int ret;
+-
+-	if (crop->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPL), &val);
+-	if (ret != 0)
+-		return -EINVAL;
+-	crop->c.left = val;
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPT), &val);
+-	if (ret != 0)
+-		return -EINVAL;
+-	crop->c.top = val;
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPW), &val);
+-	if (ret != 0)
+-		return -EINVAL;
+-	crop->c.width = val;
+-	ret = pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPH), &val);
+-	if (ret != 0)
+-		return -EINVAL;
+-	crop->c.height = val;
+-	return 0;
+-}
+-
+-static int pvr2_s_crop(struct file *file, void *priv, const struct v4l2_crop *crop)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	int ret;
+-
+-	if (crop->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	ret = pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPL),
+-			crop->c.left);
+-	if (ret != 0)
+-		return -EINVAL;
+-	ret = pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPT),
+-			crop->c.top);
+-	if (ret != 0)
+-		return -EINVAL;
+-	ret = pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPW),
+-			crop->c.width);
+-	if (ret != 0)
+-		return -EINVAL;
+-	ret = pvr2_ctrl_set_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw, PVR2_CID_CROPH),
+-			crop->c.height);
+-	if (ret != 0)
+-		return -EINVAL;
+-	return 0;
+-}
+-
+-static int pvr2_log_status(struct file *file, void *priv)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-
+-	pvr2_hdw_trigger_module_log(hdw);
+-	return 0;
+-}
+-
+-#ifdef CONFIG_VIDEO_ADV_DEBUG
+-static int pvr2_g_register(struct file *file, void *priv, struct v4l2_dbg_register *req)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	u64 val;
+-	int ret;
+-
+-	ret = pvr2_hdw_register_access(
+-			hdw, &req->match, req->reg,
+-			0, &val);
+-	req->val = val;
+-	return ret;
+-}
+-
+-static int pvr2_s_register(struct file *file, void *priv, const struct v4l2_dbg_register *req)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	u64 val;
+-	int ret;
+-
+-	val = req->val;
+-	ret = pvr2_hdw_register_access(
+-			hdw, &req->match, req->reg,
+-			1, &val);
+-	return ret;
+-}
+-#endif
+-
+-static const struct v4l2_ioctl_ops pvr2_ioctl_ops = {
+-	.vidioc_querycap		    = pvr2_querycap,
+-	.vidioc_g_priority		    = pvr2_g_priority,
+-	.vidioc_s_priority		    = pvr2_s_priority,
+-	.vidioc_s_audio			    = pvr2_s_audio,
+-	.vidioc_g_audio			    = pvr2_g_audio,
+-	.vidioc_enumaudio		    = pvr2_enumaudio,
+-	.vidioc_enum_input		    = pvr2_enum_input,
+-	.vidioc_cropcap			    = pvr2_cropcap,
+-	.vidioc_s_crop			    = pvr2_s_crop,
+-	.vidioc_g_crop			    = pvr2_g_crop,
+-	.vidioc_g_input			    = pvr2_g_input,
+-	.vidioc_s_input			    = pvr2_s_input,
+-	.vidioc_g_frequency		    = pvr2_g_frequency,
+-	.vidioc_s_frequency		    = pvr2_s_frequency,
+-	.vidioc_s_tuner			    = pvr2_s_tuner,
+-	.vidioc_g_tuner			    = pvr2_g_tuner,
+-	.vidioc_g_std			    = pvr2_g_std,
+-	.vidioc_s_std			    = pvr2_s_std,
+-	.vidioc_querystd		    = pvr2_querystd,
+-	.vidioc_log_status		    = pvr2_log_status,
+-	.vidioc_enum_fmt_vid_cap	    = pvr2_enum_fmt_vid_cap,
+-	.vidioc_g_fmt_vid_cap		    = pvr2_g_fmt_vid_cap,
+-	.vidioc_s_fmt_vid_cap		    = pvr2_s_fmt_vid_cap,
+-	.vidioc_try_fmt_vid_cap		    = pvr2_try_fmt_vid_cap,
+-	.vidioc_streamon		    = pvr2_streamon,
+-	.vidioc_streamoff		    = pvr2_streamoff,
+-	.vidioc_queryctrl		    = pvr2_queryctrl,
+-	.vidioc_querymenu		    = pvr2_querymenu,
+-	.vidioc_g_ctrl			    = pvr2_g_ctrl,
+-	.vidioc_s_ctrl			    = pvr2_s_ctrl,
+-	.vidioc_g_ext_ctrls		    = pvr2_g_ext_ctrls,
+-	.vidioc_s_ext_ctrls		    = pvr2_s_ext_ctrls,
+-	.vidioc_try_ext_ctrls		    = pvr2_try_ext_ctrls,
+-#ifdef CONFIG_VIDEO_ADV_DEBUG
+-	.vidioc_g_register		    = pvr2_g_register,
+-	.vidioc_s_register		    = pvr2_s_register,
+-#endif
+-};
+-
+-static void pvr2_v4l2_dev_destroy(struct pvr2_v4l2_dev *dip)
+-{
+-	struct pvr2_hdw *hdw = dip->v4lp->channel.mc_head->hdw;
+-	enum pvr2_config cfg = dip->config;
+-	char msg[80];
+-	unsigned int mcnt;
+-
+-	/* Construct the unregistration message *before* we actually
+-	   perform the unregistration step.  By doing it this way we don't
+-	   have to worry about potentially touching deleted resources. */
+-	mcnt = scnprintf(msg, sizeof(msg) - 1,
+-			 "pvrusb2: unregistered device %s [%s]",
+-			 video_device_node_name(&dip->devbase),
+-			 pvr2_config_get_name(cfg));
+-	msg[mcnt] = 0;
+-
+-	pvr2_hdw_v4l_store_minor_number(hdw,dip->minor_type,-1);
+-
+-	/* Paranoia */
+-	dip->v4lp = NULL;
+-	dip->stream = NULL;
+-
+-	/* Actual deallocation happens later when all internal references
+-	   are gone. */
+-	video_unregister_device(&dip->devbase);
+-
+-	printk(KERN_INFO "%s\n", msg);
+-
+-}
+-
+-
+-static void pvr2_v4l2_dev_disassociate_parent(struct pvr2_v4l2_dev *dip)
+-{
+-	if (!dip) return;
+-	if (!dip->devbase.parent) return;
+-	dip->devbase.parent = NULL;
+-	device_move(&dip->devbase.dev, NULL, DPM_ORDER_NONE);
+-}
+-
+-
+-static void pvr2_v4l2_destroy_no_lock(struct pvr2_v4l2 *vp)
+-{
+-	if (vp->dev_video) {
+-		pvr2_v4l2_dev_destroy(vp->dev_video);
+-		vp->dev_video = NULL;
+-	}
+-	if (vp->dev_radio) {
+-		pvr2_v4l2_dev_destroy(vp->dev_radio);
+-		vp->dev_radio = NULL;
+-	}
+-
+-	pvr2_trace(PVR2_TRACE_STRUCT,"Destroying pvr2_v4l2 id=%p",vp);
+-	pvr2_channel_done(&vp->channel);
+-	kfree(vp);
+-}
+-
+-
+-static void pvr2_video_device_release(struct video_device *vdev)
+-{
+-	struct pvr2_v4l2_dev *dev;
+-	dev = container_of(vdev,struct pvr2_v4l2_dev,devbase);
+-	kfree(dev);
+-}
+-
+-
+-static void pvr2_v4l2_internal_check(struct pvr2_channel *chp)
+-{
+-	struct pvr2_v4l2 *vp;
+-	vp = container_of(chp,struct pvr2_v4l2,channel);
+-	if (!vp->channel.mc_head->disconnect_flag) return;
+-	pvr2_v4l2_dev_disassociate_parent(vp->dev_video);
+-	pvr2_v4l2_dev_disassociate_parent(vp->dev_radio);
+-	if (vp->vfirst) return;
+-	pvr2_v4l2_destroy_no_lock(vp);
+-}
+-
+-
+-static long pvr2_v4l2_ioctl(struct file *file,
+-			   unsigned int cmd, unsigned long arg)
+-{
+-
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	struct pvr2_v4l2 *vp = fh->vhead;
+-	struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-	long ret = -EINVAL;
+-
+-	if (pvrusb2_debug & PVR2_TRACE_V4LIOCTL)
+-		v4l_printk_ioctl(pvr2_hdw_get_driver_name(hdw), cmd);
+-
+-	if (!pvr2_hdw_dev_ok(hdw)) {
+-		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
+-			   "ioctl failed - bad or no context");
+-		return -EFAULT;
+-	}
+-
+-	/* check priority */
+-	switch (cmd) {
+-	case VIDIOC_S_CTRL:
+-	case VIDIOC_S_STD:
+-	case VIDIOC_S_INPUT:
+-	case VIDIOC_S_TUNER:
+-	case VIDIOC_S_FREQUENCY:
+-		ret = v4l2_prio_check(&vp->prio, fh->prio);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	ret = video_ioctl2(file, cmd, arg);
+-
+-	pvr2_hdw_commit_ctl(hdw);
+-
+-	if (ret < 0) {
+-		if (pvrusb2_debug & PVR2_TRACE_V4LIOCTL) {
+-			pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-				   "pvr2_v4l2_do_ioctl failure, ret=%ld", ret);
+-		} else {
+-			if (pvrusb2_debug & PVR2_TRACE_V4LIOCTL) {
+-				pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-					   "pvr2_v4l2_do_ioctl failure, ret=%ld"
+-					   " command was:", ret);
+-				v4l_printk_ioctl(pvr2_hdw_get_driver_name(hdw),
+-						cmd);
+-			}
+-		}
+-	} else {
+-		pvr2_trace(PVR2_TRACE_V4LIOCTL,
+-			   "pvr2_v4l2_do_ioctl complete, ret=%ld (0x%lx)",
+-			   ret, ret);
+-	}
+-	return ret;
+-
+-}
+-
+-
+-static int pvr2_v4l2_release(struct file *file)
+-{
+-	struct pvr2_v4l2_fh *fhp = file->private_data;
+-	struct pvr2_v4l2 *vp = fhp->vhead;
+-	struct pvr2_hdw *hdw = fhp->channel.mc_head->hdw;
+-
+-	pvr2_trace(PVR2_TRACE_OPEN_CLOSE,"pvr2_v4l2_release");
+-
+-	if (fhp->rhp) {
+-		struct pvr2_stream *sp;
+-		pvr2_hdw_set_streaming(hdw,0);
+-		sp = pvr2_ioread_get_stream(fhp->rhp);
+-		if (sp) pvr2_stream_set_callback(sp,NULL,NULL);
+-		pvr2_ioread_destroy(fhp->rhp);
+-		fhp->rhp = NULL;
+-	}
+-
+-	v4l2_prio_close(&vp->prio, fhp->prio);
+-	file->private_data = NULL;
+-
+-	if (fhp->vnext) {
+-		fhp->vnext->vprev = fhp->vprev;
+-	} else {
+-		vp->vlast = fhp->vprev;
+-	}
+-	if (fhp->vprev) {
+-		fhp->vprev->vnext = fhp->vnext;
+-	} else {
+-		vp->vfirst = fhp->vnext;
+-	}
+-	fhp->vnext = NULL;
+-	fhp->vprev = NULL;
+-	fhp->vhead = NULL;
+-	pvr2_channel_done(&fhp->channel);
+-	pvr2_trace(PVR2_TRACE_STRUCT,
+-		   "Destroying pvr_v4l2_fh id=%p",fhp);
+-	if (fhp->input_map) {
+-		kfree(fhp->input_map);
+-		fhp->input_map = NULL;
+-	}
+-	kfree(fhp);
+-	if (vp->channel.mc_head->disconnect_flag && !vp->vfirst) {
+-		pvr2_v4l2_destroy_no_lock(vp);
+-	}
+-	return 0;
+-}
+-
+-
+-static int pvr2_v4l2_open(struct file *file)
+-{
+-	struct pvr2_v4l2_dev *dip; /* Our own context pointer */
+-	struct pvr2_v4l2_fh *fhp;
+-	struct pvr2_v4l2 *vp;
+-	struct pvr2_hdw *hdw;
+-	unsigned int input_mask = 0;
+-	unsigned int input_cnt,idx;
+-	int ret = 0;
+-
+-	dip = container_of(video_devdata(file),struct pvr2_v4l2_dev,devbase);
+-
+-	vp = dip->v4lp;
+-	hdw = vp->channel.hdw;
+-
+-	pvr2_trace(PVR2_TRACE_OPEN_CLOSE,"pvr2_v4l2_open");
+-
+-	if (!pvr2_hdw_dev_ok(hdw)) {
+-		pvr2_trace(PVR2_TRACE_OPEN_CLOSE,
+-			   "pvr2_v4l2_open: hardware not ready");
+-		return -EIO;
+-	}
+-
+-	fhp = kzalloc(sizeof(*fhp),GFP_KERNEL);
+-	if (!fhp) {
+-		return -ENOMEM;
+-	}
+-
+-	init_waitqueue_head(&fhp->wait_data);
+-	fhp->pdi = dip;
+-
+-	pvr2_trace(PVR2_TRACE_STRUCT,"Creating pvr_v4l2_fh id=%p",fhp);
+-	pvr2_channel_init(&fhp->channel,vp->channel.mc_head);
+-
+-	if (dip->v4l_type == VFL_TYPE_RADIO) {
+-		/* Opening device as a radio, legal input selection subset
+-		   is just the radio. */
+-		input_mask = (1 << PVR2_CVAL_INPUT_RADIO);
+-	} else {
+-		/* Opening the main V4L device, legal input selection
+-		   subset includes all analog inputs. */
+-		input_mask = ((1 << PVR2_CVAL_INPUT_RADIO) |
+-			      (1 << PVR2_CVAL_INPUT_TV) |
+-			      (1 << PVR2_CVAL_INPUT_COMPOSITE) |
+-			      (1 << PVR2_CVAL_INPUT_SVIDEO));
+-	}
+-	ret = pvr2_channel_limit_inputs(&fhp->channel,input_mask);
+-	if (ret) {
+-		pvr2_channel_done(&fhp->channel);
+-		pvr2_trace(PVR2_TRACE_STRUCT,
+-			   "Destroying pvr_v4l2_fh id=%p (input mask error)",
+-			   fhp);
+-
+-		kfree(fhp);
+-		return ret;
+-	}
+-
+-	input_mask &= pvr2_hdw_get_input_available(hdw);
+-	input_cnt = 0;
+-	for (idx = 0; idx < (sizeof(input_mask) << 3); idx++) {
+-		if (input_mask & (1 << idx)) input_cnt++;
+-	}
+-	fhp->input_cnt = input_cnt;
+-	fhp->input_map = kzalloc(input_cnt,GFP_KERNEL);
+-	if (!fhp->input_map) {
+-		pvr2_channel_done(&fhp->channel);
+-		pvr2_trace(PVR2_TRACE_STRUCT,
+-			   "Destroying pvr_v4l2_fh id=%p (input map failure)",
+-			   fhp);
+-		kfree(fhp);
+-		return -ENOMEM;
+-	}
+-	input_cnt = 0;
+-	for (idx = 0; idx < (sizeof(input_mask) << 3); idx++) {
+-		if (!(input_mask & (1 << idx))) continue;
+-		fhp->input_map[input_cnt++] = idx;
+-	}
+-
+-	fhp->vnext = NULL;
+-	fhp->vprev = vp->vlast;
+-	if (vp->vlast) {
+-		vp->vlast->vnext = fhp;
+-	} else {
+-		vp->vfirst = fhp;
+-	}
+-	vp->vlast = fhp;
+-	fhp->vhead = vp;
+-
+-	fhp->file = file;
+-	file->private_data = fhp;
+-	v4l2_prio_open(&vp->prio, &fhp->prio);
+-
+-	fhp->fw_mode_flag = pvr2_hdw_cpufw_get_enabled(hdw);
+-
+-	return 0;
+-}
+-
+-
+-static void pvr2_v4l2_notify(struct pvr2_v4l2_fh *fhp)
+-{
+-	wake_up(&fhp->wait_data);
+-}
+-
+-static int pvr2_v4l2_iosetup(struct pvr2_v4l2_fh *fh)
+-{
+-	int ret;
+-	struct pvr2_stream *sp;
+-	struct pvr2_hdw *hdw;
+-	if (fh->rhp) return 0;
+-
+-	if (!fh->pdi->stream) {
+-		/* No stream defined for this node.  This means that we're
+-		   not currently allowed to stream from this node. */
+-		return -EPERM;
+-	}
+-
+-	/* First read() attempt.  Try to claim the stream and start
+-	   it... */
+-	if ((ret = pvr2_channel_claim_stream(&fh->channel,
+-					     fh->pdi->stream)) != 0) {
+-		/* Someone else must already have it */
+-		return ret;
+-	}
+-
+-	fh->rhp = pvr2_channel_create_mpeg_stream(fh->pdi->stream);
+-	if (!fh->rhp) {
+-		pvr2_channel_claim_stream(&fh->channel,NULL);
+-		return -ENOMEM;
+-	}
+-
+-	hdw = fh->channel.mc_head->hdw;
+-	sp = fh->pdi->stream->stream;
+-	pvr2_stream_set_callback(sp,(pvr2_stream_callback)pvr2_v4l2_notify,fh);
+-	pvr2_hdw_set_stream_type(hdw,fh->pdi->config);
+-	if ((ret = pvr2_hdw_set_streaming(hdw,!0)) < 0) return ret;
+-	return pvr2_ioread_set_enabled(fh->rhp,!0);
+-}
+-
+-
+-static ssize_t pvr2_v4l2_read(struct file *file,
+-			      char __user *buff, size_t count, loff_t *ppos)
+-{
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	int ret;
+-
+-	if (fh->fw_mode_flag) {
+-		struct pvr2_hdw *hdw = fh->channel.mc_head->hdw;
+-		char *tbuf;
+-		int c1,c2;
+-		int tcnt = 0;
+-		unsigned int offs = *ppos;
+-
+-		tbuf = kmalloc(PAGE_SIZE,GFP_KERNEL);
+-		if (!tbuf) return -ENOMEM;
+-
+-		while (count) {
+-			c1 = count;
+-			if (c1 > PAGE_SIZE) c1 = PAGE_SIZE;
+-			c2 = pvr2_hdw_cpufw_get(hdw,offs,tbuf,c1);
+-			if (c2 < 0) {
+-				tcnt = c2;
+-				break;
+-			}
+-			if (!c2) break;
+-			if (copy_to_user(buff,tbuf,c2)) {
+-				tcnt = -EFAULT;
+-				break;
+-			}
+-			offs += c2;
+-			tcnt += c2;
+-			buff += c2;
+-			count -= c2;
+-			*ppos += c2;
+-		}
+-		kfree(tbuf);
+-		return tcnt;
+-	}
+-
+-	if (!fh->rhp) {
+-		ret = pvr2_v4l2_iosetup(fh);
+-		if (ret) {
+-			return ret;
+-		}
+-	}
+-
+-	for (;;) {
+-		ret = pvr2_ioread_read(fh->rhp,buff,count);
+-		if (ret >= 0) break;
+-		if (ret != -EAGAIN) break;
+-		if (file->f_flags & O_NONBLOCK) break;
+-		/* Doing blocking I/O.  Wait here. */
+-		ret = wait_event_interruptible(
+-			fh->wait_data,
+-			pvr2_ioread_avail(fh->rhp) >= 0);
+-		if (ret < 0) break;
+-	}
+-
+-	return ret;
+-}
+-
+-
+-static unsigned int pvr2_v4l2_poll(struct file *file, poll_table *wait)
+-{
+-	unsigned int mask = 0;
+-	struct pvr2_v4l2_fh *fh = file->private_data;
+-	int ret;
+-
+-	if (fh->fw_mode_flag) {
+-		mask |= POLLIN | POLLRDNORM;
+-		return mask;
+-	}
+-
+-	if (!fh->rhp) {
+-		ret = pvr2_v4l2_iosetup(fh);
+-		if (ret) return POLLERR;
+-	}
+-
+-	poll_wait(file,&fh->wait_data,wait);
+-
+-	if (pvr2_ioread_avail(fh->rhp) >= 0) {
+-		mask |= POLLIN | POLLRDNORM;
+-	}
+-
+-	return mask;
+-}
+-
+-
+-static const struct v4l2_file_operations vdev_fops = {
+-	.owner      = THIS_MODULE,
+-	.open       = pvr2_v4l2_open,
+-	.release    = pvr2_v4l2_release,
+-	.read       = pvr2_v4l2_read,
+-	.ioctl      = pvr2_v4l2_ioctl,
+-	.poll       = pvr2_v4l2_poll,
+-};
+-
+-
+-static struct video_device vdev_template = {
+-	.fops       = &vdev_fops,
+-};
+-
+-
+-static void pvr2_v4l2_dev_init(struct pvr2_v4l2_dev *dip,
+-			       struct pvr2_v4l2 *vp,
+-			       int v4l_type)
+-{
+-	struct usb_device *usbdev;
+-	int mindevnum;
+-	int unit_number;
+-	struct pvr2_hdw *hdw;
+-	int *nr_ptr = NULL;
+-	dip->v4lp = vp;
+-
+-	hdw = vp->channel.mc_head->hdw;
+-	usbdev = pvr2_hdw_get_dev(hdw);
+-	dip->v4l_type = v4l_type;
+-	switch (v4l_type) {
+-	case VFL_TYPE_GRABBER:
+-		dip->stream = &vp->channel.mc_head->video_stream;
+-		dip->config = pvr2_config_mpeg;
+-		dip->minor_type = pvr2_v4l_type_video;
+-		nr_ptr = video_nr;
+-		if (!dip->stream) {
+-			pr_err(KBUILD_MODNAME
+-				": Failed to set up pvrusb2 v4l video dev"
+-				" due to missing stream instance\n");
+-			return;
+-		}
+-		break;
+-	case VFL_TYPE_VBI:
+-		dip->config = pvr2_config_vbi;
+-		dip->minor_type = pvr2_v4l_type_vbi;
+-		nr_ptr = vbi_nr;
+-		break;
+-	case VFL_TYPE_RADIO:
+-		dip->stream = &vp->channel.mc_head->video_stream;
+-		dip->config = pvr2_config_mpeg;
+-		dip->minor_type = pvr2_v4l_type_radio;
+-		nr_ptr = radio_nr;
+-		break;
+-	default:
+-		/* Bail out (this should be impossible) */
+-		pr_err(KBUILD_MODNAME ": Failed to set up pvrusb2 v4l dev"
+-		    " due to unrecognized config\n");
+-		return;
+-	}
+-
+-	dip->devbase = vdev_template;
+-	dip->devbase.release = pvr2_video_device_release;
+-	dip->devbase.ioctl_ops = &pvr2_ioctl_ops;
+-	{
+-		int val;
+-		pvr2_ctrl_get_value(
+-			pvr2_hdw_get_ctrl_by_id(hdw,
+-						PVR2_CID_STDAVAIL), &val);
+-		dip->devbase.tvnorms = (v4l2_std_id)val;
+-	}
+-
+-	mindevnum = -1;
+-	unit_number = pvr2_hdw_get_unit_number(hdw);
+-	if (nr_ptr && (unit_number >= 0) && (unit_number < PVR_NUM)) {
+-		mindevnum = nr_ptr[unit_number];
+-	}
+-	dip->devbase.parent = &usbdev->dev;
+-	if ((video_register_device(&dip->devbase,
+-				   dip->v4l_type, mindevnum) < 0) &&
+-	    (video_register_device(&dip->devbase,
+-				   dip->v4l_type, -1) < 0)) {
+-		pr_err(KBUILD_MODNAME
+-			": Failed to register pvrusb2 v4l device\n");
+-	}
+-
+-	printk(KERN_INFO "pvrusb2: registered device %s [%s]\n",
+-	       video_device_node_name(&dip->devbase),
+-	       pvr2_config_get_name(dip->config));
+-
+-	pvr2_hdw_v4l_store_minor_number(hdw,
+-					dip->minor_type,dip->devbase.minor);
+-}
+-
+-
+-struct pvr2_v4l2 *pvr2_v4l2_create(struct pvr2_context *mnp)
+-{
+-	struct pvr2_v4l2 *vp;
+-
+-	vp = kzalloc(sizeof(*vp),GFP_KERNEL);
+-	if (!vp) return vp;
+-	pvr2_channel_init(&vp->channel,mnp);
+-	pvr2_trace(PVR2_TRACE_STRUCT,"Creating pvr2_v4l2 id=%p",vp);
+-
+-	vp->channel.check_func = pvr2_v4l2_internal_check;
+-
+-	/* register streams */
+-	vp->dev_video = kzalloc(sizeof(*vp->dev_video),GFP_KERNEL);
+-	if (!vp->dev_video) goto fail;
+-	pvr2_v4l2_dev_init(vp->dev_video,vp,VFL_TYPE_GRABBER);
+-	if (pvr2_hdw_get_input_available(vp->channel.mc_head->hdw) &
+-	    (1 << PVR2_CVAL_INPUT_RADIO)) {
+-		vp->dev_radio = kzalloc(sizeof(*vp->dev_radio),GFP_KERNEL);
+-		if (!vp->dev_radio) goto fail;
+-		pvr2_v4l2_dev_init(vp->dev_radio,vp,VFL_TYPE_RADIO);
+-	}
+-
+-	return vp;
+- fail:
+-	pvr2_trace(PVR2_TRACE_STRUCT,"Failure creating pvr2_v4l2 id=%p",vp);
+-	pvr2_v4l2_destroy_no_lock(vp);
+-	return NULL;
+-}
+-
+-/*
+-  Stuff for Emacs to see, in order to encourage consistent editing style:
+-  *** Local Variables: ***
+-  *** mode: c ***
+-  *** fill-column: 75 ***
+-  *** tab-width: 8 ***
+-  *** c-basic-offset: 8 ***
+-  *** End: ***
+-  */
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/sn9c102/sn9c102_core.c.orig s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/sn9c102/sn9c102_core.c.orig
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/sn9c102/sn9c102_core.c.orig	2014-08-15 11:43:45.239640585 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/sn9c102/sn9c102_core.c.orig	1970-01-01 08:00:00.000000000 +0800
+@@ -1,3423 +0,0 @@
+-/***************************************************************************
+- * V4L2 driver for SN9C1xx PC Camera Controllers                           *
+- *                                                                         *
+- * Copyright (C) 2004-2007 by Luca Risolia <luca.risolia@studio.unibo.it>  *
+- *                                                                         *
+- * This program is free software; you can redistribute it and/or modify    *
+- * it under the terms of the GNU General Public License as published by    *
+- * the Free Software Foundation; either version 2 of the License, or       *
+- * (at your option) any later version.                                     *
+- *                                                                         *
+- * This program is distributed in the hope that it will be useful,         *
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+- * GNU General Public License for more details.                            *
+- *                                                                         *
+- * You should have received a copy of the GNU General Public License       *
+- * along with this program; if not, write to the Free Software             *
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.               *
+- ***************************************************************************/
+-
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/param.h>
+-#include <linux/errno.h>
+-#include <linux/slab.h>
+-#include <linux/device.h>
+-#include <linux/fs.h>
+-#include <linux/delay.h>
+-#include <linux/compiler.h>
+-#include <linux/ioctl.h>
+-#include <linux/poll.h>
+-#include <linux/stat.h>
+-#include <linux/mm.h>
+-#include <linux/vmalloc.h>
+-#include <linux/version.h>
+-#include <linux/page-flags.h>
+-#include <asm/byteorder.h>
+-#include <asm/page.h>
+-#include <asm/uaccess.h>
+-
+-#include "sn9c102.h"
+-
+-/*****************************************************************************/
+-
+-#define SN9C102_MODULE_NAME     "V4L2 driver for SN9C1xx PC Camera Controllers"
+-#define SN9C102_MODULE_ALIAS    "sn9c1xx"
+-#define SN9C102_MODULE_AUTHOR   "(C) 2004-2007 Luca Risolia"
+-#define SN9C102_AUTHOR_EMAIL    "<luca.risolia@studio.unibo.it>"
+-#define SN9C102_MODULE_LICENSE  "GPL"
+-#define SN9C102_MODULE_VERSION  "1:1.48"
+-
+-/*****************************************************************************/
+-
+-MODULE_DEVICE_TABLE(usb, sn9c102_id_table);
+-
+-MODULE_AUTHOR(SN9C102_MODULE_AUTHOR " " SN9C102_AUTHOR_EMAIL);
+-MODULE_DESCRIPTION(SN9C102_MODULE_NAME);
+-MODULE_ALIAS(SN9C102_MODULE_ALIAS);
+-MODULE_VERSION(SN9C102_MODULE_VERSION);
+-MODULE_LICENSE(SN9C102_MODULE_LICENSE);
+-
+-static short video_nr[] = {[0 ... SN9C102_MAX_DEVICES-1] = -1};
+-module_param_array(video_nr, short, NULL, 0444);
+-MODULE_PARM_DESC(video_nr,
+-		 " <-1|n[,...]>"
+-		 "\nSpecify V4L2 minor mode number."
+-		 "\n-1 = use next available (default)"
+-		 "\n n = use minor number n (integer >= 0)"
+-		 "\nYou can specify up to "__MODULE_STRING(SN9C102_MAX_DEVICES)
+-		 " cameras this way."
+-		 "\nFor example:"
+-		 "\nvideo_nr=-1,2,-1 would assign minor number 2 to"
+-		 "\nthe second camera and use auto for the first"
+-		 "\none and for every other camera."
+-		 "\n");
+-
+-static bool force_munmap[] = {[0 ... SN9C102_MAX_DEVICES-1] =
+-			      SN9C102_FORCE_MUNMAP};
+-module_param_array(force_munmap, bool, NULL, 0444);
+-MODULE_PARM_DESC(force_munmap,
+-		 " <0|1[,...]>"
+-		 "\nForce the application to unmap previously"
+-		 "\nmapped buffer memory before calling any VIDIOC_S_CROP or"
+-		 "\nVIDIOC_S_FMT ioctl's. Not all the applications support"
+-		 "\nthis feature. This parameter is specific for each"
+-		 "\ndetected camera."
+-		 "\n0 = do not force memory unmapping"
+-		 "\n1 = force memory unmapping (save memory)"
+-		 "\nDefault value is "__MODULE_STRING(SN9C102_FORCE_MUNMAP)"."
+-		 "\n");
+-
+-static unsigned int frame_timeout[] = {[0 ... SN9C102_MAX_DEVICES-1] =
+-				       SN9C102_FRAME_TIMEOUT};
+-module_param_array(frame_timeout, uint, NULL, 0644);
+-MODULE_PARM_DESC(frame_timeout,
+-		 " <0|n[,...]>"
+-		 "\nTimeout for a video frame in seconds before"
+-		 "\nreturning an I/O error; 0 for infinity."
+-		 "\nThis parameter is specific for each detected camera."
+-		 "\nDefault value is "__MODULE_STRING(SN9C102_FRAME_TIMEOUT)"."
+-		 "\n");
+-
+-#ifdef SN9C102_DEBUG
+-static unsigned short debug = SN9C102_DEBUG_LEVEL;
+-module_param(debug, ushort, 0644);
+-MODULE_PARM_DESC(debug,
+-		 " <n>"
+-		 "\nDebugging information level, from 0 to 3:"
+-		 "\n0 = none (use carefully)"
+-		 "\n1 = critical errors"
+-		 "\n2 = significant informations"
+-		 "\n3 = more verbose messages"
+-		 "\nLevel 3 is useful for testing only."
+-		 "\nDefault value is "__MODULE_STRING(SN9C102_DEBUG_LEVEL)"."
+-		 "\n");
+-#endif
+-
+-/*
+-   Add the probe entries to this table. Be sure to add the entry in the right
+-   place, since, on failure, the next probing routine is called according to
+-   the order of the list below, from top to bottom.
+-*/
+-static int (*sn9c102_sensor_table[])(struct sn9c102_device *) = {
+-	&sn9c102_probe_hv7131d, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_hv7131r, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_mi0343, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_mi0360, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_mt9v111, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_pas106b, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_pas202bcb, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_ov7630, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_ov7660, /* strong detection based on SENSOR ids */
+-	&sn9c102_probe_tas5110c1b, /* detection based on USB pid/vid */
+-	&sn9c102_probe_tas5110d, /* detection based on USB pid/vid */
+-	&sn9c102_probe_tas5130d1b, /* detection based on USB pid/vid */
+-};
+-
+-/*****************************************************************************/
+-
+-static u32
+-sn9c102_request_buffers(struct sn9c102_device* cam, u32 count,
+-			enum sn9c102_io_method io)
+-{
+-	struct v4l2_pix_format* p = &(cam->sensor.pix_format);
+-	struct v4l2_rect* r = &(cam->sensor.cropcap.bounds);
+-	size_t imagesize = cam->module_param.force_munmap || io == IO_READ ?
+-			   (p->width * p->height * p->priv) / 8 :
+-			   (r->width * r->height * p->priv) / 8;
+-	void* buff = NULL;
+-	u32 i;
+-
+-	if (count > SN9C102_MAX_FRAMES)
+-		count = SN9C102_MAX_FRAMES;
+-
+-	if (cam->bridge == BRIDGE_SN9C105 || cam->bridge == BRIDGE_SN9C120)
+-		imagesize += 589 + 2; /* length of JPEG header + EOI marker */
+-
+-	cam->nbuffers = count;
+-	while (cam->nbuffers > 0) {
+-		if ((buff = vmalloc_32_user(cam->nbuffers *
+-					    PAGE_ALIGN(imagesize))))
+-			break;
+-		cam->nbuffers--;
+-	}
+-
+-	for (i = 0; i < cam->nbuffers; i++) {
+-		cam->frame[i].bufmem = buff + i*PAGE_ALIGN(imagesize);
+-		cam->frame[i].buf.index = i;
+-		cam->frame[i].buf.m.offset = i*PAGE_ALIGN(imagesize);
+-		cam->frame[i].buf.length = imagesize;
+-		cam->frame[i].buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-		cam->frame[i].buf.sequence = 0;
+-		cam->frame[i].buf.field = V4L2_FIELD_NONE;
+-		cam->frame[i].buf.memory = V4L2_MEMORY_MMAP;
+-		cam->frame[i].buf.flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+-	}
+-
+-	return cam->nbuffers;
+-}
+-
+-
+-static void sn9c102_release_buffers(struct sn9c102_device* cam)
+-{
+-	if (cam->nbuffers) {
+-		vfree(cam->frame[0].bufmem);
+-		cam->nbuffers = 0;
+-	}
+-	cam->frame_current = NULL;
+-}
+-
+-
+-static void sn9c102_empty_framequeues(struct sn9c102_device* cam)
+-{
+-	u32 i;
+-
+-	INIT_LIST_HEAD(&cam->inqueue);
+-	INIT_LIST_HEAD(&cam->outqueue);
+-
+-	for (i = 0; i < SN9C102_MAX_FRAMES; i++) {
+-		cam->frame[i].state = F_UNUSED;
+-		cam->frame[i].buf.bytesused = 0;
+-	}
+-}
+-
+-
+-static void sn9c102_requeue_outqueue(struct sn9c102_device* cam)
+-{
+-	struct sn9c102_frame_t *i;
+-
+-	list_for_each_entry(i, &cam->outqueue, frame) {
+-		i->state = F_QUEUED;
+-		list_add(&i->frame, &cam->inqueue);
+-	}
+-
+-	INIT_LIST_HEAD(&cam->outqueue);
+-}
+-
+-
+-static void sn9c102_queue_unusedframes(struct sn9c102_device* cam)
+-{
+-	unsigned long lock_flags;
+-	u32 i;
+-
+-	for (i = 0; i < cam->nbuffers; i++)
+-		if (cam->frame[i].state == F_UNUSED) {
+-			cam->frame[i].state = F_QUEUED;
+-			spin_lock_irqsave(&cam->queue_lock, lock_flags);
+-			list_add_tail(&cam->frame[i].frame, &cam->inqueue);
+-			spin_unlock_irqrestore(&cam->queue_lock, lock_flags);
+-		}
+-}
+-
+-/*****************************************************************************/
+-
+-/*
+-   Write a sequence of count value/register pairs. Returns -1 after the first
+-   failed write, or 0 for no errors.
+-*/
+-int sn9c102_write_regs(struct sn9c102_device* cam, const u8 valreg[][2],
+-		       int count)
+-{
+-	struct usb_device* udev = cam->usbdev;
+-	u8* buff = cam->control_buffer;
+-	int i, res;
+-
+-	for (i = 0; i < count; i++) {
+-		u8 index = valreg[i][1];
+-
+-		/*
+-		   index is a u8, so it must be <256 and can't be out of range.
+-		   If we put in a check anyway, gcc annoys us with a warning
+-		   hat our check is useless. People get all uppity when they
+-		   see warnings in the kernel compile.
+-		*/
+-
+-		*buff = valreg[i][0];
+-
+-		res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), 0x08,
+-				      0x41, index, 0, buff, 1,
+-				      SN9C102_CTRL_TIMEOUT);
+-
+-		if (res < 0) {
+-			DBG(3, "Failed to write a register (value 0x%02X, "
+-			       "index 0x%02X, error %d)", *buff, index, res);
+-			return -1;
+-		}
+-
+-		cam->reg[index] = *buff;
+-	}
+-
+-	return 0;
+-}
+-
+-
+-int sn9c102_write_reg(struct sn9c102_device* cam, u8 value, u16 index)
+-{
+-	struct usb_device* udev = cam->usbdev;
+-	u8* buff = cam->control_buffer;
+-	int res;
+-
+-	if (index >= ARRAY_SIZE(cam->reg))
+-		return -1;
+-
+-	*buff = value;
+-
+-	res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), 0x08, 0x41,
+-			      index, 0, buff, 1, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0) {
+-		DBG(3, "Failed to write a register (value 0x%02X, index "
+-		       "0x%02X, error %d)", value, index, res);
+-		return -1;
+-	}
+-
+-	cam->reg[index] = value;
+-
+-	return 0;
+-}
+-
+-
+-/* NOTE: with the SN9C10[123] reading some registers always returns 0 */
+-int sn9c102_read_reg(struct sn9c102_device* cam, u16 index)
+-{
+-	struct usb_device* udev = cam->usbdev;
+-	u8* buff = cam->control_buffer;
+-	int res;
+-
+-	res = usb_control_msg(udev, usb_rcvctrlpipe(udev, 0), 0x00, 0xc1,
+-			      index, 0, buff, 1, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0)
+-		DBG(3, "Failed to read a register (index 0x%02X, error %d)",
+-		    index, res);
+-
+-	return (res >= 0) ? (int)(*buff) : -1;
+-}
+-
+-
+-int sn9c102_pread_reg(struct sn9c102_device* cam, u16 index)
+-{
+-	if (index >= ARRAY_SIZE(cam->reg))
+-		return -1;
+-
+-	return cam->reg[index];
+-}
+-
+-
+-static int
+-sn9c102_i2c_wait(struct sn9c102_device* cam,
+-		 const struct sn9c102_sensor* sensor)
+-{
+-	int i, r;
+-
+-	for (i = 1; i <= 5; i++) {
+-		r = sn9c102_read_reg(cam, 0x08);
+-		if (r < 0)
+-			return -EIO;
+-		if (r & 0x04)
+-			return 0;
+-		if (sensor->frequency & SN9C102_I2C_400KHZ)
+-			udelay(5*16);
+-		else
+-			udelay(16*16);
+-	}
+-	return -EBUSY;
+-}
+-
+-
+-static int
+-sn9c102_i2c_detect_read_error(struct sn9c102_device* cam,
+-			      const struct sn9c102_sensor* sensor)
+-{
+-	int r , err = 0;
+-
+-	r = sn9c102_read_reg(cam, 0x08);
+-	if (r < 0)
+-		err += r;
+-
+-	if (cam->bridge == BRIDGE_SN9C101 || cam->bridge == BRIDGE_SN9C102) {
+-		if (!(r & 0x08))
+-			err += -1;
+-	} else {
+-		if (r & 0x08)
+-			err += -1;
+-	}
+-
+-	return err ? -EIO : 0;
+-}
+-
+-
+-static int
+-sn9c102_i2c_detect_write_error(struct sn9c102_device* cam,
+-			       const struct sn9c102_sensor* sensor)
+-{
+-	int r;
+-	r = sn9c102_read_reg(cam, 0x08);
+-	return (r < 0 || (r >= 0 && (r & 0x08))) ? -EIO : 0;
+-}
+-
+-
+-int
+-sn9c102_i2c_try_raw_read(struct sn9c102_device* cam,
+-			 const struct sn9c102_sensor* sensor, u8 data0,
+-			 u8 data1, u8 n, u8 buffer[])
+-{
+-	struct usb_device* udev = cam->usbdev;
+-	u8* data = cam->control_buffer;
+-	int i = 0, err = 0, res;
+-
+-	/* Write cycle */
+-	data[0] = ((sensor->interface == SN9C102_I2C_2WIRES) ? 0x80 : 0) |
+-		  ((sensor->frequency & SN9C102_I2C_400KHZ) ? 0x01 : 0) | 0x10;
+-	data[1] = data0; /* I2C slave id */
+-	data[2] = data1; /* address */
+-	data[7] = 0x10;
+-	res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), 0x08, 0x41,
+-			      0x08, 0, data, 8, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0)
+-		err += res;
+-
+-	err += sn9c102_i2c_wait(cam, sensor);
+-
+-	/* Read cycle - n bytes */
+-	data[0] = ((sensor->interface == SN9C102_I2C_2WIRES) ? 0x80 : 0) |
+-		  ((sensor->frequency & SN9C102_I2C_400KHZ) ? 0x01 : 0) |
+-		  (n << 4) | 0x02;
+-	data[1] = data0;
+-	data[7] = 0x10;
+-	res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), 0x08, 0x41,
+-			      0x08, 0, data, 8, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0)
+-		err += res;
+-
+-	err += sn9c102_i2c_wait(cam, sensor);
+-
+-	/* The first read byte will be placed in data[4] */
+-	res = usb_control_msg(udev, usb_rcvctrlpipe(udev, 0), 0x00, 0xc1,
+-			      0x0a, 0, data, 5, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0)
+-		err += res;
+-
+-	err += sn9c102_i2c_detect_read_error(cam, sensor);
+-
+-	PDBGG("I2C read: address 0x%02X, first read byte: 0x%02X", data1,
+-	      data[4]);
+-
+-	if (err) {
+-		DBG(3, "I2C read failed for %s image sensor", sensor->name);
+-		return -1;
+-	}
+-
+-	if (buffer)
+-		for (i = 0; i < n && i < 5; i++)
+-			buffer[n-i-1] = data[4-i];
+-
+-	return (int)data[4];
+-}
+-
+-
+-int
+-sn9c102_i2c_try_raw_write(struct sn9c102_device* cam,
+-			  const struct sn9c102_sensor* sensor, u8 n, u8 data0,
+-			  u8 data1, u8 data2, u8 data3, u8 data4, u8 data5)
+-{
+-	struct usb_device* udev = cam->usbdev;
+-	u8* data = cam->control_buffer;
+-	int err = 0, res;
+-
+-	/* Write cycle. It usually is address + value */
+-	data[0] = ((sensor->interface == SN9C102_I2C_2WIRES) ? 0x80 : 0) |
+-		  ((sensor->frequency & SN9C102_I2C_400KHZ) ? 0x01 : 0)
+-		  | ((n - 1) << 4);
+-	data[1] = data0;
+-	data[2] = data1;
+-	data[3] = data2;
+-	data[4] = data3;
+-	data[5] = data4;
+-	data[6] = data5;
+-	data[7] = 0x17;
+-	res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), 0x08, 0x41,
+-			      0x08, 0, data, 8, SN9C102_CTRL_TIMEOUT);
+-	if (res < 0)
+-		err += res;
+-
+-	err += sn9c102_i2c_wait(cam, sensor);
+-	err += sn9c102_i2c_detect_write_error(cam, sensor);
+-
+-	if (err)
+-		DBG(3, "I2C write failed for %s image sensor", sensor->name);
+-
+-	PDBGG("I2C raw write: %u bytes, data0 = 0x%02X, data1 = 0x%02X, "
+-	      "data2 = 0x%02X, data3 = 0x%02X, data4 = 0x%02X, data5 = 0x%02X",
+-	      n, data0, data1, data2, data3, data4, data5);
+-
+-	return err ? -1 : 0;
+-}
+-
+-
+-int
+-sn9c102_i2c_try_read(struct sn9c102_device* cam,
+-		     const struct sn9c102_sensor* sensor, u8 address)
+-{
+-	return sn9c102_i2c_try_raw_read(cam, sensor, sensor->i2c_slave_id,
+-					address, 1, NULL);
+-}
+-
+-
+-static int sn9c102_i2c_try_write(struct sn9c102_device* cam,
+-				 const struct sn9c102_sensor* sensor,
+-				 u8 address, u8 value)
+-{
+-	return sn9c102_i2c_try_raw_write(cam, sensor, 3,
+-					 sensor->i2c_slave_id, address,
+-					 value, 0, 0, 0);
+-}
+-
+-
+-int sn9c102_i2c_read(struct sn9c102_device* cam, u8 address)
+-{
+-	return sn9c102_i2c_try_read(cam, &cam->sensor, address);
+-}
+-
+-
+-int sn9c102_i2c_write(struct sn9c102_device* cam, u8 address, u8 value)
+-{
+-	return sn9c102_i2c_try_write(cam, &cam->sensor, address, value);
+-}
+-
+-/*****************************************************************************/
+-
+-static size_t sn9c102_sof_length(struct sn9c102_device* cam)
+-{
+-	switch (cam->bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-		return 12;
+-	case BRIDGE_SN9C103:
+-		return 18;
+-	case BRIDGE_SN9C105:
+-	case BRIDGE_SN9C120:
+-		return 62;
+-	}
+-
+-	return 0;
+-}
+-
+-
+-static void*
+-sn9c102_find_sof_header(struct sn9c102_device* cam, void* mem, size_t len)
+-{
+-	static const char marker[6] = {0xff, 0xff, 0x00, 0xc4, 0xc4, 0x96};
+-	const char *m = mem;
+-	size_t soflen = 0, i, j;
+-
+-	soflen = sn9c102_sof_length(cam);
+-
+-	for (i = 0; i < len; i++) {
+-		size_t b;
+-
+-		/* Read the variable part of the header */
+-		if (unlikely(cam->sof.bytesread >= sizeof(marker))) {
+-			cam->sof.header[cam->sof.bytesread] = *(m+i);
+-			if (++cam->sof.bytesread == soflen) {
+-				cam->sof.bytesread = 0;
+-				return mem + i;
+-			}
+-			continue;
+-		}
+-
+-		/* Search for the SOF marker (fixed part) in the header */
+-		for (j = 0, b=cam->sof.bytesread; j+b < sizeof(marker); j++) {
+-			if (unlikely(i+j == len))
+-				return NULL;
+-			if (*(m+i+j) == marker[cam->sof.bytesread]) {
+-				cam->sof.header[cam->sof.bytesread] = *(m+i+j);
+-				if (++cam->sof.bytesread == sizeof(marker)) {
+-					PDBGG("Bytes to analyze: %zd. SOF "
+-					      "starts at byte #%zd", len, i);
+-					i += j+1;
+-					break;
+-				}
+-			} else {
+-				cam->sof.bytesread = 0;
+-				break;
+-			}
+-		}
+-	}
+-
+-	return NULL;
+-}
+-
+-
+-static void*
+-sn9c102_find_eof_header(struct sn9c102_device* cam, void* mem, size_t len)
+-{
+-	static const u8 eof_header[4][4] = {
+-		{0x00, 0x00, 0x00, 0x00},
+-		{0x40, 0x00, 0x00, 0x00},
+-		{0x80, 0x00, 0x00, 0x00},
+-		{0xc0, 0x00, 0x00, 0x00},
+-	};
+-	size_t i, j;
+-
+-	/* The EOF header does not exist in compressed data */
+-	if (cam->sensor.pix_format.pixelformat == V4L2_PIX_FMT_SN9C10X ||
+-	    cam->sensor.pix_format.pixelformat == V4L2_PIX_FMT_JPEG)
+-		return NULL;
+-
+-	/*
+-	   The EOF header might cross the packet boundary, but this is not a
+-	   problem, since the end of a frame is determined by checking its size
+-	   in the first place.
+-	*/
+-	for (i = 0; (len >= 4) && (i <= len - 4); i++)
+-		for (j = 0; j < ARRAY_SIZE(eof_header); j++)
+-			if (!memcmp(mem + i, eof_header[j], 4))
+-				return mem + i;
+-
+-	return NULL;
+-}
+-
+-
+-static void
+-sn9c102_write_jpegheader(struct sn9c102_device* cam, struct sn9c102_frame_t* f)
+-{
+-	static const u8 jpeg_header[589] = {
+-		0xff, 0xd8, 0xff, 0xdb, 0x00, 0x84, 0x00, 0x06, 0x04, 0x05,
+-		0x06, 0x05, 0x04, 0x06, 0x06, 0x05, 0x06, 0x07, 0x07, 0x06,
+-		0x08, 0x0a, 0x10, 0x0a, 0x0a, 0x09, 0x09, 0x0a, 0x14, 0x0e,
+-		0x0f, 0x0c, 0x10, 0x17, 0x14, 0x18, 0x18, 0x17, 0x14, 0x16,
+-		0x16, 0x1a, 0x1d, 0x25, 0x1f, 0x1a, 0x1b, 0x23, 0x1c, 0x16,
+-		0x16, 0x20, 0x2c, 0x20, 0x23, 0x26, 0x27, 0x29, 0x2a, 0x29,
+-		0x19, 0x1f, 0x2d, 0x30, 0x2d, 0x28, 0x30, 0x25, 0x28, 0x29,
+-		0x28, 0x01, 0x07, 0x07, 0x07, 0x0a, 0x08, 0x0a, 0x13, 0x0a,
+-		0x0a, 0x13, 0x28, 0x1a, 0x16, 0x1a, 0x28, 0x28, 0x28, 0x28,
+-		0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28,
+-		0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28,
+-		0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28,
+-		0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0x28,
+-		0x28, 0x28, 0x28, 0x28, 0x28, 0x28, 0xff, 0xc4, 0x01, 0xa2,
+-		0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02,
+-		0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x01,
+-		0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-		0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03,
+-		0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x00,
+-		0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03, 0x05, 0x05, 0x04,
+-		0x04, 0x00, 0x00, 0x01, 0x7d, 0x01, 0x02, 0x03, 0x00, 0x04,
+-		0x11, 0x05, 0x12, 0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61,
+-		0x07, 0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08, 0x23,
+-		0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0, 0x24, 0x33, 0x62,
+-		0x72, 0x82, 0x09, 0x0a, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x25,
+-		0x26, 0x27, 0x28, 0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38,
+-		0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a,
+-		0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x63, 0x64,
+-		0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x73, 0x74, 0x75, 0x76,
+-		0x77, 0x78, 0x79, 0x7a, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88,
+-		0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99,
+-		0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa,
+-		0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xc2,
+-		0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3,
+-		0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2, 0xe3,
+-		0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xf1, 0xf2, 0xf3,
+-		0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0x11, 0x00, 0x02,
+-		0x01, 0x02, 0x04, 0x04, 0x03, 0x04, 0x07, 0x05, 0x04, 0x04,
+-		0x00, 0x01, 0x02, 0x77, 0x00, 0x01, 0x02, 0x03, 0x11, 0x04,
+-		0x05, 0x21, 0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
+-		0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91, 0xa1, 0xb1,
+-		0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0, 0x15, 0x62, 0x72, 0xd1,
+-		0x0a, 0x16, 0x24, 0x34, 0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19,
+-		0x1a, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
+-		0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a,
+-		0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x63, 0x64,
+-		0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x73, 0x74, 0x75, 0x76,
+-		0x77, 0x78, 0x79, 0x7a, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+-		0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
+-		0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9,
+-		0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba,
+-		0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2,
+-		0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe2, 0xe3,
+-		0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xf2, 0xf3, 0xf4,
+-		0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xff, 0xc0, 0x00, 0x11,
+-		0x08, 0x01, 0xe0, 0x02, 0x80, 0x03, 0x01, 0x21, 0x00, 0x02,
+-		0x11, 0x01, 0x03, 0x11, 0x01, 0xff, 0xda, 0x00, 0x0c, 0x03,
+-		0x01, 0x00, 0x02, 0x11, 0x03, 0x11, 0x00, 0x3f, 0x00
+-	};
+-	u8 *pos = f->bufmem;
+-
+-	memcpy(pos, jpeg_header, sizeof(jpeg_header));
+-	*(pos + 6) = 0x00;
+-	*(pos + 7 + 64) = 0x01;
+-	if (cam->compression.quality == 0) {
+-		memcpy(pos + 7, SN9C102_Y_QTABLE0, 64);
+-		memcpy(pos + 8 + 64, SN9C102_UV_QTABLE0, 64);
+-	} else if (cam->compression.quality == 1) {
+-		memcpy(pos + 7, SN9C102_Y_QTABLE1, 64);
+-		memcpy(pos + 8 + 64, SN9C102_UV_QTABLE1, 64);
+-	}
+-	*(pos + 564) = cam->sensor.pix_format.width & 0xFF;
+-	*(pos + 563) = (cam->sensor.pix_format.width >> 8) & 0xFF;
+-	*(pos + 562) = cam->sensor.pix_format.height & 0xFF;
+-	*(pos + 561) = (cam->sensor.pix_format.height >> 8) & 0xFF;
+-	*(pos + 567) = 0x21;
+-
+-	f->buf.bytesused += sizeof(jpeg_header);
+-}
+-
+-
+-static void sn9c102_urb_complete(struct urb *urb)
+-{
+-	struct sn9c102_device* cam = urb->context;
+-	struct sn9c102_frame_t** f;
+-	size_t imagesize, soflen;
+-	u8 i;
+-	int err = 0;
+-
+-	if (urb->status == -ENOENT)
+-		return;
+-
+-	f = &cam->frame_current;
+-
+-	if (cam->stream == STREAM_INTERRUPT) {
+-		cam->stream = STREAM_OFF;
+-		if ((*f))
+-			(*f)->state = F_QUEUED;
+-		cam->sof.bytesread = 0;
+-		DBG(3, "Stream interrupted by application");
+-		wake_up(&cam->wait_stream);
+-	}
+-
+-	if (cam->state & DEV_DISCONNECTED)
+-		return;
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		wake_up_interruptible(&cam->wait_frame);
+-		return;
+-	}
+-
+-	if (cam->stream == STREAM_OFF || list_empty(&cam->inqueue))
+-		goto resubmit_urb;
+-
+-	if (!(*f))
+-		(*f) = list_entry(cam->inqueue.next, struct sn9c102_frame_t,
+-				  frame);
+-
+-	imagesize = (cam->sensor.pix_format.width *
+-		     cam->sensor.pix_format.height *
+-		     cam->sensor.pix_format.priv) / 8;
+-	if (cam->sensor.pix_format.pixelformat == V4L2_PIX_FMT_JPEG)
+-		imagesize += 589; /* length of jpeg header */
+-	soflen = sn9c102_sof_length(cam);
+-
+-	for (i = 0; i < urb->number_of_packets; i++) {
+-		unsigned int img, len, status;
+-		void *pos, *sof, *eof;
+-
+-		len = urb->iso_frame_desc[i].actual_length;
+-		status = urb->iso_frame_desc[i].status;
+-		pos = urb->iso_frame_desc[i].offset + urb->transfer_buffer;
+-
+-		if (status) {
+-			DBG(3, "Error in isochronous frame");
+-			(*f)->state = F_ERROR;
+-			cam->sof.bytesread = 0;
+-			continue;
+-		}
+-
+-		PDBGG("Isochrnous frame: length %u, #%u i", len, i);
+-
+-redo:
+-		sof = sn9c102_find_sof_header(cam, pos, len);
+-		if (likely(!sof)) {
+-			eof = sn9c102_find_eof_header(cam, pos, len);
+-			if ((*f)->state == F_GRABBING) {
+-end_of_frame:
+-				img = len;
+-
+-				if (eof)
+-					img = (eof > pos) ? eof - pos - 1 : 0;
+-
+-				if ((*f)->buf.bytesused + img > imagesize) {
+-					u32 b;
+-					b = (*f)->buf.bytesused + img -
+-					    imagesize;
+-					img = imagesize - (*f)->buf.bytesused;
+-					PDBGG("Expected EOF not found: video "
+-					      "frame cut");
+-					if (eof)
+-						DBG(3, "Exceeded limit: +%u "
+-						       "bytes", (unsigned)(b));
+-				}
+-
+-				memcpy((*f)->bufmem + (*f)->buf.bytesused, pos,
+-				       img);
+-
+-				if ((*f)->buf.bytesused == 0)
+-					v4l2_get_timestamp(
+-						&(*f)->buf.timestamp);
+-
+-				(*f)->buf.bytesused += img;
+-
+-				if ((*f)->buf.bytesused == imagesize ||
+-				    ((cam->sensor.pix_format.pixelformat ==
+-				      V4L2_PIX_FMT_SN9C10X ||
+-				      cam->sensor.pix_format.pixelformat ==
+-				      V4L2_PIX_FMT_JPEG) && eof)) {
+-					u32 b;
+-
+-					b = (*f)->buf.bytesused;
+-					(*f)->state = F_DONE;
+-					(*f)->buf.sequence= ++cam->frame_count;
+-
+-					spin_lock(&cam->queue_lock);
+-					list_move_tail(&(*f)->frame,
+-						       &cam->outqueue);
+-					if (!list_empty(&cam->inqueue))
+-						(*f) = list_entry(
+-							cam->inqueue.next,
+-							struct sn9c102_frame_t,
+-							frame );
+-					else
+-						(*f) = NULL;
+-					spin_unlock(&cam->queue_lock);
+-
+-					memcpy(cam->sysfs.frame_header,
+-					       cam->sof.header, soflen);
+-
+-					DBG(3, "Video frame captured: %lu "
+-					       "bytes", (unsigned long)(b));
+-
+-					if (!(*f))
+-						goto resubmit_urb;
+-
+-				} else if (eof) {
+-					(*f)->state = F_ERROR;
+-					DBG(3, "Not expected EOF after %lu "
+-					       "bytes of image data",
+-					    (unsigned long)
+-					    ((*f)->buf.bytesused));
+-				}
+-
+-				if (sof) /* (1) */
+-					goto start_of_frame;
+-
+-			} else if (eof) {
+-				DBG(3, "EOF without SOF");
+-				continue;
+-
+-			} else {
+-				PDBGG("Ignoring pointless isochronous frame");
+-				continue;
+-			}
+-
+-		} else if ((*f)->state == F_QUEUED || (*f)->state == F_ERROR) {
+-start_of_frame:
+-			(*f)->state = F_GRABBING;
+-			(*f)->buf.bytesused = 0;
+-			len -= (sof - pos);
+-			pos = sof;
+-			if (cam->sensor.pix_format.pixelformat ==
+-			    V4L2_PIX_FMT_JPEG)
+-				sn9c102_write_jpegheader(cam, (*f));
+-			DBG(3, "SOF detected: new video frame");
+-			if (len)
+-				goto redo;
+-
+-		} else if ((*f)->state == F_GRABBING) {
+-			eof = sn9c102_find_eof_header(cam, pos, len);
+-			if (eof && eof < sof)
+-				goto end_of_frame; /* (1) */
+-			else {
+-				if (cam->sensor.pix_format.pixelformat ==
+-				    V4L2_PIX_FMT_SN9C10X ||
+-				    cam->sensor.pix_format.pixelformat ==
+-				    V4L2_PIX_FMT_JPEG) {
+-					if (sof - pos >= soflen) {
+-						eof = sof - soflen;
+-					} else { /* remove header */
+-						eof = pos;
+-						(*f)->buf.bytesused -=
+-							(soflen - (sof - pos));
+-					}
+-					goto end_of_frame;
+-				} else {
+-					DBG(3, "SOF before expected EOF after "
+-					       "%lu bytes of image data",
+-					    (unsigned long)
+-					    ((*f)->buf.bytesused));
+-					goto start_of_frame;
+-				}
+-			}
+-		}
+-	}
+-
+-resubmit_urb:
+-	urb->dev = cam->usbdev;
+-	err = usb_submit_urb(urb, GFP_ATOMIC);
+-	if (err < 0 && err != -EPERM) {
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "usb_submit_urb() failed");
+-	}
+-
+-	wake_up_interruptible(&cam->wait_frame);
+-}
+-
+-
+-static int sn9c102_start_transfer(struct sn9c102_device* cam)
+-{
+-	struct usb_device *udev = cam->usbdev;
+-	struct urb* urb;
+-	struct usb_host_interface* altsetting = usb_altnum_to_altsetting(
+-						    usb_ifnum_to_if(udev, 0),
+-						    SN9C102_ALTERNATE_SETTING);
+-	const unsigned int psz = le16_to_cpu(altsetting->
+-					     endpoint[0].desc.wMaxPacketSize);
+-	s8 i, j;
+-	int err = 0;
+-
+-	for (i = 0; i < SN9C102_URBS; i++) {
+-		cam->transfer_buffer[i] = kzalloc(SN9C102_ISO_PACKETS * psz,
+-						  GFP_KERNEL);
+-		if (!cam->transfer_buffer[i]) {
+-			err = -ENOMEM;
+-			DBG(1, "Not enough memory");
+-			goto free_buffers;
+-		}
+-	}
+-
+-	for (i = 0; i < SN9C102_URBS; i++) {
+-		urb = usb_alloc_urb(SN9C102_ISO_PACKETS, GFP_KERNEL);
+-		cam->urb[i] = urb;
+-		if (!urb) {
+-			err = -ENOMEM;
+-			DBG(1, "usb_alloc_urb() failed");
+-			goto free_urbs;
+-		}
+-		urb->dev = udev;
+-		urb->context = cam;
+-		urb->pipe = usb_rcvisocpipe(udev, 1);
+-		urb->transfer_flags = URB_ISO_ASAP;
+-		urb->number_of_packets = SN9C102_ISO_PACKETS;
+-		urb->complete = sn9c102_urb_complete;
+-		urb->transfer_buffer = cam->transfer_buffer[i];
+-		urb->transfer_buffer_length = psz * SN9C102_ISO_PACKETS;
+-		urb->interval = 1;
+-		for (j = 0; j < SN9C102_ISO_PACKETS; j++) {
+-			urb->iso_frame_desc[j].offset = psz * j;
+-			urb->iso_frame_desc[j].length = psz;
+-		}
+-	}
+-
+-	/* Enable video */
+-	if (!(cam->reg[0x01] & 0x04)) {
+-		err = sn9c102_write_reg(cam, cam->reg[0x01] | 0x04, 0x01);
+-		if (err) {
+-			err = -EIO;
+-			DBG(1, "I/O hardware error");
+-			goto free_urbs;
+-		}
+-	}
+-
+-	err = usb_set_interface(udev, 0, SN9C102_ALTERNATE_SETTING);
+-	if (err) {
+-		DBG(1, "usb_set_interface() failed");
+-		goto free_urbs;
+-	}
+-
+-	cam->frame_current = NULL;
+-	cam->sof.bytesread = 0;
+-
+-	for (i = 0; i < SN9C102_URBS; i++) {
+-		err = usb_submit_urb(cam->urb[i], GFP_KERNEL);
+-		if (err) {
+-			for (j = i-1; j >= 0; j--)
+-				usb_kill_urb(cam->urb[j]);
+-			DBG(1, "usb_submit_urb() failed, error %d", err);
+-			goto free_urbs;
+-		}
+-	}
+-
+-	return 0;
+-
+-free_urbs:
+-	for (i = 0; (i < SN9C102_URBS) && cam->urb[i]; i++)
+-		usb_free_urb(cam->urb[i]);
+-
+-free_buffers:
+-	for (i = 0; (i < SN9C102_URBS) && cam->transfer_buffer[i]; i++)
+-		kfree(cam->transfer_buffer[i]);
+-
+-	return err;
+-}
+-
+-
+-static int sn9c102_stop_transfer(struct sn9c102_device* cam)
+-{
+-	struct usb_device *udev = cam->usbdev;
+-	s8 i;
+-	int err = 0;
+-
+-	if (cam->state & DEV_DISCONNECTED)
+-		return 0;
+-
+-	for (i = SN9C102_URBS-1; i >= 0; i--) {
+-		usb_kill_urb(cam->urb[i]);
+-		usb_free_urb(cam->urb[i]);
+-		kfree(cam->transfer_buffer[i]);
+-	}
+-
+-	err = usb_set_interface(udev, 0, 0); /* 0 Mb/s */
+-	if (err)
+-		DBG(3, "usb_set_interface() failed");
+-
+-	return err;
+-}
+-
+-
+-static int sn9c102_stream_interrupt(struct sn9c102_device* cam)
+-{
+-	cam->stream = STREAM_INTERRUPT;
+-	wait_event_timeout(cam->wait_stream,
+-				     (cam->stream == STREAM_OFF) ||
+-				     (cam->state & DEV_DISCONNECTED),
+-				     SN9C102_URB_TIMEOUT);
+-	if (cam->state & DEV_DISCONNECTED)
+-		return -ENODEV;
+-	else if (cam->stream != STREAM_OFF) {
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "URB timeout reached. The camera is misconfigured. "
+-		       "To use it, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -EIO;
+-	}
+-
+-	return 0;
+-}
+-
+-/*****************************************************************************/
+-
+-#ifdef CONFIG_VIDEO_ADV_DEBUG
+-static u16 sn9c102_strtou16(const char* buff, size_t len, ssize_t* count)
+-{
+-	char str[7];
+-	char* endp;
+-	unsigned long val;
+-
+-	if (len < 6) {
+-		strncpy(str, buff, len);
+-		str[len] = '\0';
+-	} else {
+-		strncpy(str, buff, 6);
+-		str[6] = '\0';
+-	}
+-
+-	val = simple_strtoul(str, &endp, 0);
+-
+-	*count = 0;
+-	if (val <= 0xffff)
+-		*count = (ssize_t)(endp - str);
+-	if ((*count) && (len == *count+1) && (buff[*count] == '\n'))
+-		*count += 1;
+-
+-	return (u16)val;
+-}
+-
+-/*
+-   NOTE 1: being inside one of the following methods implies that the v4l
+-	   device exists for sure (see kobjects and reference counters)
+-   NOTE 2: buffers are PAGE_SIZE long
+-*/
+-
+-static ssize_t sn9c102_show_reg(struct device* cd,
+-				struct device_attribute *attr, char* buf)
+-{
+-	struct sn9c102_device* cam;
+-	ssize_t count;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	count = sprintf(buf, "%u\n", cam->sysfs.reg);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_reg(struct device* cd, struct device_attribute *attr,
+-		  const char* buf, size_t len)
+-{
+-	struct sn9c102_device* cam;
+-	u16 index;
+-	ssize_t count;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	index = sn9c102_strtou16(buf, len, &count);
+-	if (index >= ARRAY_SIZE(cam->reg) || !count) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EINVAL;
+-	}
+-
+-	cam->sysfs.reg = index;
+-
+-	DBG(2, "Moved SN9C1XX register index to 0x%02X", cam->sysfs.reg);
+-	DBG(3, "Written bytes: %zd", count);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t sn9c102_show_val(struct device* cd,
+-				struct device_attribute *attr, char* buf)
+-{
+-	struct sn9c102_device* cam;
+-	ssize_t count;
+-	int val;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	if ((val = sn9c102_read_reg(cam, cam->sysfs.reg)) < 0) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EIO;
+-	}
+-
+-	count = sprintf(buf, "%d\n", val);
+-
+-	DBG(3, "Read bytes: %zd, value: %d", count, val);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_val(struct device* cd, struct device_attribute *attr,
+-		  const char* buf, size_t len)
+-{
+-	struct sn9c102_device* cam;
+-	u16 value;
+-	ssize_t count;
+-	int err;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	value = sn9c102_strtou16(buf, len, &count);
+-	if (!count) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EINVAL;
+-	}
+-
+-	err = sn9c102_write_reg(cam, value, cam->sysfs.reg);
+-	if (err) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EIO;
+-	}
+-
+-	DBG(2, "Written SN9C1XX reg. 0x%02X, val. 0x%02X",
+-	    cam->sysfs.reg, value);
+-	DBG(3, "Written bytes: %zd", count);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t sn9c102_show_i2c_reg(struct device* cd,
+-				    struct device_attribute *attr, char* buf)
+-{
+-	struct sn9c102_device* cam;
+-	ssize_t count;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	count = sprintf(buf, "%u\n", cam->sysfs.i2c_reg);
+-
+-	DBG(3, "Read bytes: %zd", count);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_i2c_reg(struct device* cd, struct device_attribute *attr,
+-		      const char* buf, size_t len)
+-{
+-	struct sn9c102_device* cam;
+-	u16 index;
+-	ssize_t count;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	index = sn9c102_strtou16(buf, len, &count);
+-	if (!count) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EINVAL;
+-	}
+-
+-	cam->sysfs.i2c_reg = index;
+-
+-	DBG(2, "Moved sensor register index to 0x%02X", cam->sysfs.i2c_reg);
+-	DBG(3, "Written bytes: %zd", count);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t sn9c102_show_i2c_val(struct device* cd,
+-				    struct device_attribute *attr, char* buf)
+-{
+-	struct sn9c102_device* cam;
+-	ssize_t count;
+-	int val;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	if (!(cam->sensor.sysfs_ops & SN9C102_I2C_READ)) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENOSYS;
+-	}
+-
+-	if ((val = sn9c102_i2c_read(cam, cam->sysfs.i2c_reg)) < 0) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EIO;
+-	}
+-
+-	count = sprintf(buf, "%d\n", val);
+-
+-	DBG(3, "Read bytes: %zd, value: %d", count, val);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_i2c_val(struct device* cd, struct device_attribute *attr,
+-		      const char* buf, size_t len)
+-{
+-	struct sn9c102_device* cam;
+-	u16 value;
+-	ssize_t count;
+-	int err;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	if (!(cam->sensor.sysfs_ops & SN9C102_I2C_WRITE)) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENOSYS;
+-	}
+-
+-	value = sn9c102_strtou16(buf, len, &count);
+-	if (!count) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EINVAL;
+-	}
+-
+-	err = sn9c102_i2c_write(cam, cam->sysfs.i2c_reg, value);
+-	if (err) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -EIO;
+-	}
+-
+-	DBG(2, "Written sensor reg. 0x%02X, val. 0x%02X",
+-	    cam->sysfs.i2c_reg, value);
+-	DBG(3, "Written bytes: %zd", count);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	return count;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_green(struct device* cd, struct device_attribute *attr,
+-		    const char* buf, size_t len)
+-{
+-	struct sn9c102_device* cam;
+-	enum sn9c102_bridge bridge;
+-	ssize_t res = 0;
+-	u16 value;
+-	ssize_t count;
+-
+-	if (mutex_lock_interruptible(&sn9c102_sysfs_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam) {
+-		mutex_unlock(&sn9c102_sysfs_lock);
+-		return -ENODEV;
+-	}
+-
+-	bridge = cam->bridge;
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-	value = sn9c102_strtou16(buf, len, &count);
+-	if (!count)
+-		return -EINVAL;
+-
+-	switch (bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-		if (value > 0x0f)
+-			return -EINVAL;
+-		if ((res = sn9c102_store_reg(cd, attr, "0x11", 4)) >= 0)
+-			res = sn9c102_store_val(cd, attr, buf, len);
+-		break;
+-	case BRIDGE_SN9C103:
+-	case BRIDGE_SN9C105:
+-	case BRIDGE_SN9C120:
+-		if (value > 0x7f)
+-			return -EINVAL;
+-		if ((res = sn9c102_store_reg(cd, attr, "0x07", 4)) >= 0)
+-			res = sn9c102_store_val(cd, attr, buf, len);
+-		break;
+-	}
+-
+-	return res;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_blue(struct device* cd, struct device_attribute *attr,
+-		   const char* buf, size_t len)
+-{
+-	ssize_t res = 0;
+-	u16 value;
+-	ssize_t count;
+-
+-	value = sn9c102_strtou16(buf, len, &count);
+-	if (!count || value > 0x7f)
+-		return -EINVAL;
+-
+-	if ((res = sn9c102_store_reg(cd, attr, "0x06", 4)) >= 0)
+-		res = sn9c102_store_val(cd, attr, buf, len);
+-
+-	return res;
+-}
+-
+-
+-static ssize_t
+-sn9c102_store_red(struct device* cd, struct device_attribute *attr,
+-		  const char* buf, size_t len)
+-{
+-	ssize_t res = 0;
+-	u16 value;
+-	ssize_t count;
+-
+-	value = sn9c102_strtou16(buf, len, &count);
+-	if (!count || value > 0x7f)
+-		return -EINVAL;
+-
+-	if ((res = sn9c102_store_reg(cd, attr, "0x05", 4)) >= 0)
+-		res = sn9c102_store_val(cd, attr, buf, len);
+-
+-	return res;
+-}
+-
+-
+-static ssize_t sn9c102_show_frame_header(struct device* cd,
+-					 struct device_attribute *attr,
+-					 char* buf)
+-{
+-	struct sn9c102_device* cam;
+-	ssize_t count;
+-
+-	cam = video_get_drvdata(container_of(cd, struct video_device, dev));
+-	if (!cam)
+-		return -ENODEV;
+-
+-	count = sizeof(cam->sysfs.frame_header);
+-	memcpy(buf, cam->sysfs.frame_header, count);
+-
+-	DBG(3, "Frame header, read bytes: %zd", count);
+-
+-	return count;
+-}
+-
+-
+-static DEVICE_ATTR(reg, S_IRUGO | S_IWUSR, sn9c102_show_reg, sn9c102_store_reg);
+-static DEVICE_ATTR(val, S_IRUGO | S_IWUSR, sn9c102_show_val, sn9c102_store_val);
+-static DEVICE_ATTR(i2c_reg, S_IRUGO | S_IWUSR,
+-		   sn9c102_show_i2c_reg, sn9c102_store_i2c_reg);
+-static DEVICE_ATTR(i2c_val, S_IRUGO | S_IWUSR,
+-		   sn9c102_show_i2c_val, sn9c102_store_i2c_val);
+-static DEVICE_ATTR(green, S_IWUSR, NULL, sn9c102_store_green);
+-static DEVICE_ATTR(blue, S_IWUSR, NULL, sn9c102_store_blue);
+-static DEVICE_ATTR(red, S_IWUSR, NULL, sn9c102_store_red);
+-static DEVICE_ATTR(frame_header, S_IRUGO, sn9c102_show_frame_header, NULL);
+-
+-
+-static int sn9c102_create_sysfs(struct sn9c102_device* cam)
+-{
+-	struct device *dev = &(cam->v4ldev->dev);
+-	int err = 0;
+-
+-	if ((err = device_create_file(dev, &dev_attr_reg)))
+-		goto err_out;
+-	if ((err = device_create_file(dev, &dev_attr_val)))
+-		goto err_reg;
+-	if ((err = device_create_file(dev, &dev_attr_frame_header)))
+-		goto err_val;
+-
+-	if (cam->sensor.sysfs_ops) {
+-		if ((err = device_create_file(dev, &dev_attr_i2c_reg)))
+-			goto err_frame_header;
+-		if ((err = device_create_file(dev, &dev_attr_i2c_val)))
+-			goto err_i2c_reg;
+-	}
+-
+-	if (cam->bridge == BRIDGE_SN9C101 || cam->bridge == BRIDGE_SN9C102) {
+-		if ((err = device_create_file(dev, &dev_attr_green)))
+-			goto err_i2c_val;
+-	} else {
+-		if ((err = device_create_file(dev, &dev_attr_blue)))
+-			goto err_i2c_val;
+-		if ((err = device_create_file(dev, &dev_attr_red)))
+-			goto err_blue;
+-	}
+-
+-	return 0;
+-
+-err_blue:
+-	device_remove_file(dev, &dev_attr_blue);
+-err_i2c_val:
+-	if (cam->sensor.sysfs_ops)
+-		device_remove_file(dev, &dev_attr_i2c_val);
+-err_i2c_reg:
+-	if (cam->sensor.sysfs_ops)
+-		device_remove_file(dev, &dev_attr_i2c_reg);
+-err_frame_header:
+-	device_remove_file(dev, &dev_attr_frame_header);
+-err_val:
+-	device_remove_file(dev, &dev_attr_val);
+-err_reg:
+-	device_remove_file(dev, &dev_attr_reg);
+-err_out:
+-	return err;
+-}
+-#endif /* CONFIG_VIDEO_ADV_DEBUG */
+-
+-/*****************************************************************************/
+-
+-static int
+-sn9c102_set_pix_format(struct sn9c102_device* cam, struct v4l2_pix_format* pix)
+-{
+-	int err = 0;
+-
+-	if (pix->pixelformat == V4L2_PIX_FMT_SN9C10X ||
+-	    pix->pixelformat == V4L2_PIX_FMT_JPEG) {
+-		switch (cam->bridge) {
+-		case BRIDGE_SN9C101:
+-		case BRIDGE_SN9C102:
+-		case BRIDGE_SN9C103:
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] | 0x80,
+-						 0x18);
+-			break;
+-		case BRIDGE_SN9C105:
+-		case BRIDGE_SN9C120:
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] & 0x7f,
+-						 0x18);
+-			break;
+-		}
+-	} else {
+-		switch (cam->bridge) {
+-		case BRIDGE_SN9C101:
+-		case BRIDGE_SN9C102:
+-		case BRIDGE_SN9C103:
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] & 0x7f,
+-						 0x18);
+-			break;
+-		case BRIDGE_SN9C105:
+-		case BRIDGE_SN9C120:
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] | 0x80,
+-						 0x18);
+-			break;
+-		}
+-	}
+-
+-	return err ? -EIO : 0;
+-}
+-
+-
+-static int
+-sn9c102_set_compression(struct sn9c102_device* cam,
+-			struct v4l2_jpegcompression* compression)
+-{
+-	int i, err = 0;
+-
+-	switch (cam->bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-	case BRIDGE_SN9C103:
+-		if (compression->quality == 0)
+-			err += sn9c102_write_reg(cam, cam->reg[0x17] | 0x01,
+-						 0x17);
+-		else if (compression->quality == 1)
+-			err += sn9c102_write_reg(cam, cam->reg[0x17] & 0xfe,
+-						 0x17);
+-		break;
+-	case BRIDGE_SN9C105:
+-	case BRIDGE_SN9C120:
+-		if (compression->quality == 0) {
+-			for (i = 0; i <= 63; i++) {
+-				err += sn9c102_write_reg(cam,
+-							 SN9C102_Y_QTABLE1[i],
+-							 0x100 + i);
+-				err += sn9c102_write_reg(cam,
+-							 SN9C102_UV_QTABLE1[i],
+-							 0x140 + i);
+-			}
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] & 0xbf,
+-						 0x18);
+-		} else if (compression->quality == 1) {
+-			for (i = 0; i <= 63; i++) {
+-				err += sn9c102_write_reg(cam,
+-							 SN9C102_Y_QTABLE1[i],
+-							 0x100 + i);
+-				err += sn9c102_write_reg(cam,
+-							 SN9C102_UV_QTABLE1[i],
+-							 0x140 + i);
+-			}
+-			err += sn9c102_write_reg(cam, cam->reg[0x18] | 0x40,
+-						 0x18);
+-		}
+-		break;
+-	}
+-
+-	return err ? -EIO : 0;
+-}
+-
+-
+-static int sn9c102_set_scale(struct sn9c102_device* cam, u8 scale)
+-{
+-	u8 r = 0;
+-	int err = 0;
+-
+-	if (scale == 1)
+-		r = cam->reg[0x18] & 0xcf;
+-	else if (scale == 2) {
+-		r = cam->reg[0x18] & 0xcf;
+-		r |= 0x10;
+-	} else if (scale == 4)
+-		r = cam->reg[0x18] | 0x20;
+-
+-	err += sn9c102_write_reg(cam, r, 0x18);
+-	if (err)
+-		return -EIO;
+-
+-	PDBGG("Scaling factor: %u", scale);
+-
+-	return 0;
+-}
+-
+-
+-static int sn9c102_set_crop(struct sn9c102_device* cam, struct v4l2_rect* rect)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	u8 h_start = (u8)(rect->left - s->cropcap.bounds.left),
+-	   v_start = (u8)(rect->top - s->cropcap.bounds.top),
+-	   h_size = (u8)(rect->width / 16),
+-	   v_size = (u8)(rect->height / 16);
+-	int err = 0;
+-
+-	err += sn9c102_write_reg(cam, h_start, 0x12);
+-	err += sn9c102_write_reg(cam, v_start, 0x13);
+-	err += sn9c102_write_reg(cam, h_size, 0x15);
+-	err += sn9c102_write_reg(cam, v_size, 0x16);
+-	if (err)
+-		return -EIO;
+-
+-	PDBGG("h_start, v_start, h_size, v_size, ho_size, vo_size "
+-	      "%u %u %u %u", h_start, v_start, h_size, v_size);
+-
+-	return 0;
+-}
+-
+-
+-static int sn9c102_init(struct sn9c102_device* cam)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_control ctrl;
+-	struct v4l2_queryctrl *qctrl;
+-	struct v4l2_rect* rect;
+-	u8 i = 0;
+-	int err = 0;
+-
+-	if (!(cam->state & DEV_INITIALIZED)) {
+-		mutex_init(&cam->open_mutex);
+-		init_waitqueue_head(&cam->wait_open);
+-		qctrl = s->qctrl;
+-		rect = &(s->cropcap.defrect);
+-	} else { /* use current values */
+-		qctrl = s->_qctrl;
+-		rect = &(s->_rect);
+-	}
+-
+-	err += sn9c102_set_scale(cam, rect->width / s->pix_format.width);
+-	err += sn9c102_set_crop(cam, rect);
+-	if (err)
+-		return err;
+-
+-	if (s->init) {
+-		err = s->init(cam);
+-		if (err) {
+-			DBG(3, "Sensor initialization failed");
+-			return err;
+-		}
+-	}
+-
+-	if (!(cam->state & DEV_INITIALIZED))
+-		if (cam->bridge == BRIDGE_SN9C101 ||
+-		    cam->bridge == BRIDGE_SN9C102 ||
+-		    cam->bridge == BRIDGE_SN9C103) {
+-			if (s->pix_format.pixelformat == V4L2_PIX_FMT_JPEG)
+-				s->pix_format.pixelformat= V4L2_PIX_FMT_SBGGR8;
+-			cam->compression.quality =  cam->reg[0x17] & 0x01 ?
+-						    0 : 1;
+-		} else {
+-			if (s->pix_format.pixelformat == V4L2_PIX_FMT_SN9C10X)
+-				s->pix_format.pixelformat = V4L2_PIX_FMT_JPEG;
+-			cam->compression.quality =  cam->reg[0x18] & 0x40 ?
+-						    0 : 1;
+-			err += sn9c102_set_compression(cam, &cam->compression);
+-		}
+-	else
+-		err += sn9c102_set_compression(cam, &cam->compression);
+-	err += sn9c102_set_pix_format(cam, &s->pix_format);
+-	if (s->set_pix_format)
+-		err += s->set_pix_format(cam, &s->pix_format);
+-	if (err)
+-		return err;
+-
+-	if (s->pix_format.pixelformat == V4L2_PIX_FMT_SN9C10X ||
+-	    s->pix_format.pixelformat == V4L2_PIX_FMT_JPEG)
+-		DBG(3, "Compressed video format is active, quality %d",
+-		    cam->compression.quality);
+-	else
+-		DBG(3, "Uncompressed video format is active");
+-
+-	if (s->set_crop)
+-		if ((err = s->set_crop(cam, rect))) {
+-			DBG(3, "set_crop() failed");
+-			return err;
+-		}
+-
+-	if (s->set_ctrl) {
+-		for (i = 0; i < ARRAY_SIZE(s->qctrl); i++)
+-			if (s->qctrl[i].id != 0 &&
+-			    !(s->qctrl[i].flags & V4L2_CTRL_FLAG_DISABLED)) {
+-				ctrl.id = s->qctrl[i].id;
+-				ctrl.value = qctrl[i].default_value;
+-				err = s->set_ctrl(cam, &ctrl);
+-				if (err) {
+-					DBG(3, "Set %s control failed",
+-					    s->qctrl[i].name);
+-					return err;
+-				}
+-				DBG(3, "Image sensor supports '%s' control",
+-				    s->qctrl[i].name);
+-			}
+-	}
+-
+-	if (!(cam->state & DEV_INITIALIZED)) {
+-		mutex_init(&cam->fileop_mutex);
+-		spin_lock_init(&cam->queue_lock);
+-		init_waitqueue_head(&cam->wait_frame);
+-		init_waitqueue_head(&cam->wait_stream);
+-		cam->nreadbuffers = 2;
+-		memcpy(s->_qctrl, s->qctrl, sizeof(s->qctrl));
+-		memcpy(&(s->_rect), &(s->cropcap.defrect),
+-		       sizeof(struct v4l2_rect));
+-		cam->state |= DEV_INITIALIZED;
+-	}
+-
+-	DBG(2, "Initialization succeeded");
+-	return 0;
+-}
+-
+-/*****************************************************************************/
+-
+-static void sn9c102_release_resources(struct kref *kref)
+-{
+-	struct sn9c102_device *cam;
+-
+-	mutex_lock(&sn9c102_sysfs_lock);
+-
+-	cam = container_of(kref, struct sn9c102_device, kref);
+-
+-	DBG(2, "V4L2 device %s deregistered",
+-	    video_device_node_name(cam->v4ldev));
+-	video_set_drvdata(cam->v4ldev, NULL);
+-	video_unregister_device(cam->v4ldev);
+-	usb_put_dev(cam->usbdev);
+-	kfree(cam->control_buffer);
+-	kfree(cam);
+-
+-	mutex_unlock(&sn9c102_sysfs_lock);
+-
+-}
+-
+-
+-static int sn9c102_open(struct file *filp)
+-{
+-	struct sn9c102_device* cam;
+-	int err = 0;
+-
+-	/*
+-	   A read_trylock() in open() is the only safe way to prevent race
+-	   conditions with disconnect(), one close() and multiple (not
+-	   necessarily simultaneous) attempts to open(). For example, it
+-	   prevents from waiting for a second access, while the device
+-	   structure is being deallocated, after a possible disconnect() and
+-	   during a following close() holding the write lock: given that, after
+-	   this deallocation, no access will be possible anymore, using the
+-	   non-trylock version would have let open() gain the access to the
+-	   device structure improperly.
+-	   For this reason the lock must also not be per-device.
+-	*/
+-	if (!down_read_trylock(&sn9c102_dev_lock))
+-		return -ERESTARTSYS;
+-
+-	cam = video_drvdata(filp);
+-
+-	if (wait_for_completion_interruptible(&cam->probe)) {
+-		up_read(&sn9c102_dev_lock);
+-		return -ERESTARTSYS;
+-	}
+-
+-	kref_get(&cam->kref);
+-
+-	/*
+-	    Make sure to isolate all the simultaneous opens.
+-	*/
+-	if (mutex_lock_interruptible(&cam->open_mutex)) {
+-		kref_put(&cam->kref, sn9c102_release_resources);
+-		up_read(&sn9c102_dev_lock);
+-		return -ERESTARTSYS;
+-	}
+-
+-	if (cam->state & DEV_DISCONNECTED) {
+-		DBG(1, "Device not present");
+-		err = -ENODEV;
+-		goto out;
+-	}
+-
+-	if (cam->users) {
+-		DBG(2, "Device %s is already in use",
+-		    video_device_node_name(cam->v4ldev));
+-		DBG(3, "Simultaneous opens are not supported");
+-		/*
+-		   open() must follow the open flags and should block
+-		   eventually while the device is in use.
+-		*/
+-		if ((filp->f_flags & O_NONBLOCK) ||
+-		    (filp->f_flags & O_NDELAY)) {
+-			err = -EWOULDBLOCK;
+-			goto out;
+-		}
+-		DBG(2, "A blocking open() has been requested. Wait for the "
+-		       "device to be released...");
+-		up_read(&sn9c102_dev_lock);
+-		/*
+-		   We will not release the "open_mutex" lock, so that only one
+-		   process can be in the wait queue below. This way the process
+-		   will be sleeping while holding the lock, without losing its
+-		   priority after any wake_up().
+-		*/
+-		err = wait_event_interruptible_exclusive(cam->wait_open,
+-						(cam->state & DEV_DISCONNECTED)
+-							 || !cam->users);
+-		down_read(&sn9c102_dev_lock);
+-		if (err)
+-			goto out;
+-		if (cam->state & DEV_DISCONNECTED) {
+-			err = -ENODEV;
+-			goto out;
+-		}
+-	}
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		err = sn9c102_init(cam);
+-		if (err) {
+-			DBG(1, "Initialization failed again. "
+-			       "I will retry on next open().");
+-			goto out;
+-		}
+-		cam->state &= ~DEV_MISCONFIGURED;
+-	}
+-
+-	if ((err = sn9c102_start_transfer(cam)))
+-		goto out;
+-
+-	filp->private_data = cam;
+-	cam->users++;
+-	cam->io = IO_NONE;
+-	cam->stream = STREAM_OFF;
+-	cam->nbuffers = 0;
+-	cam->frame_count = 0;
+-	sn9c102_empty_framequeues(cam);
+-
+-	DBG(3, "Video device %s is open", video_device_node_name(cam->v4ldev));
+-
+-out:
+-	mutex_unlock(&cam->open_mutex);
+-	if (err)
+-		kref_put(&cam->kref, sn9c102_release_resources);
+-
+-	up_read(&sn9c102_dev_lock);
+-	return err;
+-}
+-
+-
+-static int sn9c102_release(struct file *filp)
+-{
+-	struct sn9c102_device* cam;
+-
+-	down_write(&sn9c102_dev_lock);
+-
+-	cam = video_drvdata(filp);
+-
+-	sn9c102_stop_transfer(cam);
+-	sn9c102_release_buffers(cam);
+-	cam->users--;
+-	wake_up_interruptible_nr(&cam->wait_open, 1);
+-
+-	DBG(3, "Video device %s closed", video_device_node_name(cam->v4ldev));
+-
+-	kref_put(&cam->kref, sn9c102_release_resources);
+-
+-	up_write(&sn9c102_dev_lock);
+-
+-	return 0;
+-}
+-
+-
+-static ssize_t
+-sn9c102_read(struct file* filp, char __user * buf, size_t count, loff_t* f_pos)
+-{
+-	struct sn9c102_device *cam = video_drvdata(filp);
+-	struct sn9c102_frame_t* f, * i;
+-	unsigned long lock_flags;
+-	long timeout;
+-	int err = 0;
+-
+-	if (mutex_lock_interruptible(&cam->fileop_mutex))
+-		return -ERESTARTSYS;
+-
+-	if (cam->state & DEV_DISCONNECTED) {
+-		DBG(1, "Device not present");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -ENODEV;
+-	}
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		DBG(1, "The camera is misconfigured. Close and open it "
+-		       "again.");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EIO;
+-	}
+-
+-	if (cam->io == IO_MMAP) {
+-		DBG(3, "Close and open the device again to choose "
+-		       "the read method");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EBUSY;
+-	}
+-
+-	if (cam->io == IO_NONE) {
+-		if (!sn9c102_request_buffers(cam,cam->nreadbuffers, IO_READ)) {
+-			DBG(1, "read() failed, not enough memory");
+-			mutex_unlock(&cam->fileop_mutex);
+-			return -ENOMEM;
+-		}
+-		cam->io = IO_READ;
+-		cam->stream = STREAM_ON;
+-	}
+-
+-	if (list_empty(&cam->inqueue)) {
+-		if (!list_empty(&cam->outqueue))
+-			sn9c102_empty_framequeues(cam);
+-		sn9c102_queue_unusedframes(cam);
+-	}
+-
+-	if (!count) {
+-		mutex_unlock(&cam->fileop_mutex);
+-		return 0;
+-	}
+-
+-	if (list_empty(&cam->outqueue)) {
+-		if (filp->f_flags & O_NONBLOCK) {
+-			mutex_unlock(&cam->fileop_mutex);
+-			return -EAGAIN;
+-		}
+-		if (!cam->module_param.frame_timeout) {
+-			err = wait_event_interruptible
+-			      ( cam->wait_frame,
+-				(!list_empty(&cam->outqueue)) ||
+-				(cam->state & DEV_DISCONNECTED) ||
+-				(cam->state & DEV_MISCONFIGURED) );
+-			if (err) {
+-				mutex_unlock(&cam->fileop_mutex);
+-				return err;
+-			}
+-		} else {
+-			timeout = wait_event_interruptible_timeout
+-				  ( cam->wait_frame,
+-				    (!list_empty(&cam->outqueue)) ||
+-				    (cam->state & DEV_DISCONNECTED) ||
+-				    (cam->state & DEV_MISCONFIGURED),
+-				    msecs_to_jiffies(
+-					cam->module_param.frame_timeout * 1000
+-				    )
+-				  );
+-			if (timeout < 0) {
+-				mutex_unlock(&cam->fileop_mutex);
+-				return timeout;
+-			} else if (timeout == 0 &&
+-				   !(cam->state & DEV_DISCONNECTED)) {
+-				DBG(1, "Video frame timeout elapsed");
+-				mutex_unlock(&cam->fileop_mutex);
+-				return -EIO;
+-			}
+-		}
+-		if (cam->state & DEV_DISCONNECTED) {
+-			mutex_unlock(&cam->fileop_mutex);
+-			return -ENODEV;
+-		}
+-		if (cam->state & DEV_MISCONFIGURED) {
+-			mutex_unlock(&cam->fileop_mutex);
+-			return -EIO;
+-		}
+-	}
+-
+-	f = list_entry(cam->outqueue.prev, struct sn9c102_frame_t, frame);
+-
+-	if (count > f->buf.bytesused)
+-		count = f->buf.bytesused;
+-
+-	if (copy_to_user(buf, f->bufmem, count)) {
+-		err = -EFAULT;
+-		goto exit;
+-	}
+-	*f_pos += count;
+-
+-exit:
+-	spin_lock_irqsave(&cam->queue_lock, lock_flags);
+-	list_for_each_entry(i, &cam->outqueue, frame)
+-		i->state = F_UNUSED;
+-	INIT_LIST_HEAD(&cam->outqueue);
+-	spin_unlock_irqrestore(&cam->queue_lock, lock_flags);
+-
+-	sn9c102_queue_unusedframes(cam);
+-
+-	PDBGG("Frame #%lu, bytes read: %zu",
+-	      (unsigned long)f->buf.index, count);
+-
+-	mutex_unlock(&cam->fileop_mutex);
+-
+-	return count;
+-}
+-
+-
+-static unsigned int sn9c102_poll(struct file *filp, poll_table *wait)
+-{
+-	struct sn9c102_device *cam = video_drvdata(filp);
+-	struct sn9c102_frame_t* f;
+-	unsigned long lock_flags;
+-	unsigned int mask = 0;
+-
+-	if (mutex_lock_interruptible(&cam->fileop_mutex))
+-		return POLLERR;
+-
+-	if (cam->state & DEV_DISCONNECTED) {
+-		DBG(1, "Device not present");
+-		goto error;
+-	}
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		DBG(1, "The camera is misconfigured. Close and open it "
+-		       "again.");
+-		goto error;
+-	}
+-
+-	if (cam->io == IO_NONE) {
+-		if (!sn9c102_request_buffers(cam, cam->nreadbuffers,
+-					     IO_READ)) {
+-			DBG(1, "poll() failed, not enough memory");
+-			goto error;
+-		}
+-		cam->io = IO_READ;
+-		cam->stream = STREAM_ON;
+-	}
+-
+-	if (cam->io == IO_READ) {
+-		spin_lock_irqsave(&cam->queue_lock, lock_flags);
+-		list_for_each_entry(f, &cam->outqueue, frame)
+-			f->state = F_UNUSED;
+-		INIT_LIST_HEAD(&cam->outqueue);
+-		spin_unlock_irqrestore(&cam->queue_lock, lock_flags);
+-		sn9c102_queue_unusedframes(cam);
+-	}
+-
+-	poll_wait(filp, &cam->wait_frame, wait);
+-
+-	if (!list_empty(&cam->outqueue))
+-		mask |= POLLIN | POLLRDNORM;
+-
+-	mutex_unlock(&cam->fileop_mutex);
+-
+-	return mask;
+-
+-error:
+-	mutex_unlock(&cam->fileop_mutex);
+-	return POLLERR;
+-}
+-
+-
+-static void sn9c102_vm_open(struct vm_area_struct* vma)
+-{
+-	struct sn9c102_frame_t* f = vma->vm_private_data;
+-	f->vma_use_count++;
+-}
+-
+-
+-static void sn9c102_vm_close(struct vm_area_struct* vma)
+-{
+-	/* NOTE: buffers are not freed here */
+-	struct sn9c102_frame_t* f = vma->vm_private_data;
+-	f->vma_use_count--;
+-}
+-
+-
+-static const struct vm_operations_struct sn9c102_vm_ops = {
+-	.open = sn9c102_vm_open,
+-	.close = sn9c102_vm_close,
+-};
+-
+-
+-static int sn9c102_mmap(struct file* filp, struct vm_area_struct *vma)
+-{
+-	struct sn9c102_device *cam = video_drvdata(filp);
+-	unsigned long size = vma->vm_end - vma->vm_start,
+-		      start = vma->vm_start;
+-	void *pos;
+-	u32 i;
+-
+-	if (mutex_lock_interruptible(&cam->fileop_mutex))
+-		return -ERESTARTSYS;
+-
+-	if (cam->state & DEV_DISCONNECTED) {
+-		DBG(1, "Device not present");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -ENODEV;
+-	}
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		DBG(1, "The camera is misconfigured. Close and open it "
+-		       "again.");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EIO;
+-	}
+-
+-	if (!(vma->vm_flags & (VM_WRITE | VM_READ))) {
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EACCES;
+-	}
+-
+-	if (cam->io != IO_MMAP ||
+-	    size != PAGE_ALIGN(cam->frame[0].buf.length)) {
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < cam->nbuffers; i++) {
+-		if ((cam->frame[i].buf.m.offset>>PAGE_SHIFT) == vma->vm_pgoff)
+-			break;
+-	}
+-	if (i == cam->nbuffers) {
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EINVAL;
+-	}
+-
+-	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
+-
+-	pos = cam->frame[i].bufmem;
+-	while (size > 0) { /* size is page-aligned */
+-		if (vm_insert_page(vma, start, vmalloc_to_page(pos))) {
+-			mutex_unlock(&cam->fileop_mutex);
+-			return -EAGAIN;
+-		}
+-		start += PAGE_SIZE;
+-		pos += PAGE_SIZE;
+-		size -= PAGE_SIZE;
+-	}
+-
+-	vma->vm_ops = &sn9c102_vm_ops;
+-	vma->vm_private_data = &cam->frame[i];
+-	sn9c102_vm_open(vma);
+-
+-	mutex_unlock(&cam->fileop_mutex);
+-
+-	return 0;
+-}
+-
+-/*****************************************************************************/
+-
+-static int
+-sn9c102_vidioc_querycap(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_capability cap = {
+-		.driver = "sn9c102",
+-		.version = V4L2_VERSION,
+-		.capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_READWRITE |
+-				V4L2_CAP_STREAMING,
+-	};
+-
+-	strlcpy(cap.card, cam->v4ldev->name, sizeof(cap.card));
+-	if (usb_make_path(cam->usbdev, cap.bus_info, sizeof(cap.bus_info)) < 0)
+-		strlcpy(cap.bus_info, dev_name(&cam->usbdev->dev),
+-			sizeof(cap.bus_info));
+-
+-	if (copy_to_user(arg, &cap, sizeof(cap)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_enuminput(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_input i;
+-
+-	if (copy_from_user(&i, arg, sizeof(i)))
+-		return -EFAULT;
+-
+-	if (i.index)
+-		return -EINVAL;
+-
+-	memset(&i, 0, sizeof(i));
+-	strcpy(i.name, "Camera");
+-	i.type = V4L2_INPUT_TYPE_CAMERA;
+-	i.capabilities = V4L2_IN_CAP_STD;
+-
+-	if (copy_to_user(arg, &i, sizeof(i)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_input(struct sn9c102_device* cam, void __user * arg)
+-{
+-	int index = 0;
+-
+-	if (copy_to_user(arg, &index, sizeof(index)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_input(struct sn9c102_device* cam, void __user * arg)
+-{
+-	int index;
+-
+-	if (copy_from_user(&index, arg, sizeof(index)))
+-		return -EFAULT;
+-
+-	if (index != 0)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_query_ctrl(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_queryctrl qc;
+-	u8 i;
+-
+-	if (copy_from_user(&qc, arg, sizeof(qc)))
+-		return -EFAULT;
+-
+-	for (i = 0; i < ARRAY_SIZE(s->qctrl); i++)
+-		if (qc.id && qc.id == s->qctrl[i].id) {
+-			memcpy(&qc, &(s->qctrl[i]), sizeof(qc));
+-			if (copy_to_user(arg, &qc, sizeof(qc)))
+-				return -EFAULT;
+-			return 0;
+-		}
+-
+-	return -EINVAL;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_ctrl(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_control ctrl;
+-	int err = 0;
+-	u8 i;
+-
+-	if (!s->get_ctrl && !s->set_ctrl)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&ctrl, arg, sizeof(ctrl)))
+-		return -EFAULT;
+-
+-	if (!s->get_ctrl) {
+-		for (i = 0; i < ARRAY_SIZE(s->qctrl); i++)
+-			if (ctrl.id && ctrl.id == s->qctrl[i].id) {
+-				ctrl.value = s->_qctrl[i].default_value;
+-				goto exit;
+-			}
+-		return -EINVAL;
+-	} else
+-		err = s->get_ctrl(cam, &ctrl);
+-
+-exit:
+-	if (copy_to_user(arg, &ctrl, sizeof(ctrl)))
+-		return -EFAULT;
+-
+-	PDBGG("VIDIOC_G_CTRL: id %lu, value %lu",
+-	      (unsigned long)ctrl.id, (unsigned long)ctrl.value);
+-
+-	return err;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_ctrl(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_control ctrl;
+-	u8 i;
+-	int err = 0;
+-
+-	if (!s->set_ctrl)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&ctrl, arg, sizeof(ctrl)))
+-		return -EFAULT;
+-
+-	for (i = 0; i < ARRAY_SIZE(s->qctrl); i++) {
+-		if (ctrl.id == s->qctrl[i].id) {
+-			if (s->qctrl[i].flags & V4L2_CTRL_FLAG_DISABLED)
+-				return -EINVAL;
+-			if (ctrl.value < s->qctrl[i].minimum ||
+-			    ctrl.value > s->qctrl[i].maximum)
+-				return -ERANGE;
+-			ctrl.value -= ctrl.value % s->qctrl[i].step;
+-			break;
+-		}
+-	}
+-	if (i == ARRAY_SIZE(s->qctrl))
+-		return -EINVAL;
+-	if ((err = s->set_ctrl(cam, &ctrl)))
+-		return err;
+-
+-	s->_qctrl[i].default_value = ctrl.value;
+-
+-	PDBGG("VIDIOC_S_CTRL: id %lu, value %lu",
+-	      (unsigned long)ctrl.id, (unsigned long)ctrl.value);
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_cropcap(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_cropcap* cc = &(cam->sensor.cropcap);
+-
+-	cc->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	cc->pixelaspect.numerator = 1;
+-	cc->pixelaspect.denominator = 1;
+-
+-	if (copy_to_user(arg, cc, sizeof(*cc)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_crop(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_crop crop = {
+-		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE,
+-	};
+-
+-	memcpy(&(crop.c), &(s->_rect), sizeof(struct v4l2_rect));
+-
+-	if (copy_to_user(arg, &crop, sizeof(crop)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_crop(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_crop crop;
+-	struct v4l2_rect* rect;
+-	struct v4l2_rect* bounds = &(s->cropcap.bounds);
+-	struct v4l2_pix_format* pix_format = &(s->pix_format);
+-	u8 scale;
+-	const enum sn9c102_stream_state stream = cam->stream;
+-	const u32 nbuffers = cam->nbuffers;
+-	u32 i;
+-	int err = 0;
+-
+-	if (copy_from_user(&crop, arg, sizeof(crop)))
+-		return -EFAULT;
+-
+-	rect = &(crop.c);
+-
+-	if (crop.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	if (cam->module_param.force_munmap)
+-		for (i = 0; i < cam->nbuffers; i++)
+-			if (cam->frame[i].vma_use_count) {
+-				DBG(3, "VIDIOC_S_CROP failed. "
+-				       "Unmap the buffers first.");
+-				return -EBUSY;
+-			}
+-
+-	/* Preserve R,G or B origin */
+-	rect->left = (s->_rect.left & 1L) ? rect->left | 1L : rect->left & ~1L;
+-	rect->top = (s->_rect.top & 1L) ? rect->top | 1L : rect->top & ~1L;
+-
+-	if (rect->width < 16)
+-		rect->width = 16;
+-	if (rect->height < 16)
+-		rect->height = 16;
+-	if (rect->width > bounds->width)
+-		rect->width = bounds->width;
+-	if (rect->height > bounds->height)
+-		rect->height = bounds->height;
+-	if (rect->left < bounds->left)
+-		rect->left = bounds->left;
+-	if (rect->top < bounds->top)
+-		rect->top = bounds->top;
+-	if (rect->left + rect->width > bounds->left + bounds->width)
+-		rect->left = bounds->left+bounds->width - rect->width;
+-	if (rect->top + rect->height > bounds->top + bounds->height)
+-		rect->top = bounds->top+bounds->height - rect->height;
+-
+-	rect->width &= ~15L;
+-	rect->height &= ~15L;
+-
+-	if (SN9C102_PRESERVE_IMGSCALE) {
+-		/* Calculate the actual scaling factor */
+-		u32 a, b;
+-		a = rect->width * rect->height;
+-		b = pix_format->width * pix_format->height;
+-		scale = b ? (u8)((a / b) < 4 ? 1 : ((a / b) < 16 ? 2 : 4)) : 1;
+-	} else
+-		scale = 1;
+-
+-	if (cam->stream == STREAM_ON)
+-		if ((err = sn9c102_stream_interrupt(cam)))
+-			return err;
+-
+-	if (copy_to_user(arg, &crop, sizeof(crop))) {
+-		cam->stream = stream;
+-		return -EFAULT;
+-	}
+-
+-	if (cam->module_param.force_munmap || cam->io == IO_READ)
+-		sn9c102_release_buffers(cam);
+-
+-	err = sn9c102_set_crop(cam, rect);
+-	if (s->set_crop)
+-		err += s->set_crop(cam, rect);
+-	err += sn9c102_set_scale(cam, scale);
+-
+-	if (err) { /* atomic, no rollback in ioctl() */
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "VIDIOC_S_CROP failed because of hardware problems. To "
+-		       "use the camera, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -EIO;
+-	}
+-
+-	s->pix_format.width = rect->width/scale;
+-	s->pix_format.height = rect->height/scale;
+-	memcpy(&(s->_rect), rect, sizeof(*rect));
+-
+-	if ((cam->module_param.force_munmap || cam->io == IO_READ) &&
+-	    nbuffers != sn9c102_request_buffers(cam, nbuffers, cam->io)) {
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "VIDIOC_S_CROP failed because of not enough memory. To "
+-		       "use the camera, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -ENOMEM;
+-	}
+-
+-	if (cam->io == IO_READ)
+-		sn9c102_empty_framequeues(cam);
+-	else if (cam->module_param.force_munmap)
+-		sn9c102_requeue_outqueue(cam);
+-
+-	cam->stream = stream;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_enum_framesizes(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_frmsizeenum frmsize;
+-
+-	if (copy_from_user(&frmsize, arg, sizeof(frmsize)))
+-		return -EFAULT;
+-
+-	if (frmsize.index != 0)
+-		return -EINVAL;
+-
+-	switch (cam->bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-	case BRIDGE_SN9C103:
+-		if (frmsize.pixel_format != V4L2_PIX_FMT_SN9C10X &&
+-		    frmsize.pixel_format != V4L2_PIX_FMT_SBGGR8)
+-			return -EINVAL;
+-		break;
+-	case BRIDGE_SN9C105:
+-	case BRIDGE_SN9C120:
+-		if (frmsize.pixel_format != V4L2_PIX_FMT_JPEG &&
+-		    frmsize.pixel_format != V4L2_PIX_FMT_SBGGR8)
+-			return -EINVAL;
+-		break;
+-	}
+-
+-	frmsize.type = V4L2_FRMSIZE_TYPE_STEPWISE;
+-	frmsize.stepwise.min_width = frmsize.stepwise.step_width = 16;
+-	frmsize.stepwise.min_height = frmsize.stepwise.step_height = 16;
+-	frmsize.stepwise.max_width = cam->sensor.cropcap.bounds.width;
+-	frmsize.stepwise.max_height = cam->sensor.cropcap.bounds.height;
+-	memset(&frmsize.reserved, 0, sizeof(frmsize.reserved));
+-
+-	if (copy_to_user(arg, &frmsize, sizeof(frmsize)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_enum_fmt(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_fmtdesc fmtd;
+-
+-	if (copy_from_user(&fmtd, arg, sizeof(fmtd)))
+-		return -EFAULT;
+-
+-	if (fmtd.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	if (fmtd.index == 0) {
+-		strcpy(fmtd.description, "bayer rgb");
+-		fmtd.pixelformat = V4L2_PIX_FMT_SBGGR8;
+-	} else if (fmtd.index == 1) {
+-		switch (cam->bridge) {
+-		case BRIDGE_SN9C101:
+-		case BRIDGE_SN9C102:
+-		case BRIDGE_SN9C103:
+-			strcpy(fmtd.description, "compressed");
+-			fmtd.pixelformat = V4L2_PIX_FMT_SN9C10X;
+-			break;
+-		case BRIDGE_SN9C105:
+-		case BRIDGE_SN9C120:
+-			strcpy(fmtd.description, "JPEG");
+-			fmtd.pixelformat = V4L2_PIX_FMT_JPEG;
+-			break;
+-		}
+-		fmtd.flags = V4L2_FMT_FLAG_COMPRESSED;
+-	} else
+-		return -EINVAL;
+-
+-	fmtd.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	memset(&fmtd.reserved, 0, sizeof(fmtd.reserved));
+-
+-	if (copy_to_user(arg, &fmtd, sizeof(fmtd)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_fmt(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_format format;
+-	struct v4l2_pix_format* pfmt = &(cam->sensor.pix_format);
+-
+-	if (copy_from_user(&format, arg, sizeof(format)))
+-		return -EFAULT;
+-
+-	if (format.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	pfmt->colorspace = (pfmt->pixelformat == V4L2_PIX_FMT_JPEG) ?
+-			   V4L2_COLORSPACE_JPEG : V4L2_COLORSPACE_SRGB;
+-	pfmt->bytesperline = (pfmt->pixelformat == V4L2_PIX_FMT_SN9C10X ||
+-			      pfmt->pixelformat == V4L2_PIX_FMT_JPEG)
+-			     ? 0 : (pfmt->width * pfmt->priv) / 8;
+-	pfmt->sizeimage = pfmt->height * ((pfmt->width*pfmt->priv)/8);
+-	pfmt->field = V4L2_FIELD_NONE;
+-	memcpy(&(format.fmt.pix), pfmt, sizeof(*pfmt));
+-
+-	if (copy_to_user(arg, &format, sizeof(format)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_try_s_fmt(struct sn9c102_device* cam, unsigned int cmd,
+-			 void __user * arg)
+-{
+-	struct sn9c102_sensor* s = &cam->sensor;
+-	struct v4l2_format format;
+-	struct v4l2_pix_format* pix;
+-	struct v4l2_pix_format* pfmt = &(s->pix_format);
+-	struct v4l2_rect* bounds = &(s->cropcap.bounds);
+-	struct v4l2_rect rect;
+-	u8 scale;
+-	const enum sn9c102_stream_state stream = cam->stream;
+-	const u32 nbuffers = cam->nbuffers;
+-	u32 i;
+-	int err = 0;
+-
+-	if (copy_from_user(&format, arg, sizeof(format)))
+-		return -EFAULT;
+-
+-	pix = &(format.fmt.pix);
+-
+-	if (format.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	memcpy(&rect, &(s->_rect), sizeof(rect));
+-
+-	{ /* calculate the actual scaling factor */
+-		u32 a, b;
+-		a = rect.width * rect.height;
+-		b = pix->width * pix->height;
+-		scale = b ? (u8)((a / b) < 4 ? 1 : ((a / b) < 16 ? 2 : 4)) : 1;
+-	}
+-
+-	rect.width = scale * pix->width;
+-	rect.height = scale * pix->height;
+-
+-	if (rect.width < 16)
+-		rect.width = 16;
+-	if (rect.height < 16)
+-		rect.height = 16;
+-	if (rect.width > bounds->left + bounds->width - rect.left)
+-		rect.width = bounds->left + bounds->width - rect.left;
+-	if (rect.height > bounds->top + bounds->height - rect.top)
+-		rect.height = bounds->top + bounds->height - rect.top;
+-
+-	rect.width &= ~15L;
+-	rect.height &= ~15L;
+-
+-	{ /* adjust the scaling factor */
+-		u32 a, b;
+-		a = rect.width * rect.height;
+-		b = pix->width * pix->height;
+-		scale = b ? (u8)((a / b) < 4 ? 1 : ((a / b) < 16 ? 2 : 4)) : 1;
+-	}
+-
+-	pix->width = rect.width / scale;
+-	pix->height = rect.height / scale;
+-
+-	switch (cam->bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-	case BRIDGE_SN9C103:
+-		if (pix->pixelformat != V4L2_PIX_FMT_SN9C10X &&
+-		    pix->pixelformat != V4L2_PIX_FMT_SBGGR8)
+-			pix->pixelformat = pfmt->pixelformat;
+-		break;
+-	case BRIDGE_SN9C105:
+-	case BRIDGE_SN9C120:
+-		if (pix->pixelformat != V4L2_PIX_FMT_JPEG &&
+-		    pix->pixelformat != V4L2_PIX_FMT_SBGGR8)
+-			pix->pixelformat = pfmt->pixelformat;
+-		break;
+-	}
+-	pix->priv = pfmt->priv; /* bpp */
+-	pix->colorspace = (pix->pixelformat == V4L2_PIX_FMT_JPEG) ?
+-			  V4L2_COLORSPACE_JPEG : V4L2_COLORSPACE_SRGB;
+-	pix->bytesperline = (pix->pixelformat == V4L2_PIX_FMT_SN9C10X ||
+-			     pix->pixelformat == V4L2_PIX_FMT_JPEG)
+-			    ? 0 : (pix->width * pix->priv) / 8;
+-	pix->sizeimage = pix->height * ((pix->width * pix->priv) / 8);
+-	pix->field = V4L2_FIELD_NONE;
+-
+-	if (cmd == VIDIOC_TRY_FMT) {
+-		if (copy_to_user(arg, &format, sizeof(format)))
+-			return -EFAULT;
+-		return 0;
+-	}
+-
+-	if (cam->module_param.force_munmap)
+-		for (i = 0; i < cam->nbuffers; i++)
+-			if (cam->frame[i].vma_use_count) {
+-				DBG(3, "VIDIOC_S_FMT failed. Unmap the "
+-				       "buffers first.");
+-				return -EBUSY;
+-			}
+-
+-	if (cam->stream == STREAM_ON)
+-		if ((err = sn9c102_stream_interrupt(cam)))
+-			return err;
+-
+-	if (copy_to_user(arg, &format, sizeof(format))) {
+-		cam->stream = stream;
+-		return -EFAULT;
+-	}
+-
+-	if (cam->module_param.force_munmap  || cam->io == IO_READ)
+-		sn9c102_release_buffers(cam);
+-
+-	err += sn9c102_set_pix_format(cam, pix);
+-	err += sn9c102_set_crop(cam, &rect);
+-	if (s->set_pix_format)
+-		err += s->set_pix_format(cam, pix);
+-	if (s->set_crop)
+-		err += s->set_crop(cam, &rect);
+-	err += sn9c102_set_scale(cam, scale);
+-
+-	if (err) { /* atomic, no rollback in ioctl() */
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "VIDIOC_S_FMT failed because of hardware problems. To "
+-		       "use the camera, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -EIO;
+-	}
+-
+-	memcpy(pfmt, pix, sizeof(*pix));
+-	memcpy(&(s->_rect), &rect, sizeof(rect));
+-
+-	if ((cam->module_param.force_munmap  || cam->io == IO_READ) &&
+-	    nbuffers != sn9c102_request_buffers(cam, nbuffers, cam->io)) {
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "VIDIOC_S_FMT failed because of not enough memory. To "
+-		       "use the camera, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -ENOMEM;
+-	}
+-
+-	if (cam->io == IO_READ)
+-		sn9c102_empty_framequeues(cam);
+-	else if (cam->module_param.force_munmap)
+-		sn9c102_requeue_outqueue(cam);
+-
+-	cam->stream = stream;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_jpegcomp(struct sn9c102_device* cam, void __user * arg)
+-{
+-	if (copy_to_user(arg, &cam->compression, sizeof(cam->compression)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_jpegcomp(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_jpegcompression jc;
+-	const enum sn9c102_stream_state stream = cam->stream;
+-	int err = 0;
+-
+-	if (copy_from_user(&jc, arg, sizeof(jc)))
+-		return -EFAULT;
+-
+-	if (jc.quality != 0 && jc.quality != 1)
+-		return -EINVAL;
+-
+-	if (cam->stream == STREAM_ON)
+-		if ((err = sn9c102_stream_interrupt(cam)))
+-			return err;
+-
+-	err += sn9c102_set_compression(cam, &jc);
+-	if (err) { /* atomic, no rollback in ioctl() */
+-		cam->state |= DEV_MISCONFIGURED;
+-		DBG(1, "VIDIOC_S_JPEGCOMP failed because of hardware problems. "
+-		       "To use the camera, close and open %s again.",
+-		    video_device_node_name(cam->v4ldev));
+-		return -EIO;
+-	}
+-
+-	cam->compression.quality = jc.quality;
+-
+-	cam->stream = stream;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_reqbufs(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_requestbuffers rb;
+-	u32 i;
+-	int err;
+-
+-	if (copy_from_user(&rb, arg, sizeof(rb)))
+-		return -EFAULT;
+-
+-	if (rb.type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	    rb.memory != V4L2_MEMORY_MMAP)
+-		return -EINVAL;
+-
+-	if (cam->io == IO_READ) {
+-		DBG(3, "Close and open the device again to choose the mmap "
+-		       "I/O method");
+-		return -EBUSY;
+-	}
+-
+-	for (i = 0; i < cam->nbuffers; i++)
+-		if (cam->frame[i].vma_use_count) {
+-			DBG(3, "VIDIOC_REQBUFS failed. Previous buffers are "
+-			       "still mapped.");
+-			return -EBUSY;
+-		}
+-
+-	if (cam->stream == STREAM_ON)
+-		if ((err = sn9c102_stream_interrupt(cam)))
+-			return err;
+-
+-	sn9c102_empty_framequeues(cam);
+-
+-	sn9c102_release_buffers(cam);
+-	if (rb.count)
+-		rb.count = sn9c102_request_buffers(cam, rb.count, IO_MMAP);
+-
+-	if (copy_to_user(arg, &rb, sizeof(rb))) {
+-		sn9c102_release_buffers(cam);
+-		cam->io = IO_NONE;
+-		return -EFAULT;
+-	}
+-
+-	cam->io = rb.count ? IO_MMAP : IO_NONE;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_querybuf(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_buffer b;
+-
+-	if (copy_from_user(&b, arg, sizeof(b)))
+-		return -EFAULT;
+-
+-	if (b.type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	    b.index >= cam->nbuffers || cam->io != IO_MMAP)
+-		return -EINVAL;
+-
+-	b = cam->frame[b.index].buf;
+-
+-	if (cam->frame[b.index].vma_use_count)
+-		b.flags |= V4L2_BUF_FLAG_MAPPED;
+-
+-	if (cam->frame[b.index].state == F_DONE)
+-		b.flags |= V4L2_BUF_FLAG_DONE;
+-	else if (cam->frame[b.index].state != F_UNUSED)
+-		b.flags |= V4L2_BUF_FLAG_QUEUED;
+-
+-	if (copy_to_user(arg, &b, sizeof(b)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_qbuf(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_buffer b;
+-	unsigned long lock_flags;
+-
+-	if (copy_from_user(&b, arg, sizeof(b)))
+-		return -EFAULT;
+-
+-	if (b.type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	    b.index >= cam->nbuffers || cam->io != IO_MMAP)
+-		return -EINVAL;
+-
+-	if (cam->frame[b.index].state != F_UNUSED)
+-		return -EINVAL;
+-
+-	cam->frame[b.index].state = F_QUEUED;
+-
+-	spin_lock_irqsave(&cam->queue_lock, lock_flags);
+-	list_add_tail(&cam->frame[b.index].frame, &cam->inqueue);
+-	spin_unlock_irqrestore(&cam->queue_lock, lock_flags);
+-
+-	PDBGG("Frame #%lu queued", (unsigned long)b.index);
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_dqbuf(struct sn9c102_device* cam, struct file* filp,
+-		     void __user * arg)
+-{
+-	struct v4l2_buffer b;
+-	struct sn9c102_frame_t *f;
+-	unsigned long lock_flags;
+-	long timeout;
+-	int err = 0;
+-
+-	if (copy_from_user(&b, arg, sizeof(b)))
+-		return -EFAULT;
+-
+-	if (b.type != V4L2_BUF_TYPE_VIDEO_CAPTURE || cam->io != IO_MMAP)
+-		return -EINVAL;
+-
+-	if (list_empty(&cam->outqueue)) {
+-		if (cam->stream == STREAM_OFF)
+-			return -EINVAL;
+-		if (filp->f_flags & O_NONBLOCK)
+-			return -EAGAIN;
+-		if (!cam->module_param.frame_timeout) {
+-			err = wait_event_interruptible
+-			      ( cam->wait_frame,
+-				(!list_empty(&cam->outqueue)) ||
+-				(cam->state & DEV_DISCONNECTED) ||
+-				(cam->state & DEV_MISCONFIGURED) );
+-			if (err)
+-				return err;
+-		} else {
+-			timeout = wait_event_interruptible_timeout
+-				  ( cam->wait_frame,
+-				    (!list_empty(&cam->outqueue)) ||
+-				    (cam->state & DEV_DISCONNECTED) ||
+-				    (cam->state & DEV_MISCONFIGURED),
+-				    cam->module_param.frame_timeout *
+-				    1000 * msecs_to_jiffies(1) );
+-			if (timeout < 0)
+-				return timeout;
+-			else if (timeout == 0 &&
+-				 !(cam->state & DEV_DISCONNECTED)) {
+-				DBG(1, "Video frame timeout elapsed");
+-				return -EIO;
+-			}
+-		}
+-		if (cam->state & DEV_DISCONNECTED)
+-			return -ENODEV;
+-		if (cam->state & DEV_MISCONFIGURED)
+-			return -EIO;
+-	}
+-
+-	spin_lock_irqsave(&cam->queue_lock, lock_flags);
+-	f = list_entry(cam->outqueue.next, struct sn9c102_frame_t, frame);
+-	list_del(cam->outqueue.next);
+-	spin_unlock_irqrestore(&cam->queue_lock, lock_flags);
+-
+-	f->state = F_UNUSED;
+-
+-	b = f->buf;
+-	if (f->vma_use_count)
+-		b.flags |= V4L2_BUF_FLAG_MAPPED;
+-
+-	if (copy_to_user(arg, &b, sizeof(b)))
+-		return -EFAULT;
+-
+-	PDBGG("Frame #%lu dequeued", (unsigned long)f->buf.index);
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_streamon(struct sn9c102_device* cam, void __user * arg)
+-{
+-	int type;
+-
+-	if (copy_from_user(&type, arg, sizeof(type)))
+-		return -EFAULT;
+-
+-	if (type != V4L2_BUF_TYPE_VIDEO_CAPTURE || cam->io != IO_MMAP)
+-		return -EINVAL;
+-
+-	cam->stream = STREAM_ON;
+-
+-	DBG(3, "Stream on");
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_streamoff(struct sn9c102_device* cam, void __user * arg)
+-{
+-	int type, err;
+-
+-	if (copy_from_user(&type, arg, sizeof(type)))
+-		return -EFAULT;
+-
+-	if (type != V4L2_BUF_TYPE_VIDEO_CAPTURE || cam->io != IO_MMAP)
+-		return -EINVAL;
+-
+-	if (cam->stream == STREAM_ON)
+-		if ((err = sn9c102_stream_interrupt(cam)))
+-			return err;
+-
+-	sn9c102_empty_framequeues(cam);
+-
+-	DBG(3, "Stream off");
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_parm(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_streamparm sp;
+-
+-	if (copy_from_user(&sp, arg, sizeof(sp)))
+-		return -EFAULT;
+-
+-	if (sp.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	sp.parm.capture.extendedmode = 0;
+-	sp.parm.capture.readbuffers = cam->nreadbuffers;
+-
+-	if (copy_to_user(arg, &sp, sizeof(sp)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_parm(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_streamparm sp;
+-
+-	if (copy_from_user(&sp, arg, sizeof(sp)))
+-		return -EFAULT;
+-
+-	if (sp.type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	sp.parm.capture.extendedmode = 0;
+-
+-	if (sp.parm.capture.readbuffers == 0)
+-		sp.parm.capture.readbuffers = cam->nreadbuffers;
+-
+-	if (sp.parm.capture.readbuffers > SN9C102_MAX_FRAMES)
+-		sp.parm.capture.readbuffers = SN9C102_MAX_FRAMES;
+-
+-	if (copy_to_user(arg, &sp, sizeof(sp)))
+-		return -EFAULT;
+-
+-	cam->nreadbuffers = sp.parm.capture.readbuffers;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_enumaudio(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_audio audio;
+-
+-	if (cam->bridge == BRIDGE_SN9C101 || cam->bridge == BRIDGE_SN9C102)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&audio, arg, sizeof(audio)))
+-		return -EFAULT;
+-
+-	if (audio.index != 0)
+-		return -EINVAL;
+-
+-	strcpy(audio.name, "Microphone");
+-	audio.capability = 0;
+-	audio.mode = 0;
+-
+-	if (copy_to_user(arg, &audio, sizeof(audio)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_g_audio(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_audio audio;
+-
+-	if (cam->bridge == BRIDGE_SN9C101 || cam->bridge == BRIDGE_SN9C102)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&audio, arg, sizeof(audio)))
+-		return -EFAULT;
+-
+-	memset(&audio, 0, sizeof(audio));
+-	strcpy(audio.name, "Microphone");
+-
+-	if (copy_to_user(arg, &audio, sizeof(audio)))
+-		return -EFAULT;
+-
+-	return 0;
+-}
+-
+-
+-static int
+-sn9c102_vidioc_s_audio(struct sn9c102_device* cam, void __user * arg)
+-{
+-	struct v4l2_audio audio;
+-
+-	if (cam->bridge == BRIDGE_SN9C101 || cam->bridge == BRIDGE_SN9C102)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&audio, arg, sizeof(audio)))
+-		return -EFAULT;
+-
+-	if (audio.index != 0)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-
+-static long sn9c102_ioctl_v4l2(struct file *filp,
+-			      unsigned int cmd, void __user *arg)
+-{
+-	struct sn9c102_device *cam = video_drvdata(filp);
+-
+-	switch (cmd) {
+-
+-	case VIDIOC_QUERYCAP:
+-		return sn9c102_vidioc_querycap(cam, arg);
+-
+-	case VIDIOC_ENUMINPUT:
+-		return sn9c102_vidioc_enuminput(cam, arg);
+-
+-	case VIDIOC_G_INPUT:
+-		return sn9c102_vidioc_g_input(cam, arg);
+-
+-	case VIDIOC_S_INPUT:
+-		return sn9c102_vidioc_s_input(cam, arg);
+-
+-	case VIDIOC_QUERYCTRL:
+-		return sn9c102_vidioc_query_ctrl(cam, arg);
+-
+-	case VIDIOC_G_CTRL:
+-		return sn9c102_vidioc_g_ctrl(cam, arg);
+-
+-	case VIDIOC_S_CTRL:
+-		return sn9c102_vidioc_s_ctrl(cam, arg);
+-
+-	case VIDIOC_CROPCAP:
+-		return sn9c102_vidioc_cropcap(cam, arg);
+-
+-	case VIDIOC_G_CROP:
+-		return sn9c102_vidioc_g_crop(cam, arg);
+-
+-	case VIDIOC_S_CROP:
+-		return sn9c102_vidioc_s_crop(cam, arg);
+-
+-	case VIDIOC_ENUM_FRAMESIZES:
+-		return sn9c102_vidioc_enum_framesizes(cam, arg);
+-
+-	case VIDIOC_ENUM_FMT:
+-		return sn9c102_vidioc_enum_fmt(cam, arg);
+-
+-	case VIDIOC_G_FMT:
+-		return sn9c102_vidioc_g_fmt(cam, arg);
+-
+-	case VIDIOC_TRY_FMT:
+-	case VIDIOC_S_FMT:
+-		return sn9c102_vidioc_try_s_fmt(cam, cmd, arg);
+-
+-	case VIDIOC_G_JPEGCOMP:
+-		return sn9c102_vidioc_g_jpegcomp(cam, arg);
+-
+-	case VIDIOC_S_JPEGCOMP:
+-		return sn9c102_vidioc_s_jpegcomp(cam, arg);
+-
+-	case VIDIOC_REQBUFS:
+-		return sn9c102_vidioc_reqbufs(cam, arg);
+-
+-	case VIDIOC_QUERYBUF:
+-		return sn9c102_vidioc_querybuf(cam, arg);
+-
+-	case VIDIOC_QBUF:
+-		return sn9c102_vidioc_qbuf(cam, arg);
+-
+-	case VIDIOC_DQBUF:
+-		return sn9c102_vidioc_dqbuf(cam, filp, arg);
+-
+-	case VIDIOC_STREAMON:
+-		return sn9c102_vidioc_streamon(cam, arg);
+-
+-	case VIDIOC_STREAMOFF:
+-		return sn9c102_vidioc_streamoff(cam, arg);
+-
+-	case VIDIOC_G_PARM:
+-		return sn9c102_vidioc_g_parm(cam, arg);
+-
+-	case VIDIOC_S_PARM:
+-		return sn9c102_vidioc_s_parm(cam, arg);
+-
+-	case VIDIOC_ENUMAUDIO:
+-		return sn9c102_vidioc_enumaudio(cam, arg);
+-
+-	case VIDIOC_G_AUDIO:
+-		return sn9c102_vidioc_g_audio(cam, arg);
+-
+-	case VIDIOC_S_AUDIO:
+-		return sn9c102_vidioc_s_audio(cam, arg);
+-
+-	default:
+-		return -ENOTTY;
+-
+-	}
+-}
+-
+-
+-static long sn9c102_ioctl(struct file *filp,
+-			 unsigned int cmd, unsigned long arg)
+-{
+-	struct sn9c102_device *cam = video_drvdata(filp);
+-	int err = 0;
+-
+-	if (mutex_lock_interruptible(&cam->fileop_mutex))
+-		return -ERESTARTSYS;
+-
+-	if (cam->state & DEV_DISCONNECTED) {
+-		DBG(1, "Device not present");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -ENODEV;
+-	}
+-
+-	if (cam->state & DEV_MISCONFIGURED) {
+-		DBG(1, "The camera is misconfigured. Close and open it "
+-		       "again.");
+-		mutex_unlock(&cam->fileop_mutex);
+-		return -EIO;
+-	}
+-
+-	V4LDBG(3, "sn9c102", cmd);
+-
+-	err = sn9c102_ioctl_v4l2(filp, cmd, (void __user *)arg);
+-
+-	mutex_unlock(&cam->fileop_mutex);
+-
+-	return err;
+-}
+-
+-/*****************************************************************************/
+-
+-static const struct v4l2_file_operations sn9c102_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sn9c102_open,
+-	.release = sn9c102_release,
+-	.unlocked_ioctl = sn9c102_ioctl,
+-	.read = sn9c102_read,
+-	.poll = sn9c102_poll,
+-	.mmap = sn9c102_mmap,
+-};
+-
+-/*****************************************************************************/
+-
+-/* It exists a single interface only. We do not need to validate anything. */
+-static int
+-sn9c102_usb_probe(struct usb_interface* intf, const struct usb_device_id* id)
+-{
+-	struct usb_device *udev = interface_to_usbdev(intf);
+-	struct sn9c102_device* cam;
+-	static unsigned int dev_nr;
+-	unsigned int i;
+-	int err = 0, r;
+-
+-	if (!(cam = kzalloc(sizeof(struct sn9c102_device), GFP_KERNEL)))
+-		return -ENOMEM;
+-
+-	cam->usbdev = udev;
+-
+-	if (!(cam->control_buffer = kzalloc(8, GFP_KERNEL))) {
+-		DBG(1, "kzalloc() failed");
+-		err = -ENOMEM;
+-		goto fail;
+-	}
+-
+-	if (!(cam->v4ldev = video_device_alloc())) {
+-		DBG(1, "video_device_alloc() failed");
+-		err = -ENOMEM;
+-		goto fail;
+-	}
+-
+-	r = sn9c102_read_reg(cam, 0x00);
+-	if (r < 0 || (r != 0x10 && r != 0x11 && r != 0x12)) {
+-		DBG(1, "Sorry, this is not a SN9C1xx-based camera "
+-		       "(vid:pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+-		err = -ENODEV;
+-		goto fail;
+-	}
+-
+-	cam->bridge = id->driver_info;
+-	switch (cam->bridge) {
+-	case BRIDGE_SN9C101:
+-	case BRIDGE_SN9C102:
+-		DBG(2, "SN9C10[12] PC Camera Controller detected "
+-		       "(vid:pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+-		break;
+-	case BRIDGE_SN9C103:
+-		DBG(2, "SN9C103 PC Camera Controller detected "
+-		       "(vid:pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+-		break;
+-	case BRIDGE_SN9C105:
+-		DBG(2, "SN9C105 PC Camera Controller detected "
+-		       "(vid:pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+-		break;
+-	case BRIDGE_SN9C120:
+-		DBG(2, "SN9C120 PC Camera Controller detected "
+-		       "(vid:pid 0x%04X:0x%04X)", id->idVendor, id->idProduct);
+-		break;
+-	}
+-
+-	for  (i = 0; i < ARRAY_SIZE(sn9c102_sensor_table); i++) {
+-		err = sn9c102_sensor_table[i](cam);
+-		if (!err)
+-			break;
+-	}
+-
+-	if (!err) {
+-		DBG(2, "%s image sensor detected", cam->sensor.name);
+-		DBG(3, "Support for %s maintained by %s",
+-		    cam->sensor.name, cam->sensor.maintainer);
+-	} else {
+-		DBG(1, "No supported image sensor detected for this bridge");
+-		err = -ENODEV;
+-		goto fail;
+-	}
+-
+-	if (!(cam->bridge & cam->sensor.supported_bridge)) {
+-		DBG(1, "Bridge not supported");
+-		err = -ENODEV;
+-		goto fail;
+-	}
+-
+-	if (sn9c102_init(cam)) {
+-		DBG(1, "Initialization failed. I will retry on open().");
+-		cam->state |= DEV_MISCONFIGURED;
+-	}
+-
+-	strcpy(cam->v4ldev->name, "SN9C1xx PC Camera");
+-	cam->v4ldev->fops = &sn9c102_fops;
+-	cam->v4ldev->release = video_device_release;
+-	cam->v4ldev->parent = &udev->dev;
+-
+-	init_completion(&cam->probe);
+-
+-	err = video_register_device(cam->v4ldev, VFL_TYPE_GRABBER,
+-				    video_nr[dev_nr]);
+-	if (err) {
+-		DBG(1, "V4L2 device registration failed");
+-		if (err == -ENFILE && video_nr[dev_nr] == -1)
+-			DBG(1, "Free /dev/videoX node not found");
+-		video_nr[dev_nr] = -1;
+-		dev_nr = (dev_nr < SN9C102_MAX_DEVICES-1) ? dev_nr+1 : 0;
+-		complete_all(&cam->probe);
+-		goto fail;
+-	}
+-
+-	DBG(2, "V4L2 device registered as %s",
+-	    video_device_node_name(cam->v4ldev));
+-
+-	video_set_drvdata(cam->v4ldev, cam);
+-	cam->module_param.force_munmap = force_munmap[dev_nr];
+-	cam->module_param.frame_timeout = frame_timeout[dev_nr];
+-
+-	dev_nr = (dev_nr < SN9C102_MAX_DEVICES-1) ? dev_nr+1 : 0;
+-
+-#ifdef CONFIG_VIDEO_ADV_DEBUG
+-	err = sn9c102_create_sysfs(cam);
+-	if (!err)
+-		DBG(2, "Optional device control through 'sysfs' "
+-		       "interface ready");
+-	else
+-		DBG(2, "Failed to create optional 'sysfs' interface for "
+-		       "device controlling. Error #%d", err);
+-#else
+-	DBG(2, "Optional device control through 'sysfs' interface disabled");
+-	DBG(3, "Compile the kernel with the 'CONFIG_VIDEO_ADV_DEBUG' "
+-	       "configuration option to enable it.");
+-#endif
+-
+-	usb_set_intfdata(intf, cam);
+-	kref_init(&cam->kref);
+-	usb_get_dev(cam->usbdev);
+-
+-	complete_all(&cam->probe);
+-
+-	return 0;
+-
+-fail:
+-	if (cam) {
+-		kfree(cam->control_buffer);
+-		if (cam->v4ldev)
+-			video_device_release(cam->v4ldev);
+-		kfree(cam);
+-	}
+-	return err;
+-}
+-
+-
+-static void sn9c102_usb_disconnect(struct usb_interface* intf)
+-{
+-	struct sn9c102_device* cam;
+-
+-	down_write(&sn9c102_dev_lock);
+-
+-	cam = usb_get_intfdata(intf);
+-
+-	DBG(2, "Disconnecting %s...", cam->v4ldev->name);
+-
+-	if (cam->users) {
+-		DBG(2, "Device %s is open! Deregistration and memory "
+-		       "deallocation are deferred.",
+-		    video_device_node_name(cam->v4ldev));
+-		cam->state |= DEV_MISCONFIGURED;
+-		sn9c102_stop_transfer(cam);
+-		cam->state |= DEV_DISCONNECTED;
+-		wake_up_interruptible(&cam->wait_frame);
+-		wake_up(&cam->wait_stream);
+-	} else
+-		cam->state |= DEV_DISCONNECTED;
+-
+-	wake_up_interruptible_all(&cam->wait_open);
+-
+-	kref_put(&cam->kref, sn9c102_release_resources);
+-
+-	up_write(&sn9c102_dev_lock);
+-}
+-
+-
+-static struct usb_driver sn9c102_usb_driver = {
+-	.name =       "sn9c102",
+-	.id_table =   sn9c102_id_table,
+-	.probe =      sn9c102_usb_probe,
+-	.disconnect = sn9c102_usb_disconnect,
+-};
+-
+-module_usb_driver(sn9c102_usb_driver);
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/stk1160/stk1160-ac97.c s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/stk1160/stk1160-ac97.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/stk1160/stk1160-ac97.c	2014-08-15 11:43:45.235640565 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/stk1160/stk1160-ac97.c	2014-08-15 11:44:01.903723217 +0800
+@@ -98,19 +98,25 @@
+ 	 * Just want a card to access ac96 controls,
+ 	 * the actual capture interface will be handled by snd-usb-audio
+ 	 */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	rc = snd_card_create(SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
+ 			      THIS_MODULE, 0, &card);
++#else
++	rc = snd_card_new(dev->dev, SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
++			      THIS_MODULE, 0, &card);
++#endif
+ 	if (rc < 0)
+ 		return rc;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, dev->dev);
+-
++#endif
+ 	/* TODO: I'm not sure where should I get these names :-( */
+ 	snprintf(card->shortname, sizeof(card->shortname),
+ 		 "stk1160-mixer");
+ 	snprintf(card->longname, sizeof(card->longname),
+ 		 "stk1160 ac97 codec mixer control");
+-	strncpy(card->driver, dev->dev->driver->name, sizeof(card->driver));
++	strlcpy(card->driver, dev->dev->driver->name, sizeof(card->driver));
+ 
+ 	rc = snd_ac97_bus(card, 0, &stk1160_ac97_ops, NULL, &ac97_bus);
+ 	if (rc)
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/tlg2300/pd-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/tlg2300/pd-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/tlg2300/pd-alsa.c	2014-08-15 11:43:45.243640605 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/tlg2300/pd-alsa.c	2014-08-15 11:44:01.903723217 +0800
+@@ -300,7 +300,12 @@
+ 	struct snd_pcm *pcm;
+ 	int ret;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	ret = snd_card_create(-1, "Telegent", THIS_MODULE, 0, &card);
++#else
++	ret = snd_card_new(&p->interface->dev, -1, "Telegent",
++			   THIS_MODULE, 0, &card);
++#endif
+ 	if (ret != 0)
+ 		return ret;
+ 
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/tm6000/tm6000-alsa.c s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/tm6000/tm6000-alsa.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/drivers/media/usb/tm6000/tm6000-alsa.c	2014-08-15 11:43:45.263640704 +0800
++++ s2-liplianin-v39+rc8bc280/linux/drivers/media/usb/tm6000/tm6000-alsa.c	2014-08-15 11:44:01.903723217 +0800
+@@ -431,7 +431,12 @@
+ 	if (!enable[devnr])
+ 		return -ENOENT;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	rc = snd_card_create(index[devnr], "tm6000", THIS_MODULE, 0, &card);
++#else
++	rc = snd_card_new(&dev->udev->dev, index[devnr], "tm6000",
++			  THIS_MODULE, 0, &card);
++#endif
+ 	if (rc < 0) {
+ 		snd_printk(KERN_ERR "cannot create card instance %d\n", devnr);
+ 		return rc;
+@@ -445,8 +450,9 @@
+ 		le16_to_cpu(dev->udev->descriptor.idVendor),
+ 		le16_to_cpu(dev->udev->descriptor.idProduct));
+ 	snd_component_add(card, component);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	snd_card_set_dev(card, &dev->udev->dev);
+-
++#endif
+ 	chip = kzalloc(sizeof(struct snd_tm6000_card), GFP_KERNEL);
+ 	if (!chip) {
+ 		rc = -ENOMEM;
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/include/media/si476x.h s2-liplianin-v39+rc8bc280/linux/include/media/si476x.h
+--- s2-liplianin-v39+rc8bc280.orig/linux/include/media/si476x.h	2014-08-15 11:43:45.099639890 +0800
++++ s2-liplianin-v39+rc8bc280/linux/include/media/si476x.h	2014-08-15 11:46:10.300359902 +0800
+@@ -23,244 +23,7 @@
+ #include <linux/types.h>
+ #include <linux/videodev2.h>
+ 
+-struct si476x_device;
+-
+-/* It is possible to select one of the four adresses using pins A0
+- * and A1 on SI476x */
+-#define SI476X_I2C_ADDR_1	0x60
+-#define SI476X_I2C_ADDR_2	0x61
+-#define SI476X_I2C_ADDR_3	0x62
+-#define SI476X_I2C_ADDR_4	0x63
+-
+-enum si476x_iqclk_config {
+-	SI476X_IQCLK_NOOP = 0,
+-	SI476X_IQCLK_TRISTATE = 1,
+-	SI476X_IQCLK_IQ = 21,
+-};
+-enum si476x_iqfs_config {
+-	SI476X_IQFS_NOOP = 0,
+-	SI476X_IQFS_TRISTATE = 1,
+-	SI476X_IQFS_IQ = 21,
+-};
+-enum si476x_iout_config {
+-	SI476X_IOUT_NOOP = 0,
+-	SI476X_IOUT_TRISTATE = 1,
+-	SI476X_IOUT_OUTPUT = 22,
+-};
+-enum si476x_qout_config {
+-	SI476X_QOUT_NOOP = 0,
+-	SI476X_QOUT_TRISTATE = 1,
+-	SI476X_QOUT_OUTPUT = 22,
+-};
+-
+-enum si476x_dclk_config {
+-	SI476X_DCLK_NOOP      = 0,
+-	SI476X_DCLK_TRISTATE  = 1,
+-	SI476X_DCLK_DAUDIO    = 10,
+-};
+-
+-enum si476x_dfs_config {
+-	SI476X_DFS_NOOP      = 0,
+-	SI476X_DFS_TRISTATE  = 1,
+-	SI476X_DFS_DAUDIO    = 10,
+-};
+-
+-enum si476x_dout_config {
+-	SI476X_DOUT_NOOP       = 0,
+-	SI476X_DOUT_TRISTATE   = 1,
+-	SI476X_DOUT_I2S_OUTPUT = 12,
+-	SI476X_DOUT_I2S_INPUT  = 13,
+-};
+-
+-enum si476x_xout_config {
+-	SI476X_XOUT_NOOP        = 0,
+-	SI476X_XOUT_TRISTATE    = 1,
+-	SI476X_XOUT_I2S_INPUT   = 13,
+-	SI476X_XOUT_MODE_SELECT = 23,
+-};
+-
+-
+-enum si476x_icin_config {
+-	SI476X_ICIN_NOOP	= 0,
+-	SI476X_ICIN_TRISTATE	= 1,
+-	SI476X_ICIN_GPO1_HIGH	= 2,
+-	SI476X_ICIN_GPO1_LOW	= 3,
+-	SI476X_ICIN_IC_LINK	= 30,
+-};
+-
+-enum si476x_icip_config {
+-	SI476X_ICIP_NOOP	= 0,
+-	SI476X_ICIP_TRISTATE	= 1,
+-	SI476X_ICIP_GPO2_HIGH	= 2,
+-	SI476X_ICIP_GPO2_LOW	= 3,
+-	SI476X_ICIP_IC_LINK	= 30,
+-};
+-
+-enum si476x_icon_config {
+-	SI476X_ICON_NOOP	= 0,
+-	SI476X_ICON_TRISTATE	= 1,
+-	SI476X_ICON_I2S		= 10,
+-	SI476X_ICON_IC_LINK	= 30,
+-};
+-
+-enum si476x_icop_config {
+-	SI476X_ICOP_NOOP	= 0,
+-	SI476X_ICOP_TRISTATE	= 1,
+-	SI476X_ICOP_I2S		= 10,
+-	SI476X_ICOP_IC_LINK	= 30,
+-};
+-
+-
+-enum si476x_lrout_config {
+-	SI476X_LROUT_NOOP	= 0,
+-	SI476X_LROUT_TRISTATE	= 1,
+-	SI476X_LROUT_AUDIO	= 2,
+-	SI476X_LROUT_MPX	= 3,
+-};
+-
+-
+-enum si476x_intb_config {
+-	SI476X_INTB_NOOP     = 0,
+-	SI476X_INTB_TRISTATE = 1,
+-	SI476X_INTB_DAUDIO   = 10,
+-	SI476X_INTB_IRQ      = 40,
+-};
+-
+-enum si476x_a1_config {
+-	SI476X_A1_NOOP     = 0,
+-	SI476X_A1_TRISTATE = 1,
+-	SI476X_A1_IRQ      = 40,
+-};
+-
+-enum si476x_part_revisions {
+-	SI476X_REVISION_A10 = 0,
+-	SI476X_REVISION_A20 = 1,
+-	SI476X_REVISION_A30 = 2,
+-};
+-
+-struct si476x_pinmux {
+-	enum si476x_dclk_config  dclk;
+-	enum si476x_dfs_config   dfs;
+-	enum si476x_dout_config  dout;
+-	enum si476x_xout_config  xout;
+-
+-	enum si476x_iqclk_config iqclk;
+-	enum si476x_iqfs_config  iqfs;
+-	enum si476x_iout_config  iout;
+-	enum si476x_qout_config  qout;
+-
+-	enum si476x_icin_config  icin;
+-	enum si476x_icip_config  icip;
+-	enum si476x_icon_config  icon;
+-	enum si476x_icop_config  icop;
+-
+-	enum si476x_lrout_config lrout;
+-
+-	enum si476x_intb_config  intb;
+-	enum si476x_a1_config    a1;
+-};
+-
+-/**
+- * enum si476x_phase_diversity_mode - possbile phase diversity modes
+- * for SI4764/5/6/7 chips.
+- *
+- * @SI476X_PHDIV_DISABLED:		Phase diversity feature is
+- *					disabled.
+- * @SI476X_PHDIV_PRIMARY_COMBINING:	Tuner works as a primary tuner
+- *					in combination with a
+- *					secondary one.
+- * @SI476X_PHDIV_PRIMARY_ANTENNA:	Tuner works as a primary tuner
+- *					using only its own antenna.
+- * @SI476X_PHDIV_SECONDARY_ANTENNA:	Tuner works as a primary tuner
+- *					usning seconary tuner's antenna.
+- * @SI476X_PHDIV_SECONDARY_COMBINING:	Tuner works as a secondary
+- *					tuner in combination with the
+- *					primary one.
+- */
+-enum si476x_phase_diversity_mode {
+-	SI476X_PHDIV_DISABLED			= 0,
+-	SI476X_PHDIV_PRIMARY_COMBINING		= 1,
+-	SI476X_PHDIV_PRIMARY_ANTENNA		= 2,
+-	SI476X_PHDIV_SECONDARY_ANTENNA		= 3,
+-	SI476X_PHDIV_SECONDARY_COMBINING	= 5,
+-};
+-
+-enum si476x_ibias6x {
+-	SI476X_IBIAS6X_OTHER			= 0,
+-	SI476X_IBIAS6X_RCVR1_NON_4MHZ_CLK	= 1,
+-};
+-
+-enum si476x_xstart {
+-	SI476X_XSTART_MULTIPLE_TUNER	= 0x11,
+-	SI476X_XSTART_NORMAL		= 0x77,
+-};
+-
+-enum si476x_freq {
+-	SI476X_FREQ_4_MHZ		= 0,
+-	SI476X_FREQ_37P209375_MHZ	= 1,
+-	SI476X_FREQ_36P4_MHZ		= 2,
+-	SI476X_FREQ_37P8_MHZ		=  3,
+-};
+-
+-enum si476x_xmode {
+-	SI476X_XMODE_CRYSTAL_RCVR1	= 1,
+-	SI476X_XMODE_EXT_CLOCK		= 2,
+-	SI476X_XMODE_CRYSTAL_RCVR2_3	= 3,
+-};
+-
+-enum si476x_xbiashc {
+-	SI476X_XBIASHC_SINGLE_RECEIVER = 0,
+-	SI476X_XBIASHC_MULTIPLE_RECEIVER = 1,
+-};
+-
+-enum si476x_xbias {
+-	SI476X_XBIAS_RCVR2_3	= 0,
+-	SI476X_XBIAS_4MHZ_RCVR1 = 3,
+-	SI476X_XBIAS_RCVR1	= 7,
+-};
+-
+-enum si476x_func {
+-	SI476X_FUNC_BOOTLOADER	= 0,
+-	SI476X_FUNC_FM_RECEIVER = 1,
+-	SI476X_FUNC_AM_RECEIVER = 2,
+-	SI476X_FUNC_WB_RECEIVER = 3,
+-};
+-
+-
+-/**
+- * @xcload: Selects the amount of additional on-chip capacitance to
+- *          be connected between XTAL1 and gnd and between XTAL2 and
+- *          GND. One half of the capacitance value shown here is the
+- *          additional load capacitance presented to the xtal. The
+- *          minimum step size is 0.277 pF. Recommended value is 0x28
+- *          but it will be layout dependent. Range is 0–0x3F i.e.
+- *          (0–16.33 pF)
+- * @ctsien: enable CTSINT(interrupt request when CTS condition
+- *          arises) when set
+- * @intsel: when set A1 pin becomes the interrupt pin; otherwise,
+- *          INTB is the interrupt pin
+- * @func:   selects the boot function of the device. I.e.
+- *          SI476X_BOOTLOADER  - Boot loader
+- *          SI476X_FM_RECEIVER - FM receiver
+- *          SI476X_AM_RECEIVER - AM receiver
+- *          SI476X_WB_RECEIVER - Weatherband receiver
+- * @freq:   oscillator's crystal frequency:
+- *          SI476X_XTAL_37P209375_MHZ - 37.209375 Mhz
+- *          SI476X_XTAL_36P4_MHZ      - 36.4 Mhz
+- *          SI476X_XTAL_37P8_MHZ      - 37.8 Mhz
+- */
+-struct si476x_power_up_args {
+-	enum si476x_ibias6x ibias6x;
+-	enum si476x_xstart  xstart;
+-	u8   xcload;
+-	bool fastboot;
+-	enum si476x_xbiashc xbiashc;
+-	enum si476x_xbias   xbias;
+-	enum si476x_func    func;
+-	enum si476x_freq    freq;
+-	enum si476x_xmode   xmode;
+-};
+-
++#include <linux/mfd/si476x-reports.h>
+ 
+ enum si476x_ctrl_id {
+ 	V4L2_CID_SI476X_RSSI_THRESHOLD	= (V4L2_CID_USER_SI476X_BASE + 1),
+@@ -271,156 +34,4 @@
+ 	V4L2_CID_SI476X_INTERCHIP_LINK	= (V4L2_CID_USER_SI476X_BASE + 6),
+ };
+ 
+-/*
+- * Platform dependent definition
+- */
+-struct si476x_platform_data {
+-	int gpio_reset; /* < 0 if not used */
+-
+-	struct si476x_power_up_args power_up_parameters;
+-	enum si476x_phase_diversity_mode diversity_mode;
+-
+-	struct si476x_pinmux pinmux;
+-};
+-
+-/**
+- * struct si476x_rsq_status - structure containing received signal
+- * quality
+- * @multhint:   Multipath Detect High.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_MULTIPATH_HIGH_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_MULTIPATH_HIGH_THRESHOLD
+- * @multlint:   Multipath Detect Low.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_MULTIPATH_LOW_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_MULTIPATH_LOW_THRESHOLD
+- * @snrhint:    SNR Detect High.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_SNR_HIGH_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_SNR_HIGH_THRESHOLD
+- * @snrlint:    SNR Detect Low.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_SNR_LOW_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_SNR_LOW_THRESHOLD
+- * @rssihint:   RSSI Detect High.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_RSSI_HIGH_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_RSSI_HIGH_THRESHOLD
+- * @rssilint:   RSSI Detect Low.
+- *              true  - Indicatedes that the value is below
+- *                      FM_RSQ_RSSI_LOW_THRESHOLD
+- *              false - Indicatedes that the value is above
+- *                      FM_RSQ_RSSI_LOW_THRESHOLD
+- * @bltf:       Band Limit.
+- *              Set if seek command hits the band limit or wrapped to
+- *              the original frequency.
+- * @snr_ready:  SNR measurement in progress.
+- * @rssiready:  RSSI measurement in progress.
+- * @afcrl:      Set if FREQOFF >= MAX_TUNE_ERROR
+- * @valid:      Set if the channel is valid
+- *               rssi < FM_VALID_RSSI_THRESHOLD
+- *               snr  < FM_VALID_SNR_THRESHOLD
+- *               tune_error < FM_VALID_MAX_TUNE_ERROR
+- * @readfreq:   Current tuned frequency.
+- * @freqoff:    Signed frequency offset.
+- * @rssi:       Received Signal Strength Indicator(dBuV).
+- * @snr:        RF SNR Indicator(dB).
+- * @lassi:
+- * @hassi:      Low/High side Adjacent(100 kHz) Channel Strength Indicator
+- * @mult:       Multipath indicator
+- * @dev:        Who knows? But values may vary.
+- * @readantcap: Antenna tuning capacity value.
+- * @assi:       Adjacent Channel(+/- 200kHz) Strength Indicator
+- * @usn:        Ultrasonic Noise Inticator in -DBFS
+- */
+-struct si476x_rsq_status_report {
+-	__u8 multhint, multlint;
+-	__u8 snrhint,  snrlint;
+-	__u8 rssihint, rssilint;
+-	__u8 bltf;
+-	__u8 snr_ready;
+-	__u8 rssiready;
+-	__u8 injside;
+-	__u8 afcrl;
+-	__u8 valid;
+-
+-	__u16 readfreq;
+-	__s8  freqoff;
+-	__s8  rssi;
+-	__s8  snr;
+-	__s8  issi;
+-	__s8  lassi, hassi;
+-	__s8  mult;
+-	__u8  dev;
+-	__u16 readantcap;
+-	__s8  assi;
+-	__s8  usn;
+-
+-	__u8 pilotdev;
+-	__u8 rdsdev;
+-	__u8 assidev;
+-	__u8 strongdev;
+-	__u16 rdspi;
+-} __packed;
+-
+-/**
+- * si476x_acf_status_report - ACF report results
+- *
+- * @blend_int: If set, indicates that stereo separation has crossed
+- * below the blend threshold as set by FM_ACF_BLEND_THRESHOLD
+- * @hblend_int: If set, indicates that HiBlend cutoff frequency is
+- * lower than threshold as set by FM_ACF_HBLEND_THRESHOLD
+- * @hicut_int:  If set, indicates that HiCut cutoff frequency is lower
+- * than the threshold set by ACF_
+-
+- */
+-struct si476x_acf_status_report {
+-	__u8 blend_int;
+-	__u8 hblend_int;
+-	__u8 hicut_int;
+-	__u8 chbw_int;
+-	__u8 softmute_int;
+-	__u8 smute;
+-	__u8 smattn;
+-	__u8 chbw;
+-	__u8 hicut;
+-	__u8 hiblend;
+-	__u8 pilot;
+-	__u8 stblend;
+-} __packed;
+-
+-enum si476x_fmagc {
+-	SI476X_FMAGC_10K_OHM	= 0,
+-	SI476X_FMAGC_800_OHM	= 1,
+-	SI476X_FMAGC_400_OHM	= 2,
+-	SI476X_FMAGC_200_OHM	= 4,
+-	SI476X_FMAGC_100_OHM	= 8,
+-	SI476X_FMAGC_50_OHM	= 16,
+-	SI476X_FMAGC_25_OHM	= 32,
+-	SI476X_FMAGC_12P5_OHM	= 64,
+-	SI476X_FMAGC_6P25_OHM	= 128,
+-};
+-
+-struct si476x_agc_status_report {
+-	__u8 mxhi;
+-	__u8 mxlo;
+-	__u8 lnahi;
+-	__u8 lnalo;
+-	__u8 fmagc1;
+-	__u8 fmagc2;
+-	__u8 pgagain;
+-	__u8 fmwblang;
+-} __packed;
+-
+-struct si476x_rds_blockcount_report {
+-	__u16 expected;
+-	__u16 received;
+-	__u16 uncorrectable;
+-} __packed;
+-
+ #endif /* SI476X_H*/
+diff -uNr s2-liplianin-v39+rc8bc280.orig/linux/sound/pci/bt87x.c s2-liplianin-v39+rc8bc280/linux/sound/pci/bt87x.c
+--- s2-liplianin-v39+rc8bc280.orig/linux/sound/pci/bt87x.c	2014-08-15 11:43:45.095639871 +0800
++++ s2-liplianin-v39+rc8bc280/linux/sound/pci/bt87x.c	2014-08-15 11:44:01.903723217 +0800
+@@ -887,8 +887,12 @@
+ 		++dev;
+ 		return -ENOENT;
+ 	}
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
+ 	err = snd_card_create(index[dev], id[dev], THIS_MODULE, 0, &card);
++#else
++	err = snd_card_new(&pci->dev, index[dev], id[dev], THIS_MODULE,
++			   0, &card);
++#endif
+ 	if (err < 0)
+ 		return err;
+ 
+diff -uNr s2-liplianin-v39+rc8bc280.orig/v4l/compat.h s2-liplianin-v39+rc8bc280/v4l/compat.h
+--- s2-liplianin-v39+rc8bc280.orig/v4l/compat.h	2014-08-15 11:43:45.083639811 +0800
++++ s2-liplianin-v39+rc8bc280/v4l/compat.h	2014-08-15 11:44:01.907723237 +0800
+@@ -674,19 +674,6 @@
+ 	} while (0)
+ #endif
+ 
+-#ifdef NEED_SND_CARD_CREATE
+-static inline int snd_card_create(int idx, const char *id,
+-			      struct module *module, int extra_size,
+-			      struct snd_card **card)
+-{
+-	*card = snd_card_new(idx, id, module, extra_size);
+-
+-	if (*card == NULL)
+-		return -ENOMEM;
+-	return 0;
+-}
+-#endif
+-
+ /* This macro was added in commit v2.6.23-5792-g34c6538 */
+ #ifndef DMA_BIT_MASK
+ #define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+@@ -890,6 +877,8 @@
+ 
+ #ifdef NEED_DEV_DBG_RATELIMITED
+ #define dev_dbg_ratelimited dev_dbg
++#define dev_err_ratelimited dev_err
++#define dev_notice_ratelimited dev_notice
+ #endif
+ 
+ #ifdef NEED_MODULE_USB_DRIVER
+@@ -1155,4 +1144,27 @@
+ }
+ #endif
+ 
++#ifdef NEED_SND_CARD_NEW
++#define snd_card_new(p, idx, id, module, extra_size, ret) \
++	snd_card_create(idx, id, module, extra_size, ret)
++#endif
++
++#ifdef NEED_COMPAT_PUT_TIMESPEC
++#define compat_put_timespec put_compat_timespec
++#endif
++
++#ifdef NEED_SMP_MB_AFTER_ATOMIC
++#define smp_mb__after_atomic smp_mb__after_clear_bit
++#endif
++
++#ifdef NEED_DEVM_KMALLOC_ARRAY
++static inline void *devm_kmalloc_array(struct device *dev,
++				       size_t n, size_t size, gfp_t flags)
++{
++	if (size != 0 && n > (~(size_t)0) / size)
++		return NULL;
++	return devm_kmalloc(dev, n * size, flags);
++}
++#endif
++
+ #endif /*  _COMPAT_H */

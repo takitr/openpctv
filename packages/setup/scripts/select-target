@@ -43,12 +43,6 @@ else
    echo "DEFTARGET=$target" >> /etc/system.options
 fi
 
-if grep -q "^BACKEND=" /etc/system.options >/dev/null 2>&1; then
-   sed -i "s/^BACKEND=.*/BACKEND=vdr/g" /etc/system.options
-else
-   echo "BACKEND=vdr" >> /etc/system.options
-fi
-
 if ! grep -q -i arm /proc/cpuinfo; then
   case $target in
     vdr)

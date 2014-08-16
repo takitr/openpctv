@@ -141,6 +141,7 @@ dialog --clear --title "$(gettext "Install additional DVB driver")" --menu \
  "tbs-dvbc-drivers" "$(gettext "Support all the TBS DVB-C devices")" \
  "tbs-atsc-drivers" "$(gettext "Support all the TBS ATSC devices")" \
  "dvbsky-dvbc-drivers" "$(gettext "Support all the DVBSky DVB-C devices")" \
+ "s2-liplianin" "$(gettext "Support most of the devices,such as DVBWorld,Tevii,Prof...")" \
  "dvb3221-driver" "$(gettext "Support the DVB3221 DVB-C device")" 2> /tmp/driver.tmp
 
 case "$(cat /tmp/driver.tmp)" in

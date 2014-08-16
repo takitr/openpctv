@@ -53,6 +53,7 @@ RUN_CAM=/usr/bin/getcam
 RUN_EPG=/usr/bin/update-epg
 RUN_TRANS=/usr/bin/update-transponders
 RUN_DVB=/usr/bin/update-dvbdevice
+RUN_BACKEND=/usr/bin/select-backend
 RUN_DISEQC=/usr/bin/diseqcsetup
 RUN_CHANNELS=/usr/bin/update-channels
 RUN_PLUGINS=/usr/bin/select-plugins
@@ -65,11 +66,12 @@ function updatelocale
 
 function setupinit
 {
-[ -f $RUN_LANG ] && $RUN_LANG
+[ -f $RUN_LANG ] && $RUN_LANG auto
 updatelocale
 [ -f $RUN_NET ] && $RUN_NET
 [ -f $RUN_DRV ] && $RUN_DRV
 [ -f $RUN_TARGET ] && $RUN_TARGET
+[ -f $RUN_BACKEND ] && $RUN_BACKEND
 #[ -f $RUN_IR ] && $RUN_IR
 #systemctl restart lircd
 systemctl stop vdr
@@ -93,7 +95,7 @@ fi
 function MainMenu
 {
 updatelocale
-echo "${DIALOG} --clear --no-cancel --backtitle \"${DISTRIB_ID} $(gettext "configuration")\" --menu \"$(gettext "Main menu")\" 22 60 15 \\" > $MENUTMP
+echo "${DIALOG} --clear --no-cancel --backtitle \"${DISTRIB_ID} $(gettext "configuration")\" --menu \"$(gettext "Main menu")\" 25 60 18 \\" > $MENUTMP
 [ -f $RUN_LANG ] && echo "Lang \"$(gettext "Set global location and language")\" \\" >> $MENUTMP
 [ -f $RUN_TARGET ] && echo "Target \"$(gettext "Set the default target")\" \\" >> $MENUTMP
 [ -f $RUN_NET ] && echo "Netconf \"$(gettext "Configure Network Environment")\" \\" >> $MENUTMP
@@ -103,12 +105,13 @@ echo "${DIALOG} --clear --no-cancel --backtitle \"${DISTRIB_ID} $(gettext "confi
 [ -f $RUN_AUDIO ] && echo "Audio \"$(gettext "Sound card Configuration")\" \\" >> $MENUTMP
 [ -f $RUN_TRANS ] && echo "Uptran \"$(gettext "Update Satellite Transponders")\" \\" >> $MENUTMP
 [ -f $RUN_EPG ] && echo "EPG \"$(gettext "Update EPG data")\" \\" >> $MENUTMP
+[ -f $RUN_BACKEND ] && echo "Backend \"$(gettext "Select the default PVR backend")\" \\" >> $MENUTMP
 [ -f $RUN_PLUGINS ] && echo "Plugins \"$(gettext "Select VDR-plugins")\" \\" >> $MENUTMP
 [ -f $RUN_CAM ] && echo "CAM \"$(gettext "Select a software emulated CAM")\" \\" >> $MENUTMP
 [ -f $RUN_DISEQC ] && echo "DiSEqC \"$(gettext "DiSEqC configuration")\" \\" >> $MENUTMP
 [ -f $RUN_CHANNELS ] && echo "Scan \"$(gettext "Auto scan channels")\" \\" >> $MENUTMP
 #grep -q BCM2708 /proc/cpuinfo && echo "VDR \"$(gettext "Start VDR with rpihddevice frontend")\" \\" >> $MENUTMP
-[ -x /usr/bin/runxbmc ] && echo "XBMC \"$(gettext "Start XBMC pvr with VDR backend")\" \\" >> $MENUTMP
+[ -x /usr/bin/runxbmc ] && echo "XBMC \"$(gettext "Start XBMC pvr with VDR/TVheadend backend")\" \\" >> $MENUTMP
 [ -x /usr/bin/runvdr ] && echo "VDR \"$(gettext "Start VDR frontend")\" \\" >> $MENUTMP
 [ -x /usr/bin/runenigma2 ] && echo "Enigma2 \"$(gettext "Start Enigam2 frontend")\" \\" >> $MENUTMP
 [ X$ARCH != "Xarm" -a -f $RUN_INSTALLER ] && echo "Install \"$(gettext "Install OpenPCTV to your hard disk")\" \\" >> $MENUTMP
@@ -144,6 +147,9 @@ case "$(cat $DIALOGOUT)" in
 		MainMenu
 		;;
     CAM)	$RUN_CAM
+		MainMenu
+		;;
+    Backend)	$RUN_BACKEND
 		MainMenu
 		;;
     DiSEqC)	systemctl stop vdr

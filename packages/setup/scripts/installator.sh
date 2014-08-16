@@ -1,6 +1,5 @@
 #!/bin/sh
 
-systemctl start plymouth-quit
 export TERM=linux
 . gettext.sh
 export TEXTDOMAIN=openpctv
@@ -194,7 +193,7 @@ cmdline_default () {
 
 # Select language definitions
 setup_lang () {
-  /usr/bin/select-language
+  /usr/bin/select-language notz
   . /etc/locale.conf && export LANG
   installmsg
 }

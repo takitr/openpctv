@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-14 11:02+0800\n"
+"POT-Creation-Date: 2014-08-16 11:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: packages/setup/scripts/audio-config:8
 #: packages/setup/scripts/audio-config:48
-#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:103
+#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:105
 msgid "Sound card Configuration"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:116
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
 msgid "Reboot"
 msgstr ""
 
@@ -466,7 +466,7 @@ msgid ""
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:136
-#: packages/setup/scripts/setup.sh:100
+#: packages/setup/scripts/setup.sh:102
 msgid "Install additional DVB driver"
 msgstr ""
 
@@ -501,66 +501,70 @@ msgid "Support all the DVBSky DVB-C devices"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:144
+msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:145
 msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:16
+#: packages/setup/scripts/installator.sh:15
 msgid "Not found or no block device exists."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:17
+#: packages/setup/scripts/installator.sh:16
 msgid "Does not have any corresponding BIOS driver."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:20
+#: packages/setup/scripts/installator.sh:19
 msgid "Keymap selection"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:22
+#: packages/setup/scripts/installator.sh:21
 msgid "Choose Keymap"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:23
+#: packages/setup/scripts/installator.sh:22
 msgid "Which keymap do you want to use ?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:26
+#: packages/setup/scripts/installator.sh:25
 msgid "Warning"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:27
+#: packages/setup/scripts/installator.sh:26
 msgid "ERROR"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:29
+#: packages/setup/scripts/installator.sh:28
 msgid "No disks found on this system.\\nCheck again ?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:30
+#: packages/setup/scripts/installator.sh:29
 msgid "refresh list"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:32
-#: packages/setup/scripts/installator.sh:41
+#: packages/setup/scripts/installator.sh:31
+#: packages/setup/scripts/installator.sh:40
 msgid "Installation device"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:33
+#: packages/setup/scripts/installator.sh:32
 msgid "You are going to install"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:33
+#: packages/setup/scripts/installator.sh:32
 msgid ""
 "For this you will need an empty partition with about 5 GB of free space. Be "
 "careful to choose the right disk! We won't take responsibility for any data "
 "loss."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:35
+#: packages/setup/scripts/installator.sh:34
 msgid "Linux EXT4 partition"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:37
+#: packages/setup/scripts/installator.sh:36
 msgid ""
 "Before continue the installator program you need to define the Linux "
 "partition(s) on your hard disk. We can use other partitioning tool under "
@@ -568,7 +572,7 @@ msgid ""
 "your partition table to create a"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:38
+#: packages/setup/scripts/installator.sh:37
 msgid ""
 "with about 5 GB of free space. The partition type can be arbitrary. Don't "
 "forget to set the bootable flag to this partition. Remember to submit the "
@@ -576,94 +580,94 @@ msgid ""
 "choose 'No' means that you've prepared a partition for it."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:43
+#: packages/setup/scripts/installator.sh:42
 msgid "You don't have any"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:44
+#: packages/setup/scripts/installator.sh:43
 msgid ""
 "partition on your system. Please create a partition first using for example "
 "cfdisk."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:45
+#: packages/setup/scripts/installator.sh:44
 msgid "Where do you want to install"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:45
+#: packages/setup/scripts/installator.sh:44
 msgid "Please choose carefully!"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:46
+#: packages/setup/scripts/installator.sh:45
 msgid "is not a valid block device."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:48
+#: packages/setup/scripts/installator.sh:47
 msgid "Partition is not formatted"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:49
+#: packages/setup/scripts/installator.sh:48
 msgid "Partition format type"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:50
+#: packages/setup/scripts/installator.sh:49
 msgid "is not supported in your partition type"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:51
+#: packages/setup/scripts/installator.sh:50
 msgid "Partition is already formatted"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:52
-#: packages/setup/scripts/installator.sh:54
+#: packages/setup/scripts/installator.sh:51
+#: packages/setup/scripts/installator.sh:53
 msgid "Formatting"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:53
+#: packages/setup/scripts/installator.sh:52
 msgid "Do you want to format"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:55
+#: packages/setup/scripts/installator.sh:54
 msgid "...\\nPlease wait"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:57
+#: packages/setup/scripts/installator.sh:56
 msgid "Linux partition type"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:58
+#: packages/setup/scripts/installator.sh:57
 msgid "Which type of Linux partition you want ?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:60
+#: packages/setup/scripts/installator.sh:59
 msgid "No formatting tooled is installed, partition can't be formatted."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:61
+#: packages/setup/scripts/installator.sh:60
 msgid "Hopefully it is already formatted."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:62
+#: packages/setup/scripts/installator.sh:61
 msgid "should be formatted as"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:64
+#: packages/setup/scripts/installator.sh:63
 msgid "Failed to mount"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:66
+#: packages/setup/scripts/installator.sh:65
 msgid "Installing... Please wait"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:69
+#: packages/setup/scripts/installator.sh:68
 msgid "Support for HDTV through X.Org ?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:70
+#: packages/setup/scripts/installator.sh:69
 msgid "It appears that this version of"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:70
+#: packages/setup/scripts/installator.sh:69
 msgid ""
 "has been compiled with support for HDTV through X.Org video server. Please "
 "note that X.Org is only useful for playback of high-resolution movies on a "
@@ -672,24 +676,24 @@ msgid ""
 "non-HD mode will still be available)"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:73
+#: packages/setup/scripts/installator.sh:72
 msgid "Bootloader"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:75
+#: packages/setup/scripts/installator.sh:74
 msgid "Couldn't find my GRUB partition representation"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:76
+#: packages/setup/scripts/installator.sh:75
 msgid "Couldn't install GRUB bootloader!"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:78
-#: packages/setup/scripts/installator.sh:80
+#: packages/setup/scripts/installator.sh:77
+#: packages/setup/scripts/installator.sh:79
 msgid "is now a"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:78
+#: packages/setup/scripts/installator.sh:77
 msgid ""
 "partition. To boot from it, you will need to install a bootloader. One can "
 "be installed. If you have any other operating system on your computer, a "
@@ -697,59 +701,59 @@ msgid ""
 "bootloader, you will need to configure it yourself. \\nI have found:"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:79
+#: packages/setup/scripts/installator.sh:78
 msgid "Do you want to install a new bootloader (GRUB)?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:80
+#: packages/setup/scripts/installator.sh:79
 msgid ""
 "partition. No OS on your system is recognized. Do you want to install a new "
 "bootloader on your MBR?"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:81
+#: packages/setup/scripts/installator.sh:80
 msgid "You must install a new bootloader to boot"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:84
+#: packages/setup/scripts/installator.sh:83
 msgid "Installation Log"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:85
+#: packages/setup/scripts/installator.sh:84
 msgid ""
 "Do you want to check installation logs ? (it is probably useful for debug "
 "purpose only)"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:88
+#: packages/setup/scripts/installator.sh:87
 msgid "Have Fun!"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:89
+#: packages/setup/scripts/installator.sh:88
 msgid "is now installed on"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:90
+#: packages/setup/scripts/installator.sh:89
 msgid "Do you want to reboot? Or press Alt + F2 to configure manually."
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:92
+#: packages/setup/scripts/installator.sh:91
 msgid "Start"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:93
+#: packages/setup/scripts/installator.sh:92
 msgid "Default target"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:94
+#: packages/setup/scripts/installator.sh:93
 msgid "setup mode"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:95
+#: packages/setup/scripts/installator.sh:94
 msgid "debugging mode"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:548
+#: packages/setup/scripts/installator.sh:547
 msgid "installator"
 msgstr ""
 
@@ -779,7 +783,7 @@ msgid "Submit"
 msgstr ""
 
 #: packages/setup/scripts/monitor.sh:19 packages/setup/scripts/monitor.sh:33
-#: packages/setup/scripts/setup.sh:102
+#: packages/setup/scripts/setup.sh:104
 msgid "Set the monitor's best resolution"
 msgstr ""
 
@@ -905,6 +909,29 @@ msgstr ""
 msgid "Searching for wireless networks, please wait ..."
 msgstr ""
 
+#: packages/setup/scripts/select-backend:8 packages/setup/scripts/setup.sh:108
+msgid "Select the default PVR backend"
+msgstr ""
+
+#: packages/setup/scripts/select-backend:8
+msgid ""
+"Now you can select VDR/TVheadend streaming server for Linux supporting DVB-"
+"S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR "
+"backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you "
+"can enable vnsi or xvdr PVR frontend."
+msgstr ""
+
+#: packages/setup/scripts/select-backend:13
+#: packages/setup/scripts/select-target:19
+msgid "A digital video recorder using standard PC components."
+msgstr ""
+
+#: packages/setup/scripts/select-backend:19
+msgid ""
+"A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, "
+"and Analog video."
+msgstr ""
+
 #: packages/setup/scripts/select-irdrv:11
 msgid "IR configuration"
 msgstr ""
@@ -928,7 +955,7 @@ msgid "This step is not necessary, because we provide a normal list."
 msgstr ""
 
 #: packages/setup/scripts/select-plugins:29
-#: packages/setup/scripts/setup.sh:106
+#: packages/setup/scripts/setup.sh:109
 msgid "Select VDR-plugins"
 msgstr ""
 
@@ -936,7 +963,7 @@ msgstr ""
 msgid "You can enable or disable VDR-plugins on the list."
 msgstr ""
 
-#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:98
+#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:100
 msgid "Set the default target"
 msgstr ""
 
@@ -948,10 +975,6 @@ msgstr ""
 msgid ""
 "Enigma2 is a series of DVB television receivers for Dreambox. It has been "
 "ported to PC."
-msgstr ""
-
-#: packages/setup/scripts/select-target:19
-msgid "A digital video recorder using standard PC components."
 msgstr ""
 
 #: packages/setup/scripts/select-target:25
@@ -970,81 +993,81 @@ msgstr ""
 msgid "or 3 seconds later enter"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid "Configure VDR"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid "Configure VDR later"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid ""
 "The following configuration is for the VDR (note the XBMC uses VDR as a PVR "
 "backend), if you only use Engima2, then you do not need to configure or re-"
 "configure VDR later."
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:96
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:98
 msgid "Main menu"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:88
+#: packages/setup/scripts/setup.sh:90
 msgid ""
 "Now, you have completed the most configurations of VDR(for Enigma2 need to "
 "be in its OSD menu) . Now you can select 'Reboot' or 'Main Menu' to continue "
 "the configuration."
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:96
+#: packages/setup/scripts/setup.sh:98
 msgid "configuration"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:97
+#: packages/setup/scripts/setup.sh:99
 msgid "Set global location and language"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:99
+#: packages/setup/scripts/setup.sh:101
 msgid "Configure Network Environment"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:104
+#: packages/setup/scripts/setup.sh:106
 msgid "Update Satellite Transponders"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:105
+#: packages/setup/scripts/setup.sh:107
 msgid "Update EPG data"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:107
+#: packages/setup/scripts/setup.sh:110
 msgid "Select a software emulated CAM"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:108
+#: packages/setup/scripts/setup.sh:111
 msgid "DiSEqC configuration"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:109
+#: packages/setup/scripts/setup.sh:112
 msgid "Auto scan channels"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:111
-msgid "Start XBMC pvr with VDR backend"
-msgstr ""
-
-#: packages/setup/scripts/setup.sh:112
-msgid "Start VDR frontend"
-msgstr ""
-
-#: packages/setup/scripts/setup.sh:113
-msgid "Start Enigam2 frontend"
-msgstr ""
-
 #: packages/setup/scripts/setup.sh:114
-msgid "Install OpenPCTV to your hard disk"
+msgid "Start XBMC pvr with VDR/TVheadend backend"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:115
+msgid "Start VDR frontend"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:116
+msgid "Start Enigam2 frontend"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:117
+msgid "Install OpenPCTV to your hard disk"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:118
 msgid "Exit to login shell"
 msgstr ""
 

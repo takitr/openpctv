@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-11 23:01+0800\n"
+"POT-Creation-Date: 2014-08-15 21:11+0800\n"
 "PO-Revision-Date: 2014-07-08 17:58+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: packages/setup/scripts/audio-config:8
 #: packages/setup/scripts/audio-config:48
-#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:103
+#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:105
 msgid "Sound card Configuration"
 msgstr "配置声卡"
 
@@ -412,7 +412,7 @@ msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr "你想在这台机器上运行SoftCAM(OScam)吗？"
 
 #: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:116
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
 msgid "Reboot"
 msgstr "重新启动"
 
@@ -491,7 +491,7 @@ msgstr ""
 "动吗？"
 
 #: packages/setup/scripts/install-drivers:136
-#: packages/setup/scripts/setup.sh:100
+#: packages/setup/scripts/setup.sh:102
 msgid "Install additional DVB driver"
 msgstr "安装附加的DVB驱动"
 
@@ -526,56 +526,60 @@ msgid "Support all the DVBSky DVB-C devices"
 msgstr "支持DVBSky DVB-C全系列的设备"
 
 #: packages/setup/scripts/install-drivers:144
+msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
+msgstr "支持大多数的设备，例如DVBWorld，Tevii，Prof等"
+
+#: packages/setup/scripts/install-drivers:145
 #, fuzzy
 msgid "Support the DVB3221 DVB-C device"
 msgstr "支持DVBSky DVB-C全系列的设备"
 
-#: packages/setup/scripts/installator.sh:16
+#: packages/setup/scripts/installator.sh:15
 msgid "Not found or no block device exists."
 msgstr "没有发现或不存在块设备"
 
-#: packages/setup/scripts/installator.sh:17
+#: packages/setup/scripts/installator.sh:16
 msgid "Does not have any corresponding BIOS driver."
 msgstr "没有任何相应的BIOS驱动"
 
-#: packages/setup/scripts/installator.sh:20
+#: packages/setup/scripts/installator.sh:19
 msgid "Keymap selection"
 msgstr "键位映射选择"
 
-#: packages/setup/scripts/installator.sh:22
+#: packages/setup/scripts/installator.sh:21
 msgid "Choose Keymap"
 msgstr "选择键位映射"
 
-#: packages/setup/scripts/installator.sh:23
+#: packages/setup/scripts/installator.sh:22
 msgid "Which keymap do you want to use ?"
 msgstr "你想要使用哪种键位映射？"
 
-#: packages/setup/scripts/installator.sh:26
+#: packages/setup/scripts/installator.sh:25
 msgid "Warning"
 msgstr "警告"
 
-#: packages/setup/scripts/installator.sh:27
+#: packages/setup/scripts/installator.sh:26
 msgid "ERROR"
 msgstr "错误"
 
-#: packages/setup/scripts/installator.sh:29
+#: packages/setup/scripts/installator.sh:28
 msgid "No disks found on this system.\\nCheck again ?"
 msgstr "在这个系统中没发现磁盘。\\n再检查一次吗？"
 
-#: packages/setup/scripts/installator.sh:30
+#: packages/setup/scripts/installator.sh:29
 msgid "refresh list"
 msgstr "刷新列表"
 
-#: packages/setup/scripts/installator.sh:32
-#: packages/setup/scripts/installator.sh:41
+#: packages/setup/scripts/installator.sh:31
+#: packages/setup/scripts/installator.sh:40
 msgid "Installation device"
 msgstr "安装设备"
 
-#: packages/setup/scripts/installator.sh:33
+#: packages/setup/scripts/installator.sh:32
 msgid "You are going to install"
 msgstr "你将要安装"
 
-#: packages/setup/scripts/installator.sh:33
+#: packages/setup/scripts/installator.sh:32
 msgid ""
 "For this you will need an empty partition with about 5 GB of free space. Be "
 "careful to choose the right disk! We won't take responsibility for any data "
@@ -584,11 +588,11 @@ msgstr ""
 "对此，你将需要一个空白的并不少于5G空间的分区。小心选择正确的磁盘！我们不会对"
 "任何数据损失负责。"
 
-#: packages/setup/scripts/installator.sh:35
+#: packages/setup/scripts/installator.sh:34
 msgid "Linux EXT4 partition"
 msgstr "Linux EXT4分区"
 
-#: packages/setup/scripts/installator.sh:37
+#: packages/setup/scripts/installator.sh:36
 msgid ""
 "Before continue the installator program you need to define the Linux "
 "partition(s) on your hard disk. We can use other partitioning tool under "
@@ -599,7 +603,7 @@ msgstr ""
 "Windows或Linux的分区工具。或者如果你选择'是'，你将使用cfdisk来编辑你的分区表"
 "来建立一个"
 
-#: packages/setup/scripts/installator.sh:38
+#: packages/setup/scripts/installator.sh:37
 msgid ""
 "with about 5 GB of free space. The partition type can be arbitrary. Don't "
 "forget to set the bootable flag to this partition. Remember to submit the "
@@ -610,94 +614,94 @@ msgstr ""
 "们不会对由此造成的任何数据损失负责。如果你选择'否'意味着你已经为它准备好了一"
 "个分区。"
 
-#: packages/setup/scripts/installator.sh:43
+#: packages/setup/scripts/installator.sh:42
 msgid "You don't have any"
 msgstr "你没有任何"
 
-#: packages/setup/scripts/installator.sh:44
+#: packages/setup/scripts/installator.sh:43
 msgid ""
 "partition on your system. Please create a partition first using for example "
 "cfdisk."
 msgstr "分区在你的系统上。请首先使用像cfdisk这个的工具来建立一个分区。"
 
-#: packages/setup/scripts/installator.sh:45
+#: packages/setup/scripts/installator.sh:44
 msgid "Where do you want to install"
 msgstr "你想安装的位置"
 
-#: packages/setup/scripts/installator.sh:45
+#: packages/setup/scripts/installator.sh:44
 msgid "Please choose carefully!"
 msgstr "请认真选择！"
 
-#: packages/setup/scripts/installator.sh:46
+#: packages/setup/scripts/installator.sh:45
 msgid "is not a valid block device."
 msgstr "不是一个有效的块设备。"
 
-#: packages/setup/scripts/installator.sh:48
+#: packages/setup/scripts/installator.sh:47
 msgid "Partition is not formatted"
 msgstr "分区没有被格式化"
 
-#: packages/setup/scripts/installator.sh:49
+#: packages/setup/scripts/installator.sh:48
 msgid "Partition format type"
 msgstr "分区格式类型"
 
-#: packages/setup/scripts/installator.sh:50
+#: packages/setup/scripts/installator.sh:49
 msgid "is not supported in your partition type"
 msgstr "不支持你分区类型"
 
-#: packages/setup/scripts/installator.sh:51
+#: packages/setup/scripts/installator.sh:50
 msgid "Partition is already formatted"
 msgstr "分区已经被格式化"
 
-#: packages/setup/scripts/installator.sh:52
-#: packages/setup/scripts/installator.sh:54
+#: packages/setup/scripts/installator.sh:51
+#: packages/setup/scripts/installator.sh:53
 msgid "Formatting"
 msgstr "格式化中"
 
-#: packages/setup/scripts/installator.sh:53
+#: packages/setup/scripts/installator.sh:52
 msgid "Do you want to format"
 msgstr "你想格式化"
 
-#: packages/setup/scripts/installator.sh:55
+#: packages/setup/scripts/installator.sh:54
 msgid "...\\nPlease wait"
 msgstr "...\\n请等待"
 
-#: packages/setup/scripts/installator.sh:57
+#: packages/setup/scripts/installator.sh:56
 msgid "Linux partition type"
 msgstr "Linux分区类型"
 
-#: packages/setup/scripts/installator.sh:58
+#: packages/setup/scripts/installator.sh:57
 msgid "Which type of Linux partition you want ?"
 msgstr "你想要哪种Linux分区类型？"
 
-#: packages/setup/scripts/installator.sh:60
+#: packages/setup/scripts/installator.sh:59
 msgid "No formatting tooled is installed, partition can't be formatted."
 msgstr "因为你安装没有任何用来格式化的工具，分区无法格式化。"
 
-#: packages/setup/scripts/installator.sh:61
+#: packages/setup/scripts/installator.sh:60
 msgid "Hopefully it is already formatted."
 msgstr "但愿它已经被格式化了。"
 
-#: packages/setup/scripts/installator.sh:62
+#: packages/setup/scripts/installator.sh:61
 msgid "should be formatted as"
 msgstr "应该被格式化为"
 
-#: packages/setup/scripts/installator.sh:64
+#: packages/setup/scripts/installator.sh:63
 msgid "Failed to mount"
 msgstr "挂载失败"
 
-#: packages/setup/scripts/installator.sh:66
+#: packages/setup/scripts/installator.sh:65
 msgid "Installing... Please wait"
 msgstr "安装中... 请等待"
 
-#: packages/setup/scripts/installator.sh:69
+#: packages/setup/scripts/installator.sh:68
 msgid "Support for HDTV through X.Org ?"
 msgstr "通过X.Org支持HDTV吗？"
 
-#: packages/setup/scripts/installator.sh:70
+#: packages/setup/scripts/installator.sh:69
 msgid "It appears that this version of"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:70
+#: packages/setup/scripts/installator.sh:69
 msgid ""
 "has been compiled with support for HDTV through X.Org video server. Please "
 "note that X.Org is only useful for playback of high-resolution movies on a "
@@ -706,24 +710,24 @@ msgid ""
 "non-HD mode will still be available)"
 msgstr ""
 
-#: packages/setup/scripts/installator.sh:73
+#: packages/setup/scripts/installator.sh:72
 msgid "Bootloader"
 msgstr "引导管理器"
 
-#: packages/setup/scripts/installator.sh:75
+#: packages/setup/scripts/installator.sh:74
 msgid "Couldn't find my GRUB partition representation"
 msgstr "不能找到我的GRUB分区"
 
-#: packages/setup/scripts/installator.sh:76
+#: packages/setup/scripts/installator.sh:75
 msgid "Couldn't install GRUB bootloader!"
 msgstr "不能安装GRUB引导管理器！"
 
-#: packages/setup/scripts/installator.sh:78
-#: packages/setup/scripts/installator.sh:80
+#: packages/setup/scripts/installator.sh:77
+#: packages/setup/scripts/installator.sh:79
 msgid "is now a"
 msgstr "现在已经是一个"
 
-#: packages/setup/scripts/installator.sh:78
+#: packages/setup/scripts/installator.sh:77
 msgid ""
 "partition. To boot from it, you will need to install a bootloader. One can "
 "be installed. If you have any other operating system on your computer, a "
@@ -734,11 +738,11 @@ msgstr ""
 "如果在你的计算机上还拥有其它的操作系统，我也将为你安装多重引导。如果你不想安"
 "装一个新的引导管理器，你将需要自己配置。我已找到："
 
-#: packages/setup/scripts/installator.sh:79
+#: packages/setup/scripts/installator.sh:78
 msgid "Do you want to install a new bootloader (GRUB)?"
 msgstr "你想安装引导管理器（GRUB）吗？"
 
-#: packages/setup/scripts/installator.sh:80
+#: packages/setup/scripts/installator.sh:79
 msgid ""
 "partition. No OS on your system is recognized. Do you want to install a new "
 "bootloader on your MBR?"
@@ -746,49 +750,49 @@ msgstr ""
 "分区。我们可以识别在你计算机中的其它操作系统，你想在硬盘的MBR上安装一个引导管"
 "理器吗？"
 
-#: packages/setup/scripts/installator.sh:81
+#: packages/setup/scripts/installator.sh:80
 msgid "You must install a new bootloader to boot"
 msgstr "你必须安装一个启动引导器来启动"
 
-#: packages/setup/scripts/installator.sh:84
+#: packages/setup/scripts/installator.sh:83
 msgid "Installation Log"
 msgstr "安装日志"
 
-#: packages/setup/scripts/installator.sh:85
+#: packages/setup/scripts/installator.sh:84
 msgid ""
 "Do you want to check installation logs ? (it is probably useful for debug "
 "purpose only)"
 msgstr "你想检查安装日志吗？（对于以调试为目的或许有用）"
 
-#: packages/setup/scripts/installator.sh:88
+#: packages/setup/scripts/installator.sh:87
 msgid "Have Fun!"
 msgstr "祝好运！"
 
-#: packages/setup/scripts/installator.sh:89
+#: packages/setup/scripts/installator.sh:88
 msgid "is now installed on"
 msgstr "现在已经安装"
 
-#: packages/setup/scripts/installator.sh:90
+#: packages/setup/scripts/installator.sh:89
 msgid "Do you want to reboot? Or press Alt + F2 to configure manually."
 msgstr "你想重新启动吗？或者按Alt+F2登录并进行手动配置"
 
-#: packages/setup/scripts/installator.sh:92
+#: packages/setup/scripts/installator.sh:91
 msgid "Start"
 msgstr "启动"
 
-#: packages/setup/scripts/installator.sh:93
+#: packages/setup/scripts/installator.sh:92
 msgid "Default target"
 msgstr "默认启动项"
 
-#: packages/setup/scripts/installator.sh:94
+#: packages/setup/scripts/installator.sh:93
 msgid "setup mode"
 msgstr "配置模式"
 
-#: packages/setup/scripts/installator.sh:95
+#: packages/setup/scripts/installator.sh:94
 msgid "debugging mode"
 msgstr "调试模式"
 
-#: packages/setup/scripts/installator.sh:548
+#: packages/setup/scripts/installator.sh:547
 msgid "installator"
 msgstr "安装程序"
 
@@ -821,7 +825,7 @@ msgid "Submit"
 msgstr "提交"
 
 #: packages/setup/scripts/monitor.sh:19 packages/setup/scripts/monitor.sh:33
-#: packages/setup/scripts/setup.sh:102
+#: packages/setup/scripts/setup.sh:104
 msgid "Set the monitor's best resolution"
 msgstr "设定显示器的最佳分辨率"
 
@@ -948,6 +952,30 @@ msgstr "检查网络的联接情况，请等待 ..."
 msgid "Searching for wireless networks, please wait ..."
 msgstr "正在搜索无线网络，请等待 ..."
 
+#: packages/setup/scripts/select-backend:8 packages/setup/scripts/setup.sh:108
+#, fuzzy
+msgid "Select the default PVR backend"
+msgstr "选择默认的启动项"
+
+#: packages/setup/scripts/select-backend:8
+msgid ""
+"Now you can select VDR/TVheadend streaming server for Linux supporting DVB-"
+"S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR "
+"backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you "
+"can enable vnsi or xvdr PVR frontend."
+msgstr ""
+
+#: packages/setup/scripts/select-backend:13
+#: packages/setup/scripts/select-target:19
+msgid "A digital video recorder using standard PC components."
+msgstr "数字录像机使用标准的PC组件。"
+
+#: packages/setup/scripts/select-backend:19
+msgid ""
+"A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, "
+"and Analog video."
+msgstr ""
+
 #: packages/setup/scripts/select-irdrv:11
 msgid "IR configuration"
 msgstr "红外线接收配置"
@@ -971,7 +999,7 @@ msgid "This step is not necessary, because we provide a normal list."
 msgstr "这一步并不是必须的，因为我们为你提供了一个缺省即可正常运行的列表。"
 
 #: packages/setup/scripts/select-plugins:29
-#: packages/setup/scripts/setup.sh:106
+#: packages/setup/scripts/setup.sh:109
 msgid "Select VDR-plugins"
 msgstr "选择VDR插件"
 
@@ -979,7 +1007,7 @@ msgstr "选择VDR插件"
 msgid "You can enable or disable VDR-plugins on the list."
 msgstr "你可以在下面的列表中允许或禁止VDR插件。"
 
-#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:98
+#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:100
 msgid "Set the default target"
 msgstr "选择默认的启动项"
 
@@ -992,10 +1020,6 @@ msgid ""
 "Enigma2 is a series of DVB television receivers for Dreambox. It has been "
 "ported to PC."
 msgstr "Engiam2是Dreambox接收机的系统，现已被移植到PC上。"
-
-#: packages/setup/scripts/select-target:19
-msgid "A digital video recorder using standard PC components."
-msgstr "数字录像机使用标准的PC组件。"
 
 #: packages/setup/scripts/select-target:25
 msgid "A free and open source media player developed by the XBMC Foundation"
@@ -1013,15 +1037,15 @@ msgstr "按任意键进入配置程序，"
 msgid "or 3 seconds later enter"
 msgstr "否则三秒后将自动进入"
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid "Configure VDR"
 msgstr "配置VDR"
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid "Configure VDR later"
 msgstr "稍后配置VDR"
 
-#: packages/setup/scripts/setup.sh:83
+#: packages/setup/scripts/setup.sh:85
 msgid ""
 "The following configuration is for the VDR (note the XBMC uses VDR as a PVR "
 "backend), if you only use Engima2, then you do not need to configure or re-"
@@ -1030,11 +1054,11 @@ msgstr ""
 "接下来的配置只是针对VDR的（注意XBMC使用了VDR作为一种PVR后端），如果你只使用"
 "Enigma2,那么你可不必配置或稍后再配置VDR。"
 
-#: packages/setup/scripts/setup.sh:88 packages/setup/scripts/setup.sh:96
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:98
 msgid "Main menu"
 msgstr "主菜单"
 
-#: packages/setup/scripts/setup.sh:88
+#: packages/setup/scripts/setup.sh:90
 msgid ""
 "Now, you have completed the most configurations of VDR(for Enigma2 need to "
 "be in its OSD menu) . Now you can select 'Reboot' or 'Main Menu' to continue "
@@ -1043,56 +1067,57 @@ msgstr ""
 "现在，你已经完成了OpenPCTV 的大部分配置（针对Enigma2需要在其OSD中设置），现在"
 "你可以选择'重新启动'或'主菜单'来继续进行配置。"
 
-#: packages/setup/scripts/setup.sh:96
+#: packages/setup/scripts/setup.sh:98
 msgid "configuration"
 msgstr "配置"
 
-#: packages/setup/scripts/setup.sh:97
+#: packages/setup/scripts/setup.sh:99
 msgid "Set global location and language"
 msgstr "设置全局区域和语言"
 
-#: packages/setup/scripts/setup.sh:99
+#: packages/setup/scripts/setup.sh:101
 msgid "Configure Network Environment"
 msgstr "配置网络环境"
 
-#: packages/setup/scripts/setup.sh:104
+#: packages/setup/scripts/setup.sh:106
 msgid "Update Satellite Transponders"
 msgstr "更新卫星参数"
 
-#: packages/setup/scripts/setup.sh:105
+#: packages/setup/scripts/setup.sh:107
 msgid "Update EPG data"
 msgstr "更新第三方EPG数据"
 
-#: packages/setup/scripts/setup.sh:107
+#: packages/setup/scripts/setup.sh:110
 msgid "Select a software emulated CAM"
 msgstr "选择一种模拟CAM软件"
 
-#: packages/setup/scripts/setup.sh:108
+#: packages/setup/scripts/setup.sh:111
 msgid "DiSEqC configuration"
 msgstr "DiSEqC配置"
 
-#: packages/setup/scripts/setup.sh:109
+#: packages/setup/scripts/setup.sh:112
 msgid "Auto scan channels"
 msgstr "自动扫描频道"
 
-#: packages/setup/scripts/setup.sh:111
-msgid "Start XBMC pvr with VDR backend"
+#: packages/setup/scripts/setup.sh:114
+#, fuzzy
+msgid "Start XBMC pvr with VDR/TVheadend backend"
 msgstr "启动带有VDR后台的XBMC"
 
-#: packages/setup/scripts/setup.sh:112
+#: packages/setup/scripts/setup.sh:115
 #, fuzzy
 msgid "Start VDR frontend"
 msgstr "启动带有rpihddevice的VDR"
 
-#: packages/setup/scripts/setup.sh:113
+#: packages/setup/scripts/setup.sh:116
 msgid "Start Enigam2 frontend"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:114
+#: packages/setup/scripts/setup.sh:117
 msgid "Install OpenPCTV to your hard disk"
 msgstr "将OpenPCTV安装到你的硬盘"
 
-#: packages/setup/scripts/setup.sh:115
+#: packages/setup/scripts/setup.sh:118
 msgid "Exit to login shell"
 msgstr "退出并登录shell"
 
@@ -1165,6 +1190,3 @@ msgstr ""
 
 #~ msgid "Support the TBS QBOX I DVB-S2 devices"
 #~ msgstr "支持TBS QBOX I DVB-S2设备"
-
-#~ msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
-#~ msgstr "支持大多数的设备，例如DVBWorld，Tevii，Prof等"

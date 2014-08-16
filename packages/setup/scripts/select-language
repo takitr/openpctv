@@ -3,7 +3,14 @@
 [ ! -f /etc/lang.list ] && exit
 export TERM=linux
 
-echo "dialog --clear --no-cancel --title \"Set global locale and language\" --menu \"Select a language environment, after this, we'll set the locale and modify XBMC/VDR/Enigma2 depending on selected language\" 50 70 40 \\" > /tmp/menufile
+setlang ()
+{
+if [ -f /etc/locale.conf ]; then
+  . /etc/locale.conf
+  default_item="--default-item \"$LANG\""
+fi
+
+echo "dialog --clear --no-cancel $default_item --title \"Set global locale and language\" --menu \"Select a language environment, after this, we'll set the locale and modify XBMC/VDR/Enigma2 depending on selected language\" 50 70 40 \\" > /tmp/menufile
 grep -v ^# /etc/lang.list | while read line; do
   locale=$(echo $line | cut -d: -f2)
   lang=$(echo $line | cut -d: -f1)
@@ -20,8 +27,6 @@ xbmclang="$(echo $langline | cut -d: -f1 | cut -d\/ -f1)"
 xbmcregion="$(grep  "region\ name=" /usr/share/xbmc/language/"$xbmclang"/langinfo.xml -m1 | cut -d\" -f2)"
 vdrlang=$(echo $langline | cut -d: -f3)
 e2lang=$(echo $langline | cut -d: -f4)
-tzlocal=$(echo $locale | cut -d\. -f1 | cut -d_ -f2)
-tztime=$(grep ^$tzlocal /usr/share/zoneinfo/zone.tab -m1 | awk '{print $3}')
 
 #echo "langline:$langline"
 #echo "locale:$locale xbmclang:$xbmclang vdrlang:$vdrlang e2lang:$e2lang"
@@ -51,8 +56,17 @@ if [ -x /usr/bin/enigma2 ]; then
     [ "$e2lang" != "none" ] && echo "config.osd.language=$e2lang" >> /etc/enigma2/settings
   fi
 fi
+}
 
-default_item="--default-item \"$tztime\""
+settztime ()
+{
+
+if [ -f /etc/locale.conf ]; then
+  . /etc/locale.conf
+  TZCODE=$(echo $LANG | cut -d\. -f1 | cut -d_ -f2)
+  TZ=$(grep ^$TZCODE /usr/share/zoneinfo/zone.tab -m1 | awk '{print $3}')
+  default_item="--default-item \"$TZ\""
+fi
 
 echo "Creating timezone list, please wait ..."
 echo "dialog --clear --no-cancel --colors --title \"Change the Timezone\" $default_item --menu \"Here is the Timezone list, currently selected is based on your choice of global locale.\" 50 80 40 \\" > /tmp/menufile
@@ -70,3 +84,20 @@ tztime=$(cat /tmp/tmpfile)
 rm /tmp/tmpfile /tmp/menufile
 
 cp /usr/share/zoneinfo/$tztime /etc/localtime
+}
+
+option=$1
+
+if [ X"$option" = Xauto ]; then
+  if [ ! -f /etc/localtime ]; then
+    setlang
+  fi
+else
+  setlang
+fi
+
+if [ X"$option" != Xnotz ]; then
+  if [ X"$option" = Xauto -a ! -f /etc/localtime ]; then
+    settztime
+  fi
+fi
