@@ -5,7 +5,7 @@ export TERM=linux
 export TEXTDOMAIN=openpctv
 
 i=0
-echo "dialog --no-cancel --clear --title \"$(gettext "Select the default PVR backend")\" --menu \"$(gettext "Now you can select VDR/TVheadend streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you can enable vnsi or xvdr PVR frontend.")\" 11 90 4 \\" > /tmp/menu.tmp
+echo "dialog --no-cancel --clear --title \"$(gettext "Select the default PVR backend for XBMC")\" --menu \"$(gettext "Now you can select VDR/TVheadend streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you can enable vnsi or xvdr PVR frontend.")\" 12 90 5 \\" > /tmp/menu.tmp
 
 if [ -f /usr/bin/vdr ]; then
   i=`expr $i + 1`
@@ -16,8 +16,10 @@ fi
 if [ -f /usr/bin/tvheadend ]; then
   i=`expr $i + 1`
   target=tvheadend
-  echo "tvheadend \"$(gettext "A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, and Analog video.")\" 2> /tmp/target.tmp" >> /tmp/menu.tmp
+  echo "tvheadend \"$(gettext "A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, and Analog video.")\" \\" >> /tmp/menu.tmp
 fi
+
+echo "no \"$(gettext "Do not run any PVR backend")\" 2> /tmp/target.tmp" >> /tmp/menu.tmp
 
 if [ $i -ne 1 ]; then
   . /tmp/menu.tmp

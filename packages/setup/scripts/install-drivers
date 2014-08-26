@@ -122,6 +122,7 @@ done
 rm /tmp/lspci.log
 
 if [ -c /dev/dvb/adapter[0..9]/dvr[0...9] -a -c /dev/dvb/adapter[0..9]/frontend[0..9] -a -c /dev/dvb/adapter[0..9]/demux[0..9] ]; then
+  /usr/bin/update-dvbdevice
   dialog --title "$(gettext "Additional DVB driver")" --clear --defaultno \
   --yesno "$(gettext "Your DVB devices seem to be normal. Perhaps you do not need to install other additional drivers. If you want to install additional drivers please select 'Yes'")" 8 61
   retval=$?

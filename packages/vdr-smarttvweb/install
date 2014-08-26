@@ -18,7 +18,7 @@ done
 NAME=`echo ${PKG_NAME} | sed s/vdr-//`
 mkdir -p $INSTALL/etc/vdr/plugins.d
 echo "PLUGIN=${NAME}" > $INSTALL/etc/vdr/plugins.d/50_$NAME
-echo "ENABLED=yes" >> $INSTALL/etc/vdr/plugins.d/50_$NAME
+echo "ENABLED=no" >> $INSTALL/etc/vdr/plugins.d/50_$NAME
 
 mkdir -p $INSTALL/etc/vdr/plugins/$NAME
 cp -r $BUILD/$1*/web $INSTALL/etc/vdr/plugins/$NAME

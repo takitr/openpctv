@@ -1,7 +1,11 @@
 PKG_NAME=lm-sensors
-PKG_VERSION=3.3.5
+PKG_URL_PROTO=svn
+PKG_URL_REV=6253
+PKG_URL="http://lm-sensors.org/svn/lm-sensors/trunk"
+PKG_VERSION=3.3.6+r${PKG_URL_REV}
+#PKG_VERSION=3.3.5
 PKG_REV=1
-PKG_URL="http://ftp.gwdg.de/pub/linux/misc/lm-sensors/lm_sensors-$PKG_VERSION.tar.bz2"
+#PKG_URL="http://ftp.gwdg.de/pub/linux/misc/lm-sensors/lm_sensors-$PKG_VERSION.tar.bz2"
 PKG_BUILD_DEPENDS="toolchain"
 PKG_PRIORITY=optional
 PKG_SECTION="utils"

@@ -1,8 +1,8 @@
 PKG_NAME=fuse
-PKG_VERSION=2.9.3
-PKG_URL="$SFNET_SRCS/fuse/fuse-${PKG_VERSION}.tar.gz"
+PKG_VERSION=2.9.3+re3b7d4
+PKG_URL="$SFNET_SRCS/openpctv/sources/fuse-${PKG_VERSION}.tar.bz2"
 #PKG_URL_PROTO=git
-#PKG_URL_REV=78bc1108
+#PKG_URL_REV=e3b7d4
 #PKG_URL="git://git.code.sf.net/p/fuse/fuse"
 #PKG_VERSION=2.9.3+r${PKG_URL_REV}
 PKG_REV=1

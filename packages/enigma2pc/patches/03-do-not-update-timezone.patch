@@ -1,0 +1,38 @@
+diff -uNr enigma2pc-20140612.orig/etc/tuxbox/timezone.xml enigma2pc-20140612/etc/tuxbox/timezone.xml
+--- enigma2pc-20140612.orig/etc/tuxbox/timezone.xml	2014-06-12 21:41:33.000000000 +0800
++++ enigma2pc-20140612/etc/tuxbox/timezone.xml	2014-08-26 07:44:59.325146373 +0800
+@@ -57,7 +57,7 @@
+ 	<zone name="(GMT+06:30) Rangoon" zone="Asia/Rangoon" />
+ 	<zone name="(GMT+07:00) Bangkok, Hanoi, Jakarta" zone="Asia/Bangkok" />
+ 	<zone name="(GMT+07:00) Krasnoyarsk" zone="Asia/Krasnoyarsk" />
+-	<zone name="(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi" zone="Asia/Hong_Kong" />
++	<zone name="(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi" zone="Asia/Shanghai" />
+ 	<zone name="(GMT+08:00) Irkutsk, Ulaan Bataar" zone="Asia/Irkutsk" />
+ 	<zone name="(GMT+08:00) Kuala Lumpur, Singapore" zone="Asia/Kuala_Lumpur" />
+ 	<zone name="(GMT+08:00) Perth" zone="Australia/Perth" />
+diff -uNr enigma2pc-20140612.orig/lib/python/Components/Timezones.py enigma2pc-20140612/lib/python/Components/Timezones.py
+--- enigma2pc-20140612.orig/lib/python/Components/Timezones.py	2014-06-12 20:25:59.000000000 +0800
++++ enigma2pc-20140612/lib/python/Components/Timezones.py	2014-08-26 07:43:33.144719027 +0800
+@@ -25,14 +25,14 @@
+ 			return
+ 		
+ 		environ['TZ'] = self.timezones[index][1]
+-		try:
+-			unlink(eEnv.resolve("${sysconfdir}/localtime"))
+-		except OSError:
+-			pass
+-		try:
+-			symlink(eEnv.resolve("${datarootdir}/zoneinfo/%s") %(self.timezones[index][1]), eEnv.resolve("${sysconfdir}/localtime"))
+-		except OSError:
+-			pass
++		#try:
++		#	unlink(eEnv.resolve("${sysconfdir}/localtime"))
++		#except OSError:
++		#	pass
++		#try:
++		#	symlink(eEnv.resolve("${datarootdir}/zoneinfo/%s") %(self.timezones[index][1]), eEnv.resolve("${sysconfdir}/localtime"))
++		#except OSError:
++		#	pass
+ 		try:
+ 			time.tzset()
+ 		except:

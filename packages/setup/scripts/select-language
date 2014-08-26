@@ -70,20 +70,39 @@ fi
 
 echo "Creating timezone list, please wait ..."
 echo "dialog --clear --no-cancel --colors --title \"Change the Timezone\" $default_item --menu \"Here is the Timezone list, currently selected is based on your choice of global locale.\" 50 80 40 \\" > /tmp/menufile
-grep -v ^# /usr/share/zoneinfo/zone.tab | while read line; do
-  TZ=$(echo $line | awk '{print $3}')
-  CODE=$(echo $line | awk '{print $1}')
-  COORDINATES=$(echo $line | awk '{print $2}')
-  echo "\"$TZ\" \"Country Code:\Z5$CODE\Zn Coordinates:\Z5$COORDINATES\Zn\" \\" >> /tmp/menufile
-done
+#grep -v ^# /usr/share/zoneinfo/zone.tab | while read line; do
+#  TZ=$(echo $line | awk '{print $3}')
+#  CODE=$(echo $line | awk '{print $1}')
+#  COORDINATES=$(echo $line | awk '{print $2}')
+#  echo "\"$TZ\" \"Country Code:\Z5$CODE\Zn Coordinates:\Z5$COORDINATES\Zn\" \\" >> /tmp/menufile
+#done
+cat /usr/share/zoneinfo/zonelist >> /tmp/menufile
 echo "2> /tmp/tmpfile" >> /tmp/menufile
 . /tmp/menufile
 
-tztime=$(cat /tmp/tmpfile)
+TZ=$(cat /tmp/tmpfile)
 
 rm /tmp/tmpfile /tmp/menufile
 
-cp /usr/share/zoneinfo/$tztime /etc/localtime
+ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
+
+if [ -x /usr/bin/xbmc ]; then
+  TZ_COUNTRY_CODE=`grep $TZ /usr/share/zoneinfo/zone.tab | cut -f1 | head -1`
+  TZ_COUNTRY=`grep $TZ_COUNTRY_CODE /usr/share/zoneinfo/iso3166.tab | cut -f2 | head -1`
+
+  sed -i -e "s#<timezone>.*#<timezone>$TZ</timezone>#g" \
+         -e "s#<timezonecountry>.*#<timezonecountry>$TZ_COUNTRY</timezonecountry>#g" \
+         /root/.xbmc/userdata/guisettings.xml
+fi
+
+if [ -x /usr/bin/enigma2 ]; then
+  TZINFO="$(grep $TZ /usr/share/zoneinfo/zonelist | awk -F\" '{print $4}' | head -1)"
+  if grep "^config.timezone.val" /etc/enigma2/settings > /dev/null; then
+    sed -i "s/^config.timezone.val=.*/config.timezone.val=$TZINFO/g" /etc/enigma2/settings
+  else
+    echo "config.timezone.val=$TZINFO" >> /etc/enigma2/settings
+  fi
+fi
 }
 
 option=$1
@@ -97,7 +116,11 @@ else
 fi
 
 if [ X"$option" != Xnotz ]; then
-  if [ X"$option" = Xauto -a ! -f /etc/localtime ]; then
+  if [ X"$option" = Xauto ]; then
+    if [ ! -f /etc/localtime ]; then
+      settztime
+    fi
+  else
     settztime
   fi
 fi

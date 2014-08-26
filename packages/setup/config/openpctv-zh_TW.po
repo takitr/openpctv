@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-15 21:11+0800\n"
+"POT-Creation-Date: 2014-08-26 22:36+0800\n"
 "PO-Revision-Date: 2014-07-08 17:58+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
@@ -468,12 +468,12 @@ msgstr "指定$field 卡的序號"
 msgid "Here is a list of valid choices for the card=<n> insmod option"
 msgstr "這裡是電視卡設備有效的列表，請選擇你的卡的正確編號。"
 
-#: packages/setup/scripts/install-drivers:125
-#: packages/setup/scripts/install-drivers:130
+#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:131
 msgid "Additional DVB driver"
 msgstr "附加的DVB驅動"
 
-#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:127
 msgid ""
 "Your DVB devices seem to be normal. Perhaps you do not need to install other "
 "additional drivers. If you want to install additional drivers please select "
@@ -482,7 +482,7 @@ msgstr ""
 "你的DVB設備驅動看上是正常的。也許你並不需要安裝其它附加的驅動。如果你想安裝附"
 "加驅動，請選擇'是'"
 
-#: packages/setup/scripts/install-drivers:131
+#: packages/setup/scripts/install-drivers:132
 msgid ""
 "Your DVB device does not seem to work properly. Perhaps you should install "
 "another driver. Do you want to install the additional drivers?"
@@ -490,46 +490,46 @@ msgstr ""
 "你的DVB設備看上去似乎並不正常，或許你應該安裝另外一個驅動。你想要安裝附加的驅"
 "動嗎？"
 
-#: packages/setup/scripts/install-drivers:136
+#: packages/setup/scripts/install-drivers:137
 #: packages/setup/scripts/setup.sh:102
 msgid "Install additional DVB driver"
 msgstr "安裝附加的DVB驅動"
 
-#: packages/setup/scripts/install-drivers:137
+#: packages/setup/scripts/install-drivers:138
 msgid ""
 "Before proceeding please confirm your DVB device specific information. "
 "Choose the driver you need to install carefully."
 msgstr "在繼續之前你請確認你的V4L及DVB設備的信息，仔細選擇你想要安裝的驅動。"
 
-#: packages/setup/scripts/install-drivers:138
+#: packages/setup/scripts/install-drivers:139
 msgid "I do not want to install now."
 msgstr "我現在不想要安裝。"
 
-#: packages/setup/scripts/install-drivers:139
+#: packages/setup/scripts/install-drivers:140
 msgid "Support all the TBS devices"
 msgstr "支持TBS全系列的設備"
 
-#: packages/setup/scripts/install-drivers:140
+#: packages/setup/scripts/install-drivers:141
 msgid "Support all the DVBSky devices"
 msgstr "支持DVBSky全系列的設備"
 
-#: packages/setup/scripts/install-drivers:141
+#: packages/setup/scripts/install-drivers:142
 msgid "Support all the TBS DVB-C devices"
 msgstr "支持TBS DVB-C全系列的設備"
 
-#: packages/setup/scripts/install-drivers:142
+#: packages/setup/scripts/install-drivers:143
 msgid "Support all the TBS ATSC devices"
 msgstr "支持TBS ATSC全系列的設備"
 
-#: packages/setup/scripts/install-drivers:143
+#: packages/setup/scripts/install-drivers:144
 msgid "Support all the DVBSky DVB-C devices"
 msgstr "支持DVBSky DVB-C全系列的設備"
 
-#: packages/setup/scripts/install-drivers:144
+#: packages/setup/scripts/install-drivers:145
 msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
 msgstr "支持大多數的設備，例如DVBWorld，Tevii，Prof等"
 
-#: packages/setup/scripts/install-drivers:145
+#: packages/setup/scripts/install-drivers:146
 #, fuzzy
 msgid "Support the DVB3221 DVB-C device"
 msgstr "支持DVBSky DVB-C全系列的設備"
@@ -952,9 +952,9 @@ msgstr "檢查網絡的聯接情況，請等待 ..."
 msgid "Searching for wireless networks, please wait ..."
 msgstr "正在搜索無線網絡，請等待 ..."
 
-#: packages/setup/scripts/select-backend:8 packages/setup/scripts/setup.sh:108
+#: packages/setup/scripts/select-backend:8
 #, fuzzy
-msgid "Select the default PVR backend"
+msgid "Select the default PVR backend for XBMC"
 msgstr "選擇預設的啟動項"
 
 #: packages/setup/scripts/select-backend:8
@@ -974,6 +974,10 @@ msgstr "數字錄像機使用標準的PC組件。"
 msgid ""
 "A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, "
 "and Analog video."
+msgstr ""
+
+#: packages/setup/scripts/select-backend:22
+msgid "Do not run any PVR backend"
 msgstr ""
 
 #: packages/setup/scripts/select-irdrv:11
@@ -1086,6 +1090,11 @@ msgstr "更新衛星參數"
 #: packages/setup/scripts/setup.sh:107
 msgid "Update EPG data"
 msgstr "更新第三方EPG數據"
+
+#: packages/setup/scripts/setup.sh:108
+#, fuzzy
+msgid "Select the default PVR backend"
+msgstr "選擇預設的啟動項"
 
 #: packages/setup/scripts/setup.sh:110
 msgid "Select a software emulated CAM"

@@ -62,7 +62,15 @@ if [ -f /sys/class/drm/card0/device/vendor ]; then
   fi
 fi
 
+i=1
+while [ ! -c /dev/dvb/adapter0/frontend0 ]; do
+  [ $i -ge 30 ] && break
+  sleep 0.5
+  i=$(expr $i + 1)
+done
+
 chvt 4
+
 sync
 LD_PRELOAD=$LIBS ${exec_prefix}/bin/enigma2
 

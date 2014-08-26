@@ -3,9 +3,10 @@
 . config/options
 
 get_meta $1
+
 cd $PKG_BUILD_DIR
 #aclocal --force --verbose -I m4
-#do_autoconf
+do_autoconf
 do_configure \
             --enable-lib \
             --enable-util \

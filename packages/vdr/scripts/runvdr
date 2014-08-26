@@ -47,9 +47,9 @@ fi
 
 . /etc/audio
 cat > /etc/asound.conf <<EOF
-#defaults.pcm.card $ALSA_CARD
-#defaults.pcm.device $ALSA_DEVICE
-#defaults.ctl.card $ALSA_CARD
+defaults.pcm.card $ALSA_CARD
+defaults.pcm.device $ALSA_DEVICE
+defaults.ctl.card $ALSA_CARD
 EOF
 
 sync
@@ -82,8 +82,18 @@ if grep -q BCM2708 /proc/cpuinfo; then
   setterm -clear -cursor off > /dev/tty4
 fi
 
+i=1
+while [ ! -c /dev/dvb/adapter0/frontend0 ]; do
+  [ $i -ge 30 ] && break
+  sleep 0.5
+  i=$(expr $i + 1)
+done
+
+[ $CAM = "OScam" ] && systemctl restart oscam
+
 chvt 4
 if [ $(ps -A | grep -v grep | grep -c unclutter) -eq 0 -a -f /usr/bin/unclutter ]; then
    /usr/bin/unclutter -idle 1 -root  &
 fi
+
 eval vdr -g /tmp --vfat $PLUGINS -v /video -c /etc/vdr --lirc -E /etc/vdr/epg.data -s shutdown

@@ -1,0 +1,16 @@
+diff -uNr fuse-exfat-1.1.0.orig/libexfat/compiler.h fuse-exfat-1.1.0/libexfat/compiler.h
+--- fuse-exfat-1.1.0.orig/libexfat/compiler.h	2014-08-19 11:10:24.121971135 +0800
++++ fuse-exfat-1.1.0/libexfat/compiler.h	2014-08-19 11:10:35.434027237 +0800
+@@ -24,9 +24,9 @@
+ #ifndef COMPILER_H_INCLUDED
+ #define COMPILER_H_INCLUDED
+ 
+-#if __STDC_VERSION__ < 199901L
+-#error C99-compliant compiler is required
+-#endif
++//#if __STDC_VERSION__ < 199901L
++//#error C99-compliant compiler is required
++//#endif
+ 
+ #if defined(__clang__)
+ 

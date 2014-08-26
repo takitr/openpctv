@@ -1,0 +1,10 @@
+[Unit]
+Description=Get EPG
+After=network-link.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/update-epg
+
+[Install]
+WantedBy=multi-user.target

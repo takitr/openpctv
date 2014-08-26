@@ -1,0 +1,60 @@
+diff -uNr tbs-drivers-v140707/linux/drivers/media/dvb/dvb-core/dvb_net.c tbs-drivers-v140819/linux/drivers/media/dvb/dvb-core/dvb_net.c
+--- tbs-drivers-v140707/linux/drivers/media/dvb/dvb-core/dvb_net.c	2012-02-13 04:06:09.000000000 +0800
++++ tbs-drivers-v140819/linux/drivers/media/dvb/dvb-core/dvb_net.c	2014-08-17 08:20:52.000000000 +0800
+@@ -1294,7 +1294,12 @@
+ 	if ((if_num = get_if(dvbnet)) < 0)
+ 		return -EINVAL;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
+ 	net = alloc_netdev(sizeof(struct dvb_net_priv), "dvb", dvb_net_setup);
++#else
++	net = alloc_netdev(sizeof(struct dvb_net_priv), "dvb",
++			   NET_NAME_UNKNOWN, dvb_net_setup);
++#endif
+ 	if (!net)
+ 		return -ENOMEM;
+ 
+diff -uNr tbs-drivers-v140707/linux/drivers/media/video/cx231xx/cx231xx-cards.c tbs-drivers-v140819/linux/drivers/media/video/cx231xx/cx231xx-cards.c
+--- tbs-drivers-v140707/linux/drivers/media/video/cx231xx/cx231xx-cards.c	2014-01-30 02:23:22.000000000 +0800
++++ tbs-drivers-v140819/linux/drivers/media/video/cx231xx/cx231xx-cards.c	2014-08-17 08:21:18.000000000 +0800
+@@ -1194,7 +1194,7 @@
+ 	dev->gpio_dir = 0;
+ 	dev->gpio_val = 0;
+ 	dev->xc_fw_load_done = 0;
+-	dev->has_alsa_audio = 1;
++	dev->has_alsa_audio = 0;
+ 	dev->power_mode = -1;
+ 	atomic_set(&dev->devlist_count, 0);
+ 
+diff -uNr tbs-drivers-v140707/v4l/compat.h tbs-drivers-v140819/v4l/compat.h
+--- tbs-drivers-v140707/v4l/compat.h	2013-03-19 03:40:05.000000000 +0800
++++ tbs-drivers-v140819/v4l/compat.h	2014-08-17 08:20:28.000000000 +0800
+@@ -654,11 +654,15 @@
+ 			      struct module *module, int extra_size,
+ 			      struct snd_card **card)
+ {
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 15, 0)
+ 	*card = snd_card_new(idx, id, module, extra_size);
+ 
+ 	if (*card == NULL)
+ 		return -ENOMEM;
+ 	return 0;
++#else
++	return snd_card_new(NULL, idx, id, module, extra_size, card);
++#endif
+ }
+ #endif
+ 
+@@ -703,10 +707,12 @@
+ #endif /* _LINUX_HRTIMER_H */
+ 
+ #ifndef PCI_VDEVICE
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
+ #define PCI_VDEVICE(vendor, device)             \
+ 	PCI_VENDOR_ID_##vendor, (device),       \
+ 	PCI_ANY_ID, PCI_ANY_ID, 0, 0
+ #endif
++#endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 25)
+ #define __devinitconst

@@ -7,10 +7,10 @@ else
   cachedir=/video
 fi
 
-if [ -f $cachedir/epg.dat ]; then
-  a=`find $cachedir -mmin +120 -name epg.dat -print`
-  [ X$a = "X" ] && exit 0
-fi
+#if [ -f $cachedir/epg.dat ]; then
+#  a=`find $cachedir -mmin +120 -name epg.dat -print`
+#  [ X$a = "X" ] && exit 0
+#fi
 
 . /etc/system.options
 . /etc/locale.conf

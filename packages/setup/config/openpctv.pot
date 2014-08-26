@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-16 11:33+0800\n"
+"POT-Creation-Date: 2014-08-26 22:36+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -447,64 +447,64 @@ msgstr ""
 msgid "Here is a list of valid choices for the card=<n> insmod option"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:125
-#: packages/setup/scripts/install-drivers:130
+#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:131
 msgid "Additional DVB driver"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:127
 msgid ""
 "Your DVB devices seem to be normal. Perhaps you do not need to install other "
 "additional drivers. If you want to install additional drivers please select "
 "'Yes'"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:131
+#: packages/setup/scripts/install-drivers:132
 msgid ""
 "Your DVB device does not seem to work properly. Perhaps you should install "
 "another driver. Do you want to install the additional drivers?"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:136
+#: packages/setup/scripts/install-drivers:137
 #: packages/setup/scripts/setup.sh:102
 msgid "Install additional DVB driver"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:137
+#: packages/setup/scripts/install-drivers:138
 msgid ""
 "Before proceeding please confirm your DVB device specific information. "
 "Choose the driver you need to install carefully."
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:138
+#: packages/setup/scripts/install-drivers:139
 msgid "I do not want to install now."
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:139
+#: packages/setup/scripts/install-drivers:140
 msgid "Support all the TBS devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:140
+#: packages/setup/scripts/install-drivers:141
 msgid "Support all the DVBSky devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:141
+#: packages/setup/scripts/install-drivers:142
 msgid "Support all the TBS DVB-C devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:142
+#: packages/setup/scripts/install-drivers:143
 msgid "Support all the TBS ATSC devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:143
+#: packages/setup/scripts/install-drivers:144
 msgid "Support all the DVBSky DVB-C devices"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:144
+#: packages/setup/scripts/install-drivers:145
 msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:145
+#: packages/setup/scripts/install-drivers:146
 msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 
@@ -909,8 +909,8 @@ msgstr ""
 msgid "Searching for wireless networks, please wait ..."
 msgstr ""
 
-#: packages/setup/scripts/select-backend:8 packages/setup/scripts/setup.sh:108
-msgid "Select the default PVR backend"
+#: packages/setup/scripts/select-backend:8
+msgid "Select the default PVR backend for XBMC"
 msgstr ""
 
 #: packages/setup/scripts/select-backend:8
@@ -930,6 +930,10 @@ msgstr ""
 msgid ""
 "A TV streaming server supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC, IPTV, "
 "and Analog video."
+msgstr ""
+
+#: packages/setup/scripts/select-backend:22
+msgid "Do not run any PVR backend"
 msgstr ""
 
 #: packages/setup/scripts/select-irdrv:11
@@ -1037,6 +1041,10 @@ msgstr ""
 
 #: packages/setup/scripts/setup.sh:107
 msgid "Update EPG data"
+msgstr ""
+
+#: packages/setup/scripts/setup.sh:108
+msgid "Select the default PVR backend"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:110

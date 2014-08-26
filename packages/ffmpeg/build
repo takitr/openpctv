@@ -109,5 +109,6 @@ do_gcc_strip_gold
 make -j3
 make_install
 
-do_strip .install/usr/lib/*.a
-strip_bins .install/usr/bin
+for i in `find .install -type f -readable -writable -name "*.a"`; do
+  strip --strip-debug "$i"
+done

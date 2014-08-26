@@ -191,9 +191,29 @@ for i in .install/usr/share/xbmc/addons/skin.*; do
   fi
 done
 
-mkdir .install/root
-tar afx $ROOT/$PACKAGES/$1/config/xbmc_userdata.tar.xz -C \
-  .install/root
+#mkdir .install/root
+#tar afx $ROOT/$PACKAGES/$1/config/xbmc_userdata.tar.xz -C \
+#  .install/root
 
+USERDATA=".install/root/.xbmc/userdata"
+FILESPATH="$ROOT/$PACKAGES/$1/config"
+mkdir -p $USERDATA
+
+if [ "$TARGET_PLATFORM" = omap4 ];	then SYS_PREFIX="panda"
+elif [ "$TARGET_PLATFORM" = ux500 ];	then SYS_PREFIX="snowball"
+elif [ "$TARGET_MACHINE" = cubox ];	then SYS_PREFIX="cubox"
+elif [ "$TARGET_PLATFORM" = bcm2708 ];	then SYS_PREFIX="rpi"
+elif [ "$TARGET_PLATFORM" = a10 -o "$TARGET_PLATFORM" = a20 ];	then SYS_PREFIX="a10"
+elif [ "$TARGET_MACHINE" = utilite ];	then SYS_PREFIX="utilite"
+elif [ "$TARGET_PLATFORM" = imx6 ];	then SYS_PREFIX="cuboxi"
+else					SYS_PREFIX="generic"     
+fi
+
+[ -f $FILESPATH/$SYS_PREFIX-advancedsettings.xml ] && \
+	cp $FILESPATH/$SYS_PREFIX-advancedsettings.xml $USERDATA/advancedsettings.xml
+[ -f $FILESPATH/$SYS_PREFIX-guisettings.xml ] && \
+	cp $FILESPATH/$SYS_PREFIX-guisettings.xml $USERDATA/guisettings.xml
+[ -f $FILESPATH/sources.xml ] && \
+	cp $FILESPATH/sources.xml $USERDATA
 
 exit 0

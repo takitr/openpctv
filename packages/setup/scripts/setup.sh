@@ -172,8 +172,8 @@ case "$(cat $DIALOGOUT)" in
 		;;
     Enigma2)	systemctl start enigma2pc
 		;;
-    XBMC)	systemctl start getty\@ttymxc0
-		systemctl start vdr-backend
+    XBMC)	[ -c /dev/ttymxc0 ] && systemctl start getty\@ttymxc0
+		systemctl start backend
 		systemctl start xbmc
 		;;
     Install)	$RUN_INSTALLER

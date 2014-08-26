@@ -9,6 +9,15 @@ elif [ $CAM = "VDR-SC" ]; then
   systemctl stop oscam
 fi
 
+i=1                                                                                                                     
+while [ ! -c /dev/dvb/adapter0/frontend0 ]; do                                                                          
+  [ $i -ge 30 ] && break                                                                                                
+  sleep 0.5                                                                                                   
+  i=$(expr $i + 1)                                                                     
+done
+
+[ $CAM = "OScam" ] && systemctl restart oscam
+
 if [ X$BACKEND = "Xvdr" ]; then
   if [ X$E2EPG = "Xyes" ]; then
     epgen -i /video/epg.dat -o /tmp/epg.dat && epgtrans &

@@ -518,9 +518,9 @@ install_grub (){
   chmod 755 $BOOTDISK_MNT/etc/grub.d/08_openpctv
 
   if [ "$MBR" = "yes" ]; then
-    grub-install --root-directory=$BOOTDISK_MNT $TMP_DISK
+    grub-install --target=i386-pc --root-directory=$BOOTDISK_MNT $TMP_DISK
   else #try to install into partition
-    grub-install --root-directory=$BOOTDISK_MNT $LOC_DEV
+    grub-install --target=i386-pc --root-directory=$BOOTDISK_MNT $LOC_DEV
   fi
   cp -rf /usr/lib/grub/themes $BOOTDISK_MNT/boot/grub/
   cp -rf /usr/lib/grub/fonts $BOOTDISK_MNT/boot/grub/
@@ -639,7 +639,7 @@ cp -P /.root/boot/initrd $BOOTDISK_MNT/boot >> $LOGFILE 2>&1
 has_ssd_with_tirm $DEV
 INSTALL_SSD=$?
 if [ "$INSTALL_SSD" = 0 ]; then
-  echo "* */4 * * * fstrim /" >> $BOOTDISK_MNT/var/spool/cron/crontabs/root
+  echo "0 */4 * * * fstrim /" >> $BOOTDISK_MNT/var/spool/cron/crontabs/root
 fi
 
 install_grub "$DEV" "$MKFS_TYPE"

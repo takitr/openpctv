@@ -50,6 +50,9 @@ mkdir -p $INSTALL/usr/share/installator
 cp $PACKAGES/$1/config/grub.cfg  $INSTALL/usr/share/installator
 cp $PACKAGES/$1/config/syslinux.cfg  $INSTALL/usr/share/installator
 
+mkdir -p $INSTALL/usr/share/zoneinfo
+cp $PACKAGES/$1/config/zonelist $INSTALL/usr/share/zoneinfo
+
 mkdir -p $INSTALL/etc/installator
 
 mkdir -p $INSTALL/lib/systemd/system/installator.target.wants/

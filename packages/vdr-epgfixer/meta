@@ -1,0 +1,13 @@
+PKG_NAME=vdr-epgfixer
+PKG_URL_REV=1ad4aaf
+PKG_VERSION=0.3.2+${PKG_URL_REV}
+PKG_URL_PROTO=git
+PKG_URL="git://projects.vdr-developer.org/vdr-plugin-epgfixer.git"
+PKG_REV=1
+PKG_DEPENDS="vdr"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="VDR -- epgfixer plugin"
+PKG_LONGDESC="Epgfixer is a VDR plugin for doing extra fixing of EPG data."

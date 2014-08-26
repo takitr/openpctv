@@ -20,5 +20,6 @@ $CC \
   $CFLAGS -I$LIB_PREFIX/include/fuse -Ilibexfat \
   -DFUSE_USE_VERSION=26 -D_FILE_OFFSET_BITS=64 \
   -s fuse/main.c -o .install/sbin/mount.exfat-fuse \
-  -L$LIB_PREFIX/lib -Llibexfat -lexfat -lfuse -pthread -lrt -ldl \
+  -L$LIB_PREFIX/lib -Llibexfat -lexfat -lfuse -pthread -lrt -ldl
 
+ln -sf mount.exfat-fuse .install/sbin/mount.exfat
