@@ -57,6 +57,7 @@ export LDFLAGS="$LDFLAGS -lm -ldl -lavcodec -lavformat -lavutil -lpostproc -lsws
 export CPP=${TARGET_PREFIX}cpp
 do_autoconf
 do_configure \
+            --with-pic=PIC \
             --disable-dependency-tracking \
             --disable-nls \
             --disable-ipv6 \

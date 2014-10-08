@@ -1,5 +1,5 @@
 PKG_NAME=mesa
-PKG_VERSION=10.3.0-rc1
+PKG_VERSION=10.3.0
 PKG_URL="ftp://ftp.freedesktop.org/pub/mesa/10.3/MesaLib-$PKG_VERSION.tar.bz2"
 #PKG_URL_PROTO=git
 #PKG_URL_REV=58511b6

@@ -30,7 +30,8 @@ export SWIG_LIB=$ROOT/$TOOLCHAIN/share/swig/$SWIG_VER
 do_configure \
              --with-arch=$TARGET_ARCH \
              --with-cpu=$TARGET_CPU \
-             --with-xlib
+             --with-xlib \
+             --with-pic
 
 make
 make_install
