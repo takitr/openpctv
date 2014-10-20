@@ -1,0 +1,249 @@
+diff --git a/docs/relnotes/10.3.1.html b/docs/relnotes/10.3.1.html
+index ea8e297..7de0506 100644
+--- a/docs/relnotes/10.3.1.html
++++ b/docs/relnotes/10.3.1.html
+@@ -30,7 +30,9 @@ because compatibility contexts are not supported.
+ 
+ <h2>SHA256 checksums</h2>
+ <pre>
+-TBA
++155afcbad17be8bb80282c761b957d5cc716c14a1fa16c4f5ee04e76df729c6d  MesaLib-10.3.1.tar.gz
++b081d077d717e5d56f2d59677490856052c41573e50378ff86d6c72456714add  MesaLib-10.3.1.tar.bz2
++07a14febfed06412d519e091a62d24513fee6745f1a6f8a8f1956bfe04b77d15  MesaLib-10.3.1.zip
+ </pre>
+ 
+ <h2>New features</h2>
+diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gk110.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gk110.cpp
+index 23a6ac7..d8adc93 100644
+--- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gk110.cpp
++++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gk110.cpp
+@@ -140,6 +140,7 @@ private:
+    code[(0x##b) / 32] |= 1 << ((0x##b) % 32)
+ 
+ #define FTZ_(b) if (i->ftz) code[(0x##b) / 32] |= 1 << ((0x##b) % 32)
++#define DNZ_(b) if (i->dnz) code[(0x##b) / 32] |= 1 << ((0x##b) % 32)
+ 
+ #define SAT_(b) if (i->saturate) code[(0x##b) / 32] |= 1 << ((0x##b) % 32)
+ 
+@@ -464,6 +465,7 @@ CodeEmitterGK110::emitFMAD(const Instruction *i)
+    SAT_(35);
+    RND_(36, F);
+    FTZ_(38);
++   DNZ_(39);
+ 
+    bool neg1 = (i->src(0).mod ^ i->src(1).mod).neg();
+ 
+@@ -487,6 +489,7 @@ CodeEmitterGK110::emitFMUL(const Instruction *i)
+       emitForm_L(i, 0x200, 0x2, Modifier(0));
+ 
+       FTZ_(38);
++      DNZ_(39);
+       SAT_(3a);
+       if (neg)
+          code[1] ^= 1 << 22;
+@@ -499,6 +502,7 @@ CodeEmitterGK110::emitFMUL(const Instruction *i)
+ 
+       RND_(2a, F);
+       FTZ_(2f);
++      DNZ_(30);
+       SAT_(35);
+ 
+       if (code[0] & 0x1) {
+diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gm107.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gm107.cpp
+index bafb9ca..944ceb2 100644
+--- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gm107.cpp
++++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_gm107.cpp
+@@ -432,7 +432,7 @@ CodeEmitterGM107::emitNEG2(int pos, const ValueRef &a, const ValueRef &b)
+ void
+ CodeEmitterGM107::emitFMZ(int pos, int len)
+ {
+-   emitField(pos, len, /*XXX: insn->dnz << 1 | */ insn->ftz);
++   emitField(pos, len, insn->dnz << 1 | insn->ftz);
+ }
+ 
+ void
+diff --git a/src/gallium/drivers/radeon/r600_buffer_common.c b/src/gallium/drivers/radeon/r600_buffer_common.c
+index ee05776..acdabc0 100644
+--- a/src/gallium/drivers/radeon/r600_buffer_common.c
++++ b/src/gallium/drivers/radeon/r600_buffer_common.c
+@@ -110,11 +110,13 @@ bool r600_init_resource(struct r600_common_screen *rscreen,
+ 	enum radeon_bo_flag flags = 0;
+ 
+ 	switch (res->b.b.usage) {
++	case PIPE_USAGE_STREAM:
++		flags = RADEON_FLAG_GTT_WC;
++		/* fall through */
+ 	case PIPE_USAGE_STAGING:
+ 		/* Transfers are likely to occur more often with these resources. */
+ 		res->domains = RADEON_DOMAIN_GTT;
+ 		break;
+-	case PIPE_USAGE_STREAM:
+ 	case PIPE_USAGE_DYNAMIC:
+ 		/* Older kernels didn't always flush the HDP cache before
+ 		 * CS execution
+diff --git a/src/gallium/drivers/radeonsi/si_descriptors.c b/src/gallium/drivers/radeonsi/si_descriptors.c
+index 0e95f48..81ea11e 100644
+--- a/src/gallium/drivers/radeonsi/si_descriptors.c
++++ b/src/gallium/drivers/radeonsi/si_descriptors.c
+@@ -411,6 +411,11 @@ static void si_set_sampler_views(struct pipe_context *ctx,
+ 				si_set_sampler_view(sctx, shader, SI_FMASK_TEX_OFFSET + slot,
+ 						    NULL, NULL);
+ 			}
++		} else {
++			samplers->depth_texture_mask &= ~(1 << slot);
++			samplers->compressed_colortex_mask &= ~(1 << slot);
++			si_set_sampler_view(sctx, shader, SI_FMASK_TEX_OFFSET + slot,
++					    NULL, NULL);
+ 		}
+ 	}
+ 
+diff --git a/src/gallium/state_trackers/wgl/stw_ext_context.c b/src/gallium/state_trackers/wgl/stw_ext_context.c
+index bc8d5c2..451f330 100644
+--- a/src/gallium/state_trackers/wgl/stw_ext_context.c
++++ b/src/gallium/state_trackers/wgl/stw_ext_context.c
+@@ -50,8 +50,8 @@
+ HGLRC WINAPI
+ wglCreateContextAttribsARB(HDC hDC, HGLRC hShareContext, const int *attribList)
+ {
+-   typedef HGLRC (*wglCreateContext_t)(HDC hdc);
+-   typedef BOOL (*wglDeleteContext_t)(HGLRC hglrc);
++   typedef HGLRC (WINAPI *wglCreateContext_t)(HDC hdc);
++   typedef BOOL (WINAPI *wglDeleteContext_t)(HGLRC hglrc);
+    HGLRC context;
+    static HMODULE opengl_lib = 0;
+    static wglCreateContext_t wglCreateContext_func = 0;
+diff --git a/src/mesa/drivers/dri/i965/brw_defines.h b/src/mesa/drivers/dri/i965/brw_defines.h
+index 968aba1..9470fbc 100644
+--- a/src/mesa/drivers/dri/i965/brw_defines.h
++++ b/src/mesa/drivers/dri/i965/brw_defines.h
+@@ -2312,9 +2312,13 @@ enum brw_wm_barycentric_interp_mode {
+ #define HSW_MOCS_WB_LLC_WB_ELLC         (2 << 1)
+ #define HSW_MOCS_UC_LLC_WB_ELLC         (3 << 1)
+ 
+-/* Broadwell: write-back or write-through; always use all the caches. */
+-#define BDW_MOCS_WB 0x78
+-#define BDW_MOCS_WT 0x58
++/* Broadwell: these defines always use all available caches (L3, LLC, eLLC),
++ * and let you force write-back (WB) or write-through (WT) caching, or leave
++ * it up to the page table entry (PTE) specified by the kernel.
++ */
++#define BDW_MOCS_WB  0x78
++#define BDW_MOCS_WT  0x58
++#define BDW_MOCS_PTE 0x18
+ 
+ #include "intel_chipset.h"
+ 
+diff --git a/src/mesa/drivers/dri/i965/gen8_surface_state.c b/src/mesa/drivers/dri/i965/gen8_surface_state.c
+index 40eb2ea..6dd343f 100644
+--- a/src/mesa/drivers/dri/i965/gen8_surface_state.c
++++ b/src/mesa/drivers/dri/i965/gen8_surface_state.c
+@@ -377,7 +377,7 @@ gen8_update_renderbuffer_surface(struct brw_context *brw,
+              horizontal_alignment(mt) |
+              surface_tiling_mode(tiling);
+ 
+-   surf[1] = SET_FIELD(BDW_MOCS_WT, GEN8_SURFACE_MOCS) | mt->qpitch >> 2;
++   surf[1] = SET_FIELD(BDW_MOCS_PTE, GEN8_SURFACE_MOCS) | mt->qpitch >> 2;
+ 
+    surf[2] = SET_FIELD(width - 1, GEN7_SURFACE_WIDTH) |
+              SET_FIELD(height - 1, GEN7_SURFACE_HEIGHT);
+diff --git a/src/mesa/drivers/dri/i965/intel_extensions.c b/src/mesa/drivers/dri/i965/intel_extensions.c
+index 046d2a1..f3aa37f 100644
+--- a/src/mesa/drivers/dri/i965/intel_extensions.c
++++ b/src/mesa/drivers/dri/i965/intel_extensions.c
+@@ -87,6 +87,7 @@ can_do_pipelined_register_writes(struct brw_context *brw)
+ 
+    /* Check whether the value got written. */
+    drm_intel_bo_map(brw->batch.workaround_bo, false);
++   data = brw->batch.workaround_bo->virtual;
+    bool success = data[offset] == expected_value;
+    drm_intel_bo_unmap(brw->batch.workaround_bo);
+ 
+@@ -145,6 +146,7 @@ can_write_oacontrol(struct brw_context *brw)
+ 
+    /* Check whether the value got written. */
+    drm_intel_bo_map(brw->batch.workaround_bo, false);
++   data = brw->batch.workaround_bo->virtual;
+    bool success = data[offset] == expected_value;
+    drm_intel_bo_unmap(brw->batch.workaround_bo);
+ 
+diff --git a/src/mesa/main/context.c b/src/mesa/main/context.c
+index 4c7faad..801c90b 100644
+--- a/src/mesa/main/context.c
++++ b/src/mesa/main/context.c
+@@ -896,7 +896,21 @@ _mesa_generic_nop(void)
+ 
+ 
+ /**
+- * Allocate and initialize a new dispatch table.
++ * Special no-op glFlush, see below.
++ */
++#if defined(_WIN32)
++static void GLAPIENTRY
++nop_glFlush(void)
++{
++   /* don't record an error like we do in _mesa_generic_nop() */
++}
++#endif
++
++
++/**
++ * Allocate and initialize a new dispatch table.  All the dispatch
++ * function pointers will point at the _mesa_generic_nop() function
++ * which raises GL_INVALID_OPERATION.
+  */
+ struct _glapi_table *
+ _mesa_alloc_dispatch_table()
+@@ -916,6 +930,26 @@ _mesa_alloc_dispatch_table()
+       for (i = 0; i < numEntries; i++) {
+          entry[i] = (_glapi_proc) _mesa_generic_nop;
+       }
++
++#if defined(_WIN32)
++      /* This is a special case for Windows in the event that
++       * wglGetProcAddress is called between glBegin/End().
++       *
++       * The MS opengl32.dll library apparently calls glFlush from
++       * wglGetProcAddress().  If we're inside glBegin/End(), glFlush
++       * will dispatch to _mesa_generic_nop() and we'll generate a
++       * GL_INVALID_OPERATION error.
++       *
++       * The specific case which hits this is piglit's primitive-restart
++       * test which calls glPrimitiveRestartNV() inside glBegin/End.  The
++       * first time we call glPrimitiveRestartNV() Piglit's API dispatch
++       * code will try to resolve the function by calling wglGetProcAddress.
++       * This raises GL_INVALID_OPERATION and an assert(glGetError()==0)
++       * will fail causing the test to fail.  By suppressing the error, the
++       * assertion passes and the test continues.
++       */
++      SET_Flush(table, nop_glFlush);
++#endif
+    }
+    return table;
+ }
+diff --git a/src/mesa/main/texgetimage.c b/src/mesa/main/texgetimage.c
+index 2c54e4a..cb5f793 100644
+--- a/src/mesa/main/texgetimage.c
++++ b/src/mesa/main/texgetimage.c
+@@ -78,8 +78,8 @@ get_tex_depth(struct gl_context *ctx, GLuint dimensions,
+               struct gl_texture_image *texImage)
+ {
+    const GLint width = texImage->Width;
+-   const GLint height = texImage->Height;
+-   const GLint depth = texImage->Depth;
++   GLint height = texImage->Height;
++   GLint depth = texImage->Depth;
+    GLint img, row;
+    GLfloat *depthRow = malloc(width * sizeof(GLfloat));
+ 
+@@ -88,6 +88,11 @@ get_tex_depth(struct gl_context *ctx, GLuint dimensions,
+       return;
+    }
+ 
++   if (texImage->TexObject->Target == GL_TEXTURE_1D_ARRAY) {
++      depth = height;
++      height = 1;
++   }
++
+    for (img = 0; img < depth; img++) {
+       GLubyte *srcMap;
+       GLint srcRowStride;

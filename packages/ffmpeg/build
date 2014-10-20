@@ -68,8 +68,8 @@ do_gcc_strip_gold
             --target-os=linux \
             --extra-cflags="$CFLAGS" \
             --cpu=$TARGET_CPU \
-            --enable-static \
-            --disable-shared \
+            --disable-static \
+            --enable-shared \
             --enable-gpl \
             --disable-ffserver \
             --enable-ffmpeg \
@@ -109,6 +109,6 @@ do_gcc_strip_gold
 make -j3
 make_install
 
-for i in `find .install -type f -readable -writable -name "*.a"`; do
-  strip --strip-debug "$i"
-done
+#for i in `find .install -type f -readable -writable -name "*.a"`; do
+#  strip --strip-debug "$i"
+#done

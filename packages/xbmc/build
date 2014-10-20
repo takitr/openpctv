@@ -41,7 +41,7 @@ xbmc_set_option $1 "libcec"            "libcec"
 xbmc_set_option $1 "libnfs"            "nfs"
 xbmc_set_option $1 "afpclient"         "afpclient"
 xbmc_set_option $1 "airtunes"          "airtunes"
-xbmc_set_option $1 "screensavers"      "rsxs"
+#xbmc_set_option $1 "screensavers"      "rsxs"
 xbmc_set_option $1 "gstreamer"         "gstreamer"
 xbmc_set_option $1 "xorg"              "x11 xrandr"
 xbmc_set_option $1 "sdl"               "sdl"
@@ -147,7 +147,9 @@ do_configure \
   --disable-mid \
   --disable-hal \
   --disable-asap-codec \
+  --disable-rsxs \
   --enable-projectm \
+  --with-ffmpeg=shared \
   $CFG_TEGRA \
   $EXTRA_CONFIG \
 

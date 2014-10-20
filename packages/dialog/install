@@ -7,4 +7,4 @@ get_meta $1
 cd $PKG_BUILD_DIR
 
 do_install usr/bin/dialog
-#do_install usr/share/locale
+do_install usr/share/locale
