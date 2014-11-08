@@ -1,6 +1,6 @@
 PKG_NAME=vdr-graphtftng
 PKG_URL_PROTO=git
-PKG_URL_REV=f3536cd
+PKG_URL_REV=bc84e66
 PKG_URL="git://projects.vdr-developer.org/vdr-plugin-graphtftng.git"
 PKG_VERSION=0.4.10+r${PKG_URL_REV}
 PKG_REV=1

@@ -11,5 +11,5 @@ PKG_USE="opengl"
 PKG_REQUIRES_USE="avahi:qt qt:gstreamer qt:declarative"
 PKG_PRIORITY=optional
 PKG_SECTION=multimedia
-PKG_SHORTDESC="QML implementation of XBMC-like MediaCenter"
-PKG_LONGDESC="This is a reference implementation of XBMC intended to showcase the power and convenience of QML and as a demo for use at Qt related events more. It is intended for research and to convey best practices when using Qt/QML. It deliberately touches as much of QML as possible in order to serve as a full fledged bleeding edge real world example."
+PKG_SHORTDESC="QML implementation of KODI-like MediaCenter"
+PKG_LONGDESC="This is a reference implementation of KODI intended to showcase the power and convenience of QML and as a demo for use at Qt related events more. It is intended for research and to convey best practices when using Qt/QML. It deliberately touches as much of QML as possible in order to serve as a full fledged bleeding edge real world example."

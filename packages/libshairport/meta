@@ -1,6 +1,6 @@
 #
-# See http://mirrors.xbmc.org/build-deps/darwin-libs for more releases
-# See https://github.com/xbmc/xbmc/tree/master/lib/libshairport for patch
+# See http://mirrors.kodi.org/build-deps/darwin-libs for more releases
+# See https://github.com/kodi/kodi/tree/master/lib/libshairport for patch
 #
 
 PKG_NAME=libshairport

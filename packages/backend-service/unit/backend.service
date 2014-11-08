@@ -1,7 +1,7 @@
 [Unit]
 Description=TV streaming server
 After=oscam.service network.target
-Before=xbmc.service
+Before=kodi.service
 
 [Service]
 ExecStart=/usr/bin/runbackend

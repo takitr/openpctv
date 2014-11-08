@@ -3,7 +3,7 @@
 . config/options
 
 fix_soname () {
-  sed -i "s%@$2_SONAME@%lib$3.so%g" $BUILD/$1*/xbmc/DllPaths_generated.h.in
+  sed -i "s%@$2_SONAME@%lib$3.so%g" $BUILD/$1*/kodi/DllPaths_generated.h.in
 }
 
 # fix libraries runtime .so name lookup

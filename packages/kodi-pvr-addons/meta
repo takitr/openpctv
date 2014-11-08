@@ -1,0 +1,13 @@
+PKG_NAME=kodi-pvr-addons
+PKG_URL_PROTO=git
+PKG_URL_REV=067befe
+PKG_URL="https://github.com/opdenkamp/xbmc-pvr-addons"
+PKG_VERSION=1.9.23+r${PKG_URL_REV}
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_DEPENDS="curl"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="KODI PVR addons/clients"
+PKG_LONGDESC="KODI PVR addons collection from Lars Opdenkamp"

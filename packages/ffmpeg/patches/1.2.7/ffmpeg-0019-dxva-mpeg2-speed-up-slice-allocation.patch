@@ -1,5 +1,5 @@
 From 681f74b224e16a4df7f8c4e31a9be56975d57e10 Mon Sep 17 00:00:00 2001
-From: CrystalP <CrystalP@xbmc.org>
+From: CrystalP <CrystalP@kodi.org>
 Date: Mon, 10 Oct 2011 19:42:50 -0400
 Subject: [PATCH 19/24] dxva-mpeg2 speed up slice allocation
 

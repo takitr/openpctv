@@ -81,9 +81,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//configure boxee-sources-0.9.23.15885
  
    { $as_echo "$as_me:${as_lineno-$LINENO}: $external_python_enabled" >&5
  $as_echo "$as_me: $external_python_enabled" >&6;}
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/app/App_Python_Wrapper.cpp boxee-sources-0.9.23.15885/xbmc/app/App_Python_Wrapper.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/app/App_Python_Wrapper.cpp	2011-02-24 19:26:43.001170998 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/app/App_Python_Wrapper.cpp	2011-02-25 22:41:51.271171018 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/app/App_Python_Wrapper.cpp boxee-sources-0.9.23.15885/kodi/app/App_Python_Wrapper.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/app/App_Python_Wrapper.cpp	2011-02-24 19:26:43.001170998 +0100
++++ boxee-sources-0.9.23.15885/kodi/app/App_Python_Wrapper.cpp	2011-02-25 22:41:51.271171018 +0100
 @@ -132,7 +132,10 @@
    #include "config.h"
  #endif
@@ -96,9 +96,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/app/App_Python_Wrapper.cpp boxe
      #include <python2.6/Python.h>
      #include <python2.6/osdefs.h>
    #elif (defined HAVE_LIBPYTHON2_5)
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/linux/Makefile.in boxee-sources-0.9.23.15885/xbmc/lib/libPython/linux/Makefile.in
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/linux/Makefile.in	2011-02-24 19:26:36.551170998 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/linux/Makefile.in	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/linux/Makefile.in boxee-sources-0.9.23.15885/kodi/lib/libPython/linux/Makefile.in
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/linux/Makefile.in	2011-02-24 19:26:36.551170998 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/linux/Makefile.in	2011-02-25 22:28:11.941171002 +0100
 @@ -2,7 +2,10 @@
  
  SHELL=/bin/bash
@@ -111,9 +111,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/linux/Makefile.in
      PYVERSION=python2.6
      SO=python26-$(ARCH).so
  else ifeq (@USE_PYTHON2_5@,1)
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/pyport.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/Python/Include/pyport.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/pyport.h	2011-02-24 19:26:36.321171000 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/Python/Include/pyport.h	2011-02-25 22:28:20.441171001 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/Python/Include/pyport.h boxee-sources-0.9.23.15885/kodi/lib/libPython/Python/Include/pyport.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/Python/Include/pyport.h	2011-02-24 19:26:36.321171000 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/Python/Include/pyport.h	2011-02-25 22:28:20.441171001 +0100
 @@ -1,7 +1,7 @@
  #ifndef Py_PYPORT_H
  #define Py_PYPORT_H
@@ -123,9 +123,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/py
  
  #ifdef HAVE_STDINT_H
  #include <stdint.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/Python.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/Python/Include/Python.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/Python.h	2011-02-24 19:26:36.321171000 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/Python/Include/Python.h	2011-02-25 22:28:32.011171001 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/Python/Include/Python.h boxee-sources-0.9.23.15885/kodi/lib/libPython/Python/Include/Python.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/Python/Include/Python.h	2011-02-24 19:26:36.321171000 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/Python/Include/Python.h	2011-02-25 22:28:32.011171001 +0100
 @@ -5,7 +5,7 @@
  /* Include nearly all Python header files */
  
@@ -135,9 +135,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/Python/Include/Py
  
  /* Cyclic gc is always enabled, starting with release 2.3a1.  Supply the
   * old symbol for the benefit of extension modules written before then
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/action.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/action.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/action.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/action.h	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/action.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/action.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/action.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/action.h	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -149,9 +149,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/action
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlbutton.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlbutton.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlbutton.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlbutton.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlbutton.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlbutton.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlbutton.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlbutton.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -24,7 +24,9 @@
    #include "config.h"
  #endif
@@ -163,9 +163,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlcheckmark.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlcheckmark.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlcheckmark.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlcheckmark.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlcheckmark.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlcheckmark.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlcheckmark.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlcheckmark.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -177,9 +177,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlfadelabel.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlfadelabel.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlfadelabel.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlfadelabel.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlfadelabel.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlfadelabel.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlfadelabel.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlfadelabel.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -191,9 +191,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlgroup.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlgroup.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlgroup.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlgroup.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlgroup.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlgroup.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlgroup.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlgroup.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -205,9 +205,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/control.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/control.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/control.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/control.h	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/control.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/control.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/control.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/control.h	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -219,9 +219,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlimage.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlimage.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlimage.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlimage.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlimage.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlimage.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlimage.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlimage.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -233,9 +233,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controllabel.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controllabel.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controllabel.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controllabel.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controllabel.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controllabel.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controllabel.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controllabel.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -247,9 +247,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controllist.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controllist.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controllist.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controllist.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controllist.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controllist.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controllist.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controllist.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -261,9 +261,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlprogress.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlprogress.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlprogress.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlprogress.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlprogress.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlprogress.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlprogress.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlprogress.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -275,9 +275,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlradiobutton.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlradiobutton.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlradiobutton.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlradiobutton.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlradiobutton.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlradiobutton.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlradiobutton.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlradiobutton.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -289,9 +289,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlspin.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlspin.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controlspin.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controlspin.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlspin.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlspin.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controlspin.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controlspin.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -303,9 +303,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controltextbox.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controltextbox.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/controltextbox.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/controltextbox.cpp	2011-02-25 22:28:11.941171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controltextbox.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controltextbox.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/controltextbox.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/controltextbox.cpp	2011-02-25 22:28:11.941171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -317,9 +317,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/contro
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/dialog.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/dialog.cpp	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/dialog.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/dialog.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/dialog.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/dialog.cpp	2011-02-25 22:28:11.951171002 +0100
 @@ -24,7 +24,9 @@
  #endif
  #include "dialog.h"
@@ -331,9 +331,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/dialog.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/dialog.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/dialog.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/dialog.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/dialog.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/dialog.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -345,9 +345,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/dialog
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/GUIPythonWindow.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/GUIPythonWindow.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/GUIPythonWindow.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/GUIPythonWindow.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/GUIPythonWindow.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/GUIPythonWindow.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/GUIPythonWindow.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/GUIPythonWindow.h	2011-02-25 22:28:11.951171002 +0100
 @@ -26,7 +26,9 @@
    #include "config.h"
  #endif
@@ -359,9 +359,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/GUIPyt
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infotagmusic.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/infotagmusic.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infotagmusic.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/infotagmusic.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/infotagmusic.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/infotagmusic.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/infotagmusic.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/infotagmusic.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -373,9 +373,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infota
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infotagvideo.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/infotagvideo.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infotagvideo.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/infotagvideo.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/infotagvideo.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/infotagvideo.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/infotagvideo.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/infotagvideo.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -387,9 +387,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/infota
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/keyboard.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/keyboard.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/keyboard.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/keyboard.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/keyboard.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/keyboard.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/keyboard.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/keyboard.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -401,9 +401,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/keyboa
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/language.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/language.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/language.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/language.h	2011-02-25 22:35:45.661170998 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/language.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/language.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/language.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/language.h	2011-02-25 22:35:45.661170998 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -415,9 +415,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/langua
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listitem.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/listitem.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listitem.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/listitem.cpp	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/listitem.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/listitem.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/listitem.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/listitem.cpp	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -429,9 +429,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listit
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listitem.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/listitem.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listitem.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/listitem.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/listitem.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/listitem.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/listitem.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/listitem.h	2011-02-25 22:28:11.951171002 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -443,9 +443,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/listit
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/player.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/player.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/player.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/player.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/player.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/player.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/player.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/player.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -457,9 +457,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/player
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplaylist.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyplaylist.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplaylist.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyplaylist.cpp	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyplaylist.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyplaylist.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyplaylist.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyplaylist.cpp	2011-02-25 22:28:11.951171002 +0100
 @@ -26,7 +26,9 @@
  #include "Util.h"
  #include "pyplaylist.h"
@@ -471,9 +471,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplay
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplaylist.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyplaylist.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplaylist.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyplaylist.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyplaylist.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyplaylist.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyplaylist.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyplaylist.h	2011-02-25 22:28:11.951171002 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -485,9 +485,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyplay
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/PythonPlayer.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/PythonPlayer.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/PythonPlayer.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/PythonPlayer.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/PythonPlayer.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/PythonPlayer.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/PythonPlayer.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/PythonPlayer.h	2011-02-25 22:28:11.951171002 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -499,9 +499,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/Python
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/PythonSettings.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/PythonSettings.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/PythonSettings.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/PythonSettings.h	2011-02-25 22:30:48.251171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/PythonSettings.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/PythonSettings.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/PythonSettings.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/PythonSettings.h	2011-02-25 22:30:48.251171002 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -513,9 +513,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/Python
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyutil.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyutil.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyutil.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/pyutil.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyutil.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyutil.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/pyutil.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/pyutil.h	2011-02-25 22:28:11.951171002 +0100
 @@ -25,7 +25,9 @@
    #include "config.h"
  #endif
@@ -527,9 +527,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/pyutil
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/window.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/window.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/window.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/window.h	2011-02-25 22:28:11.951171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/window.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/window.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/window.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/window.h	2011-02-25 22:28:11.951171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -541,9 +541,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/window
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxml.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxml.cpp	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxml.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxml.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxml.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxml.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -24,7 +24,9 @@
  #endif
  #include "winxml.h"
@@ -555,9 +555,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxmldialog.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxmldialog.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxmldialog.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxmldialog.cpp	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxmldialog.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxmldialog.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxmldialog.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxmldialog.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -24,7 +24,9 @@
  #endif
  #include "winxml.h"
@@ -569,9 +569,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxml.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml.h	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/winxml.h	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxml.h boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxml.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/winxml.h	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/winxml.h	2011-02-25 22:28:11.971171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -583,9 +583,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/winxml
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcguimodule.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/xbmcguimodule.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcguimodule.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/xbmcguimodule.cpp	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/kodiguimodule.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/kodiguimodule.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/kodiguimodule.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/kodiguimodule.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -597,9 +597,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcgu
      #include <python2.6/Python.h>
      #include <python2.6/structmember.h>
    #elif (defined HAVE_LIBPYTHON2_5)
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcmodule.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/xbmcmodule.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcmodule.cpp	2011-02-24 19:26:36.141171002 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/xbmcmodule/xbmcmodule.cpp	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/kodimodule.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/kodimodule.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/kodimodule/kodimodule.cpp	2011-02-24 19:26:36.141171002 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/kodimodule/kodimodule.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -23,7 +23,9 @@
    #include "config.h"
  #endif
@@ -611,9 +611,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/xbmcmodule/xbmcmo
      #include <python2.6/Python.h>
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPython.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPython.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPython.cpp	2011-02-24 19:26:36.541171004 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPython.cpp	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPython.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPython.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPython.cpp	2011-02-24 19:26:36.541171004 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPython.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -32,7 +32,9 @@
    #include "config.h"
  #endif
@@ -626,74 +626,74 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPython.cpp boxe
    #elif (defined HAVE_LIBPYTHON2_5)
      #include <python2.5/Python.h>
 @@ -69,7 +71,9 @@
- #define PYTHON_DLL "special://xbmc/system/python/python24-x86-osx.so"
+ #define PYTHON_DLL "special://kodi/system/python/python24-x86-osx.so"
  #endif
  #elif defined(__x86_64__)
 -#if (defined HAVE_LIBPYTHON2_6)
 +#if (defined HAVE_LIBPYTHON2_7)
-+#define PYTHON_DLL "special://xbmc/system/python/python27-x86_64-linux.so"
++#define PYTHON_DLL "special://kodi/system/python/python27-x86_64-linux.so"
 +#elif (defined HAVE_LIBPYTHON2_6)
- #define PYTHON_DLL "special://xbmc/system/python/python26-x86_64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python26-x86_64-linux.so"
  #elif (defined HAVE_LIBPYTHON2_5)
- #define PYTHON_DLL "special://xbmc/system/python/python25-x86_64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python25-x86_64-linux.so"
 @@ -77,7 +81,9 @@
- #define PYTHON_DLL "special://xbmc/system/python/python24-x86_64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python24-x86_64-linux.so"
  #endif
  #elif defined(_POWERPC)
 -#if (defined HAVE_LIBPYTHON2_6)
 +#if (defined HAVE_LIBPYTHON2_7)
-+#define PYTHON_DLL "special://xbmc/system/python/python27-powerpc-linux.so"
++#define PYTHON_DLL "special://kodi/system/python/python27-powerpc-linux.so"
 +#elif (defined HAVE_LIBPYTHON2_6)
- #define PYTHON_DLL "special://xbmc/system/python/python26-powerpc-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python26-powerpc-linux.so"
  #elif (defined HAVE_LIBPYTHON2_5)
- #define PYTHON_DLL "special://xbmc/system/python/python25-powerpc-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python25-powerpc-linux.so"
 @@ -85,7 +91,9 @@
- #define PYTHON_DLL "special://xbmc/system/python/python24-powerpc-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python24-powerpc-linux.so"
  #endif
  #elif defined(_POWERPC64)
 -#if (defined HAVE_LIBPYTHON2_6)
 +#if (defined HAVE_LIBPYTHON2_7)
-+#define PYTHON_DLL "special://xbmc/system/python/python27-powerpc64-linux.so"
++#define PYTHON_DLL "special://kodi/system/python/python27-powerpc64-linux.so"
 +#elif (defined HAVE_LIBPYTHON2_6)
- #define PYTHON_DLL "special://xbmc/system/python/python26-powerpc64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python26-powerpc64-linux.so"
  #elif (defined HAVE_LIBPYTHON2_5)
- #define PYTHON_DLL "special://xbmc/system/python/python25-powerpc64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python25-powerpc64-linux.so"
 @@ -93,7 +101,9 @@
- #define PYTHON_DLL "special://xbmc/system/python/python24-powerpc64-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python24-powerpc64-linux.so"
  #endif
  #elif defined(__arm__)
 -#if (defined HAVE_LIBPYTHON2_6)
 +#if (defined HAVE_LIBPYTHON2_7)
-+#define PYTHON_DLL "special://xbmc/system/python/python27-arm.so"
++#define PYTHON_DLL "special://kodi/system/python/python27-arm.so"
 +#elif (defined HAVE_LIBPYTHON2_6)
- #define PYTHON_DLL "special://xbmc/system/python/python26-arm-none-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python26-arm-none-linux.so"
  #elif (defined HAVE_LIBPYTHON2_5)
- #define PYTHON_DLL "special://xbmc/system/python/python25-arm-none-linux.so"
+ #define PYTHON_DLL "special://kodi/system/python/python25-arm-none-linux.so"
 @@ -104,7 +114,9 @@
  #else /* !__x86_64__ && !__powerpc__ */
  
  #ifdef __x86_64__
 -  #if (defined HAVE_LIBPYTHON2_6)
 +  #if (defined HAVE_LIBPYTHON2_7)
-+    #define PYTHON_DLL "special://xbmc/system/python/python27-x86_64-linux.so"
++    #define PYTHON_DLL "special://kodi/system/python/python27-x86_64-linux.so"
 +  #elif (defined HAVE_LIBPYTHON2_6)
-     #define PYTHON_DLL "special://xbmc/system/python/python26-x86_64-linux.so"
+     #define PYTHON_DLL "special://kodi/system/python/python26-x86_64-linux.so"
    #elif (defined HAVE_LIBPYTHON2_5)
-     #define PYTHON_DLL "special://xbmc/system/python/python25-x86_64-linux.so"
+     #define PYTHON_DLL "special://kodi/system/python/python25-x86_64-linux.so"
 @@ -112,7 +124,9 @@
-     #define PYTHON_DLL "special://xbmc/system/python/python24-x86_64-linux.so"
+     #define PYTHON_DLL "special://kodi/system/python/python24-x86_64-linux.so"
    #endif
  #else
 -  #if (defined HAVE_LIBPYTHON2_6)
 +  #if (defined HAVE_LIBPYTHON2_7)
-+    #define PYTHON_DLL "special://xbmc/system/python/python27-i486-linux.so"
++    #define PYTHON_DLL "special://kodi/system/python/python27-i486-linux.so"
 +  #elif (defined HAVE_LIBPYTHON2_6)
-     #define PYTHON_DLL "special://xbmc/system/python/python26-i486-linux.so"
+     #define PYTHON_DLL "special://kodi/system/python/python26-i486-linux.so"
    #elif (defined HAVE_LIBPYTHON2_5)
-     #define PYTHON_DLL "special://xbmc/system/python/python25-i486-linux.so"
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPyThread.cpp boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPyThread.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPyThread.cpp	2011-02-24 19:26:36.551170998 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPyThread.cpp	2011-02-25 22:28:11.971171002 +0100
+     #define PYTHON_DLL "special://kodi/system/python/python25-i486-linux.so"
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPyThread.cpp boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPyThread.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPyThread.cpp	2011-02-24 19:26:36.551170998 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPyThread.cpp	2011-02-25 22:28:11.971171002 +0100
 @@ -25,7 +25,10 @@
    #include "config.h"
  #endif
@@ -706,9 +706,9 @@ diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPyThread.cpp bo
      #include <python2.6/Python.h>
      #include <python2.6/osdefs.h>
    #elif (defined HAVE_LIBPYTHON2_5)
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPyThread.h boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPyThread.h
---- boxee-sources-0.9.23.15885.orig//xbmc/lib/libPython/XBPyThread.h	2011-02-24 19:26:36.541171004 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/lib/libPython/XBPyThread.h	2011-02-25 22:28:11.971171002 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPyThread.h boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPyThread.h
+--- boxee-sources-0.9.23.15885.orig//kodi/lib/libPython/XBPyThread.h	2011-02-24 19:26:36.541171004 +0100
++++ boxee-sources-0.9.23.15885/kodi/lib/libPython/XBPyThread.h	2011-02-25 22:28:11.971171002 +0100
 @@ -26,7 +26,9 @@
    #include "config.h"
  #endif

@@ -26,7 +26,7 @@ if (grep -v -q "systemd.unit" /proc/cmdline && test X$target = "Xenigma2pc.targe
     sed -i '/^\[dvbapi\].*/aboxtype       = dreambox' /etc/oscam/oscam.conf
   fi
 else
-  target=vdr_xbmc
+  target=vdr_kodi
   [ X$CAM = "XVDR-SC" ] && exit 1
   if grep -q "^boxtype" /etc/oscam/oscam.conf; then
     sed -i 's/^boxtype.*/boxtype       = pc/g' /etc/oscam/oscam.conf

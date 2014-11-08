@@ -4,7 +4,7 @@ Date: Sun, 11 Sep 2011 19:04:51 +0200
 Subject: [PATCH 01/15] Support raw dvdsub palette as stored on normal dvd's
 
 This is how the palette is stored on dvd's. Currently
-only xbmc passes the palette information to libavcodec
+only kodi passes the palette information to libavcodec
 this way.
 ---
  libavcodec/dvdsubdec.c | 24 ++++++++++++++++++++++++
@@ -164,7 +164,7 @@ index 978b956..30f099d 100644
 
 
 From bb32180f7e9fe2ff89888c26731dc043844b49e2 Mon Sep 17 00:00:00 2001
-From: Cory Fields <theuni-nospam-@xbmc.org>
+From: Cory Fields <theuni-nospam-@kodi.org>
 Date: Mon, 28 Jun 2010 01:55:31 -0400
 Subject: [PATCH 04/15] if av_read_packet returns AVERROR_IO, we are done.
  ffmpeg's codecs might or might not handle returning any completed demuxed
@@ -192,7 +192,7 @@ index e095d60..9fa0bb0 100644
 
 
 From aae4de70cac340ed7e1b8db34125216c1e13cb00 Mon Sep 17 00:00:00 2001
-From: Cory Fields <theuni-nospam-@xbmc.org>
+From: Cory Fields <theuni-nospam-@kodi.org>
 Date: Mon, 28 Jun 2010 02:10:50 -0400
 Subject: [PATCH 05/15] added: Ticket #7187, TV Teletext support for DVB EBU
  Teletext streams
@@ -321,7 +321,7 @@ index 9ec6220..ab03372 100644
 
 
 From aa357f84bcdb105910478aee74d5b675d65114bd Mon Sep 17 00:00:00 2001
-From: Cory Fields <theuni-nospam-@xbmc.org>
+From: Cory Fields <theuni-nospam-@kodi.org>
 Date: Fri, 9 Jul 2010 16:43:31 -0400
 Subject: [PATCH 08/15] Read PID timestamps as well as PCR timestamps to find
  location in mpegts stream
@@ -659,7 +659,7 @@ index ded26f8..e20f2c8 100644
 
 
 From 67247a541dc1dfb547d35eb326ecf26b6c10b4d3 Mon Sep 17 00:00:00 2001
-From: elupus <elupus@xbmc.org>
+From: elupus <elupus@kodi.org>
 Date: Tue, 1 Nov 2011 20:18:35 +0100
 Subject: [PATCH 14/15] add public version of ff_read_frame_flush
 

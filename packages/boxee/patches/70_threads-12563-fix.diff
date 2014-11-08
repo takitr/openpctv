@@ -1,8 +1,8 @@
 From
 http://aur.archlinux.org/packages/boxee-source/boxee-source/12563_fix.patch
 
---- a/xbmc/lib/libPython/XBPyPersistentThread.cpp.orig	2010-07-11 03:20:51.000000000 -0700
-+++ b/xbmc/lib/libPython/XBPyPersistentThread.cpp	2010-07-11 03:23:40.000000000 -0700
+--- a/kodi/lib/libPython/XBPyPersistentThread.cpp.orig	2010-07-11 03:20:51.000000000 -0700
++++ b/kodi/lib/libPython/XBPyPersistentThread.cpp	2010-07-11 03:23:40.000000000 -0700
 @@ -390,42 +390,10 @@
  
  void XBPyPersistentThread::CreatePolicy(const ThreadIdentifier threadId)
@@ -23,7 +23,7 @@ http://aur.archlinux.org/packages/boxee-source/boxee-source/12563_fix.patch
 -    ThreadPolicy *slPolicy = TPAllocPolicy(threadId,SHARED_LIBRARY);
 -    FileRule rule;
 -
--    rule.fileName = _P("special://xbmc/system/python");
+-    rule.fileName = _P("special://kodi/system/python");
 -    rule.accessMode = FILE_ACCESS_READ;
 -
 -    TPAddRuleToPolicy(threadId, slPolicy, &rule);

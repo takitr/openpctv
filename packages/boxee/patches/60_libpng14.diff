@@ -1,9 +1,9 @@
 Patch from
 http://aur.archlinux.org/packages/boxee-source/boxee-source/libpng.patch
 
-diff -Naur boxee-0.9.23.15885/xbmc/lib/cximage-6.0/CxImage/ximapng.cpp boxee-0.9.23.15885a/xbmc/lib/cximage-6.0/CxImage/ximapng.cpp
---- boxee-0.9.23.15885/xbmc/lib/cximage-6.0/CxImage/ximapng.cpp	2009-09-30 14:01:59.000000000 +0200
-+++ boxee-0.9.23.15885a/xbmc/lib/cximage-6.0/CxImage/ximapng.cpp	2011-02-25 16:26:51.531154158 +0100
+diff -Naur boxee-0.9.23.15885/kodi/lib/cximage-6.0/CxImage/ximapng.cpp boxee-0.9.23.15885a/kodi/lib/cximage-6.0/CxImage/ximapng.cpp
+--- boxee-0.9.23.15885/kodi/lib/cximage-6.0/CxImage/ximapng.cpp	2009-09-30 14:01:59.000000000 +0200
++++ boxee-0.9.23.15885a/kodi/lib/cximage-6.0/CxImage/ximapng.cpp	2011-02-25 16:26:51.531154158 +0100
 @@ -144,9 +144,9 @@
  	if (info_ptr->num_trans!=0){ //palette transparency
  		if (info_ptr->num_trans==1){
@@ -66,9 +66,9 @@ diff -Naur boxee-0.9.23.15885/xbmc/lib/cximage-6.0/CxImage/ximapng.cpp boxee-0.9
  		}
  
  		// copy the palette colors
-diff -Naur boxee-0.9.23.15885/xbmc/screensavers/rsxs-0.9/src/pngimage.cc boxee-0.9.23.15885a/xbmc/screensavers/rsxs-0.9/src/pngimage.cc
---- boxee-0.9.23.15885/xbmc/screensavers/rsxs-0.9/src/pngimage.cc	2008-08-11 22:31:00.000000000 +0200
-+++ boxee-0.9.23.15885a/xbmc/screensavers/rsxs-0.9/src/pngimage.cc	2011-02-25 16:26:51.531154158 +0100
+diff -Naur boxee-0.9.23.15885/kodi/screensavers/rsxs-0.9/src/pngimage.cc boxee-0.9.23.15885a/kodi/screensavers/rsxs-0.9/src/pngimage.cc
+--- boxee-0.9.23.15885/kodi/screensavers/rsxs-0.9/src/pngimage.cc	2008-08-11 22:31:00.000000000 +0200
++++ boxee-0.9.23.15885a/kodi/screensavers/rsxs-0.9/src/pngimage.cc	2011-02-25 16:26:51.531154158 +0100
 @@ -65,7 +65,7 @@
  			(png_get_color_type(png, pngInfo) == PNG_COLOR_TYPE_GRAY) &&
  			png_get_bit_depth(png, pngInfo) < 8
@@ -78,9 +78,9 @@ diff -Naur boxee-0.9.23.15885/xbmc/screensavers/rsxs-0.9/src/pngimage.cc boxee-0
  		if (png_get_valid(png, pngInfo, PNG_INFO_tRNS))
  			png_set_tRNS_to_alpha(png);
  		if (fullColor)
-diff -Naur boxee-0.9.23.15885/xbmc/visualizations/Goom/goom2k4-0/src/pngload.c boxee-0.9.23.15885a/xbmc/visualizations/Goom/goom2k4-0/src/pngload.c
---- boxee-0.9.23.15885/xbmc/visualizations/Goom/goom2k4-0/src/pngload.c	2008-08-05 15:59:55.000000000 +0200
-+++ boxee-0.9.23.15885a/xbmc/visualizations/Goom/goom2k4-0/src/pngload.c	2011-02-25 16:26:51.531154158 +0100
+diff -Naur boxee-0.9.23.15885/kodi/visualizations/Goom/goom2k4-0/src/pngload.c boxee-0.9.23.15885a/kodi/visualizations/Goom/goom2k4-0/src/pngload.c
+--- boxee-0.9.23.15885/kodi/visualizations/Goom/goom2k4-0/src/pngload.c	2008-08-05 15:59:55.000000000 +0200
++++ boxee-0.9.23.15885a/kodi/visualizations/Goom/goom2k4-0/src/pngload.c	2011-02-25 16:26:51.531154158 +0100
 @@ -94,7 +94,7 @@
  		png_set_palette_to_rgb (png_ptr);
  

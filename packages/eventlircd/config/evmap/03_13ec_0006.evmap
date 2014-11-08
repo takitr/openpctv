@@ -43,5 +43,5 @@
  KEY_VIDEO         = KEY_VIDEO         # Videos
  KEY_DVD           = KEY_DVD           # DVD/VCD
 
- KEY_MENU          = KEY_EPG           # Menu (used for XBMC's context menu)
- KEY_K             = KEY_EPG           # Title (used for XBMC's context menu)
+ KEY_MENU          = KEY_EPG           # Menu (used for KODI's context menu)
+ KEY_K             = KEY_EPG           # Title (used for KODI's context menu)

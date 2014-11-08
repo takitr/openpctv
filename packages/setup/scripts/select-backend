@@ -5,7 +5,7 @@ export TERM=linux
 export TEXTDOMAIN=openpctv
 
 i=0
-echo "dialog --no-cancel --clear --title \"$(gettext "Select the default PVR backend for XBMC")\" --menu \"$(gettext "Now you can select VDR/TVheadend streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you can enable vnsi or xvdr PVR frontend.")\" 12 90 5 \\" > /tmp/menu.tmp
+echo "dialog --no-cancel --clear --title \"$(gettext "Select the default PVR backend for KODI")\" --menu \"$(gettext "Now you can select VDR/TVheadend streaming server for Linux supporting DVB-S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR backend of KODI. Note you need to enable a PVR addon in KODI, for VDR you can enable vnsi or xvdr PVR frontend.")\" 12 90 5 \\" > /tmp/menu.tmp
 
 if [ -f /usr/bin/vdr ]; then
   i=`expr $i + 1`

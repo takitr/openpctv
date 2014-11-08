@@ -1,0 +1,9 @@
+[Unit]
+Description=KODI Media Center
+Requires=graphical.target
+Conflicts=rescue.service rescue.target
+After=graphical.target backend.target
+AllowIsolate=yes
+
+[Install]
+Alias=default.target

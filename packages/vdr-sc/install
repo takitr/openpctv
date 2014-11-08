@@ -29,4 +29,4 @@ touch $INSTALL/etc/vdr/plugins/$NAME/cardclient.conf
 
 mkdir -p $INSTALL/etc/vdr/plugins.d
 echo "PLUGIN=${NAME}" > $INSTALL/etc/vdr/plugins.d/10_$NAME
-echo "ENABLED=yes" >> $INSTALL/etc/vdr/plugins.d/10_$NAME
+echo "ENABLED=no" >> $INSTALL/etc/vdr/plugins.d/10_$NAME

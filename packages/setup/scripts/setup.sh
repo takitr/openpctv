@@ -8,7 +8,7 @@ export TEXTDOMAIN=openpctv
 . /etc/lsb-release
 [ -z ${DISTRIB_ID} ] && DISTRIB_ID=OpenPCTV
 [ -f /etc/system.options ] && . /etc/system.options
-[ -z $DEFTARGET ] && DEFTARGET=xbmc
+[ -z $DEFTARGET ] && DEFTARGET=kodi
 
 source /etc/profile
 
@@ -20,10 +20,10 @@ if grep -q -i arm /proc/cpuinfo; then
   read -s -n1 -t4
   result=$?
   if [ $result = 142 -o $result = 130 ]; then
-    if [ $DEFTARGET = "xbmc" ]; then
+    if [ $DEFTARGET = "kodi" ]; then
       systemctl start getty\@ttymxc0
       systemctl start vdr-backend
-      systemctl start xbmc
+      systemctl start kodi
       exit 0
     elif [ $DEFTARGET = "vdr" ]; then
       systemctl start vdr
@@ -82,7 +82,7 @@ systemctl stop vdr-backend
 [ -f $RUN_EPG ] && $RUN_EPG
 [ -f $RUN_TRANS ] && $RUN_TRANS
 [ -f $RUN_DVB ] && $RUN_DVB
-if dialog --defaultno --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the XBMC uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
+if dialog --defaultno --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the KODI uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
   [ -f $RUN_PLUGINS ] && $RUN_PLUGINS
   [ -f $RUN_DISEQC ] && $RUN_DISEQC
   [ -f $RUN_CHANNELS ] && $RUN_CHANNELS
@@ -111,7 +111,7 @@ echo "${DIALOG} --clear --no-cancel --backtitle \"${DISTRIB_ID} $(gettext "confi
 [ -f $RUN_DISEQC ] && echo "DiSEqC \"$(gettext "DiSEqC configuration")\" \\" >> $MENUTMP
 [ -f $RUN_CHANNELS ] && echo "Scan \"$(gettext "Auto scan channels")\" \\" >> $MENUTMP
 #grep -q BCM2708 /proc/cpuinfo && echo "VDR \"$(gettext "Start VDR with rpihddevice frontend")\" \\" >> $MENUTMP
-[ -x /usr/bin/runxbmc ] && echo "XBMC \"$(gettext "Start XBMC pvr with VDR/TVheadend backend")\" \\" >> $MENUTMP
+[ -x /usr/bin/runkodi ] && echo "KODI \"$(gettext "Start KODI pvr with VDR/TVheadend backend")\" \\" >> $MENUTMP
 [ -x /usr/bin/runvdr ] && echo "VDR \"$(gettext "Start VDR frontend")\" \\" >> $MENUTMP
 [ -x /usr/bin/runenigma2 ] && echo "Enigma2 \"$(gettext "Start Enigam2 frontend")\" \\" >> $MENUTMP
 [ X$ARCH != "Xarm" -a -f $RUN_INSTALLER ] && echo "Install \"$(gettext "Install OpenPCTV to your hard disk")\" \\" >> $MENUTMP
@@ -172,9 +172,9 @@ case "$(cat $DIALOGOUT)" in
 		;;
     Enigma2)	systemctl start enigma2pc
 		;;
-    XBMC)	[ -c /dev/ttymxc0 ] && systemctl start getty\@ttymxc0
+    KODI)	[ -c /dev/ttymxc0 ] && systemctl start getty\@ttymxc0
 		systemctl start backend
-		systemctl start xbmc
+		systemctl start kodi
 		;;
     Install)	$RUN_INSTALLER
 		;;

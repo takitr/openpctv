@@ -5,7 +5,7 @@ Subject: [PATCH] [ffmpeg] - backport - avcodec/aacdec: default to non-wide 7.1
  in non-strict mode
 
 Upstream commit e10fccf62a36e09b54ad6ea3d5fa6638f298d5ae, for
-http://trac.xbmc.org/ticket/13758.
+http://trac.kodi.org/ticket/13758.
 
 AAC specification has 7.1(wide) as a default layout for 8-channel
 streams (channel config 7). However, at least Nero AAC encoder encodes

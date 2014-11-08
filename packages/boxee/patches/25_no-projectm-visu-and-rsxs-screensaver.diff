@@ -3,27 +3,27 @@ diff -Naur boxee-sources-0.9.23.15885.orig//Makefile.in boxee-sources-0.9.23.158
 +++ boxee-sources-0.9.23.15885/Makefile.in	2011-02-24 19:58:55.371170994 +0100
 @@ -95,13 +95,12 @@
  
- LIB_DIRS+= xbmc/lib/libBoxee xbmc/lib/libBoxee/tinyxpath 
+ LIB_DIRS+= kodi/lib/libBoxee kodi/lib/libBoxee/tinyxpath 
  
 -SS_DIRS=\
--	xbmc/screensavers/rsxs-0.9/xbmc
+-	kodi/screensavers/rsxs-0.9/kodi
 +SS_DIRS=
  
  VIS_DIRS=\
- 	xbmc/visualizations/OpenGLSpectrum \
--	xbmc/visualizations/WaveForm \
--	xbmc/visualizations/XBMCProjectM
-+	xbmc/visualizations/WaveForm
+ 	kodi/visualizations/OpenGLSpectrum \
+-	kodi/visualizations/WaveForm \
+-	kodi/visualizations/KODIProjectM
++	kodi/visualizations/WaveForm
 +
  ifneq (@BUILD_GOOM@,1)
- VIS_DIRS+=xbmc/visualizations/Goom
+ VIS_DIRS+=kodi/visualizations/Goom
  endif
 @@ -292,7 +291,7 @@
  endif
  endif
  screensavers: exports
--	$(MAKE) -C xbmc/screensavers/rsxs-0.9/xbmc
+-	$(MAKE) -C kodi/screensavers/rsxs-0.9/kodi
 +
  libpython: dllloader
- 	$(MAKE) -C xbmc/lib/libPython
- 	$(MAKE) -C xbmc/lib/libPython/xbmcmodule
+ 	$(MAKE) -C kodi/lib/libPython
+ 	$(MAKE) -C kodi/lib/libPython/kodimodule

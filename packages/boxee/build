@@ -2,7 +2,7 @@
 
 . config/options
 
-xbmc_set_option() {
+kodi_set_option() {
   PKG="$1"
   OPT="$2"
   CFG_LIST="$3"
@@ -13,19 +13,19 @@ xbmc_set_option() {
   return 0
 }
 
-xbmc_set_option $1 "opengl"     "gl"
-xbmc_set_option $1 "joystick"   "joystick"
-xbmc_set_option $1 "faac"       "faac"
-xbmc_set_option $1 "zeroconf"   "avahi"
-xbmc_set_option $1 "webserver"  "webserver"
-xbmc_set_option $1 "vdpau"      "vdpau"
-xbmc_set_option $1 "vaapi"      "vaapi"
-xbmc_set_option $1 "crystalhd"  "crystalhd"
-xbmc_set_option $1 "pulse"      "pulse"
-xbmc_set_option $1 "dvdcss"     "dvdcss"
-xbmc_set_option $1 "bluray"     "libbluray"
-xbmc_set_option $1 "rtmp"       "rtmp"
-xbmc_set_option $1 "nonfree"    "non-free"
+kodi_set_option $1 "opengl"     "gl"
+kodi_set_option $1 "joystick"   "joystick"
+kodi_set_option $1 "faac"       "faac"
+kodi_set_option $1 "zeroconf"   "avahi"
+kodi_set_option $1 "webserver"  "webserver"
+kodi_set_option $1 "vdpau"      "vdpau"
+kodi_set_option $1 "vaapi"      "vaapi"
+kodi_set_option $1 "crystalhd"  "crystalhd"
+kodi_set_option $1 "pulse"      "pulse"
+kodi_set_option $1 "dvdcss"     "dvdcss"
+kodi_set_option $1 "bluray"     "libbluray"
+kodi_set_option $1 "rtmp"       "rtmp"
+kodi_set_option $1 "nonfree"    "non-free"
 
 export MAKEFLAGS=-j1
 export LIBS="$LIBS -lpython2.7 -lmms -lssl -lcdio -lmysqlclient -ldl -lstdc++"
@@ -187,12 +187,12 @@ cp UserData/rtorrent.rc.linux $install_dir/opt/boxee/UserData/rtorrent.rc
 
 # binary
 cp Boxee $install_dir/opt/boxee
-cp xbmc-xrandr $install_dir/opt/boxee
+cp kodi-xrandr $install_dir/opt/boxee
 cp give_me_my_mouse_back $install_dir/opt/boxee
 
 # stripping binaries
 strip_libs "$install_dir" "$install_dir_debug/usr/lib/debug"
-for file in Boxee xbmc-xrandr give_me_my_mouse_back bin/boxee-rtorrent system/players/flashplayer/bxflplayer-${boxee_arch}-linux; do
+for file in Boxee kodi-xrandr give_me_my_mouse_back bin/boxee-rtorrent system/players/flashplayer/bxflplayer-${boxee_arch}-linux; do
   extract_debug_info "$install_dir_debug/usr/lib/debug" "$install_dir/opt/boxee/$file"
   do_strip bin $install_dir/opt/boxee/$file
 done

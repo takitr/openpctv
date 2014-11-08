@@ -1,6 +1,6 @@
-diff -Naur boxee-sources-0.9.23.15885.orig//xbmc/utils/Splash.cpp boxee-sources-0.9.23.15885/xbmc/utils/Splash.cpp
---- boxee-sources-0.9.23.15885.orig//xbmc/utils/Splash.cpp	2011-02-24 19:26:37.861171009 +0100
-+++ boxee-sources-0.9.23.15885/xbmc/utils/Splash.cpp	2011-02-24 20:02:17.141171005 +0100
+diff -Naur boxee-sources-0.9.23.15885.orig//kodi/utils/Splash.cpp boxee-sources-0.9.23.15885/kodi/utils/Splash.cpp
+--- boxee-sources-0.9.23.15885.orig//kodi/utils/Splash.cpp	2011-02-24 19:26:37.861171009 +0100
++++ boxee-sources-0.9.23.15885/kodi/utils/Splash.cpp	2011-02-24 20:02:17.141171005 +0100
 @@ -53,9 +53,9 @@
    g_graphicsContext.Clear();
  

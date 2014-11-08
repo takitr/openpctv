@@ -36,4 +36,4 @@ PKG_DEPENDS_rtmp="rtmpdump"
 PKG_PRIORITY=optional
 PKG_SECTION=multimedia
 PKG_SHORTDESC="Boxee MediaCenter"
-PKG_LONGDESC="Boxee Media Center is a derivated version of XBMC Media Center."
+PKG_LONGDESC="Boxee Media Center is a derivated version of KODI Media Center."

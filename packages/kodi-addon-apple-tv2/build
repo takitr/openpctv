@@ -1,0 +1,9 @@
+#!/bin/sh
+
+. config/options
+
+cd $BUILD/$1*
+
+mkdir -p .install/usr/share/kodi/addons/repository.bluecop.kodi-plugins
+cp addon.xml .install/usr/share/kodi/addons/repository.bluecop.kodi-plugins
+cp icon.png .install/usr/share/kodi/addons/repository.bluecop.kodi-plugins

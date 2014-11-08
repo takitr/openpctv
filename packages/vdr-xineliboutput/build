@@ -44,6 +44,7 @@ fi
            --enable-libxine \
            --enable-libjpeg \
            --disable-dbus-glib-1 \
+           --disable-libcec \
            --cc="$CC" \
            --cxx="$CXX" \
            --add-cflags="$CFLAGS" \

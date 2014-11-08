@@ -2,5 +2,5 @@
 
 . config/options
 
-mkdir -p $INSTALL/usr/share/xbmc/media/Fonts
-cp -PR $BUILD/$1*/*.ttf $INSTALL/usr/share/xbmc/media/Fonts
+mkdir -p $INSTALL/usr/share/kodi/media/Fonts
+cp -PR $BUILD/$1*/*.ttf $INSTALL/usr/share/kodi/media/Fonts

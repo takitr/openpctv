@@ -1,0 +1,3364 @@
+diff -uNr xine-lib-1.2.4_git20140612.orig/ChangeLog xine-lib-1.2.4_git20140612/ChangeLog
+--- xine-lib-1.2.4_git20140612.orig/ChangeLog	2014-11-07 21:58:06.435708887 +0800
++++ xine-lib-1.2.4_git20140612/ChangeLog	2014-11-07 21:58:24.883800367 +0800
+@@ -1,5 +1,23 @@
++xine-lib (1.2.6) 2014-07-06
+   * Add libmmal video output plugin for Raspberry Pi.
+   * Add libmmal HW video decoder plugin for Raspberry Pi.
++  * Add overlay colormatrix support.
++  * Add "sqare monitor pixels" config option.
++  * Add VAAPI colormatrix and fullrange video support.
++  * Add "radeonhd" XV colormatrix support.
++  * Add Opus audio support.
++  * Update german translation.
++  * Optimize OpenGL2 video out.
++  * Optimize raw RGB video decoder.
++  * Fix multithread ffmpeg video decoding.
++  * Fix/optimize DVB subtitles.
++  * Fix external text subtitles.
++  * BSD build fixes.
++  * Clang build fixes.
++  * Build optimization fixes (aliasing).
++  * AVformat demux build fix.
++  * More safety on memory allocation failure.
++  * Fix detection of and compilation with libcaca 0.99 beta 19.
+ 
+ xine-lib (1.2.5) 2014-04-08
+   * Update german translation.
+diff -uNr xine-lib-1.2.4_git20140612.orig/configure.ac xine-lib-1.2.4_git20140612/configure.ac
+--- xine-lib-1.2.4_git20140612.orig/configure.ac	2014-11-07 21:58:06.427708841 +0800
++++ xine-lib-1.2.4_git20140612/configure.ac	2014-11-07 21:58:24.883800367 +0800
+@@ -944,6 +944,8 @@
+     AC_DEFINE(HAVE_MIN_MACRO, 1, [Define to 1 if you have 'MIN' macro in sys/param.h])
+   ],[])
+ 
++AC_CHECK_HEADERS([limits.h])
++
+ AC_LIBSOURCE([timedlock.c])
+ ac_save_LIBS="$LIBS" LIBS="$LIBS $PTHREAD_LIBS"
+ AC_CHECK_FUNCS([pthread_mutex_timedlock],
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/a52dec/imdct.c xine-lib-1.2.4_git20140612/contrib/a52dec/imdct.c
+--- xine-lib-1.2.4_git20140612.orig/contrib/a52dec/imdct.c	2014-11-07 21:58:06.419708805 +0800
++++ xine-lib-1.2.4_git20140612/contrib/a52dec/imdct.c	2014-11-07 21:58:24.883800367 +0800
+@@ -183,6 +183,7 @@
+     complex_t * buf1;
+     complex_t * buf2;
+     complex_t * buf3;
++    sample_t  * wi;
+     double tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8;
+     int i;
+ 
+@@ -194,14 +195,16 @@
+     BUTTERFLY_ZERO (buf[-1], buf1[-1], buf2[-1], buf3[-1]);
+ 
+     i = n - 1;
++    wi = weight + n - 2;
+ 
+     do {
+-	BUTTERFLY (buf[0], buf1[0], buf2[0], buf3[0], weight[n], weight[2*i]);
++	BUTTERFLY (buf[0], buf1[0], buf2[0], buf3[0], weight[0], wi[0]);
+ 	buf++;
+ 	buf1++;
+ 	buf2++;
+ 	buf3++;
+ 	weight++;
++	wi--;
+     } while (--i);
+ }
+ 
+@@ -210,7 +213,7 @@
+     ifft8 (buf);
+     ifft4 (buf + 8);
+     ifft4 (buf + 12);
+-    ifft_pass (buf, roots16 - 4, 4);
++    ifft_pass (buf, roots16, 4);
+ }
+ 
+ static void ifft32 (complex_t * buf)
+@@ -218,7 +221,7 @@
+     ifft16 (buf);
+     ifft8 (buf + 16);
+     ifft8 (buf + 24);
+-    ifft_pass (buf, roots32 - 8, 8);
++    ifft_pass (buf, roots32, 8);
+ }
+ 
+ static void ifft64_c (complex_t * buf)
+@@ -226,7 +229,7 @@
+     ifft32 (buf);
+     ifft16 (buf + 32);
+     ifft16 (buf + 48);
+-    ifft_pass (buf, roots64 - 16, 16);
++    ifft_pass (buf, roots64, 16);
+ }
+ 
+ static void ifft128_c (complex_t * buf)
+@@ -234,11 +237,11 @@
+     ifft32 (buf);
+     ifft16 (buf + 32);
+     ifft16 (buf + 48);
+-    ifft_pass (buf, roots64 - 16, 16);
++    ifft_pass (buf, roots64, 16);
+ 
+     ifft32 (buf + 64);
+     ifft32 (buf + 96);
+-    ifft_pass (buf, roots128 - 32, 32);
++    ifft_pass (buf, roots128, 32);
+ }
+ 
+ void a52_imdct_512 (sample_t * data, sample_t * delay, sample_t bias)
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/a52dec/parse.c xine-lib-1.2.4_git20140612/contrib/a52dec/parse.c
+--- xine-lib-1.2.4_git20140612.orig/contrib/a52dec/parse.c	2014-11-07 21:58:06.419708805 +0800
++++ xine-lib-1.2.4_git20140612/contrib/a52dec/parse.c	2014-11-07 21:58:24.887800383 +0800
+@@ -52,7 +52,6 @@
+ a52_state_t * a52_init (uint32_t mm_accel)
+ {
+     a52_state_t * state;
+-    int i;
+ 
+     state = calloc(1, sizeof (a52_state_t));
+     if (state == NULL)
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/libfaad/decoder.c xine-lib-1.2.4_git20140612/contrib/libfaad/decoder.c
+--- xine-lib-1.2.4_git20140612.orig/contrib/libfaad/decoder.c	2014-11-07 21:58:06.415708785 +0800
++++ xine-lib-1.2.4_git20140612/contrib/libfaad/decoder.c	2014-11-07 21:58:24.887800383 +0800
+@@ -60,7 +60,7 @@
+ static void create_channel_config(NeAACDecHandle hDecoder, NeAACDecFrameInfo *hInfo);
+ 
+ 
+-char* NEAACDECAPI NeAACDecGetErrorMessage(uint8_t errcode)
++const char* NEAACDECAPI NeAACDecGetErrorMessage(uint8_t errcode)
+ {
+     if (errcode >= NUM_ERROR_MESSAGES)
+         return NULL;
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/libfaad/decoder.h xine-lib-1.2.4_git20140612/contrib/libfaad/decoder.h
+--- xine-lib-1.2.4_git20140612.orig/contrib/libfaad/decoder.h	2014-11-07 21:58:06.415708785 +0800
++++ xine-lib-1.2.4_git20140612/contrib/libfaad/decoder.h	2014-11-07 21:58:24.887800383 +0800
+@@ -73,7 +73,7 @@
+ #define LFE_CHANNEL          (9)
+ #define UNKNOWN_CHANNEL      (0)
+ 
+-char* NEAACDECAPI NeAACDecGetErrorMessage(uint8_t errcode);
++const char* NEAACDECAPI NeAACDecGetErrorMessage(uint8_t errcode);
+ 
+ uint32_t NEAACDECAPI NeAACDecGetCapabilities(void);
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/libfaad/error.c xine-lib-1.2.4_git20140612/contrib/libfaad/error.c
+--- xine-lib-1.2.4_git20140612.orig/contrib/libfaad/error.c	2014-11-07 21:58:06.415708785 +0800
++++ xine-lib-1.2.4_git20140612/contrib/libfaad/error.c	2014-11-07 21:58:24.887800383 +0800
+@@ -31,7 +31,7 @@
+ #include "common.h"
+ #include "error.h"
+ 
+-char *err_msg[] = {
++const char *err_msg[] = {
+     "No error",
+     "Gain control not yet implemented",
+     "Pulse coding not allowed in short blocks",
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/libfaad/error.h xine-lib-1.2.4_git20140612/contrib/libfaad/error.h
+--- xine-lib-1.2.4_git20140612.orig/contrib/libfaad/error.h	2014-11-07 21:58:06.415708785 +0800
++++ xine-lib-1.2.4_git20140612/contrib/libfaad/error.h	2014-11-07 21:58:24.887800383 +0800
+@@ -36,7 +36,7 @@
+ #endif
+ 
+ #define NUM_ERROR_MESSAGES 33
+-extern char *err_msg[];
++extern const char *err_msg[];
+ 
+ #ifdef __cplusplus
+ }
+diff -uNr xine-lib-1.2.4_git20140612.orig/contrib/libfaad/specrec.c xine-lib-1.2.4_git20140612/contrib/libfaad/specrec.c
+--- xine-lib-1.2.4_git20140612.orig/contrib/libfaad/specrec.c	2014-11-07 21:58:06.419708805 +0800
++++ xine-lib-1.2.4_git20140612/contrib/libfaad/specrec.c	2014-11-07 21:58:24.887800383 +0800
+@@ -425,7 +425,7 @@
+     }
+ }
+ 
+-/* iquant() *
++/* iquant() */
+ /* output = sign(input)*abs(input)^(4/3) */
+ /**/
+ static INLINE real_t iquant(int16_t q, const real_t *tab, uint8_t *error)
+diff -uNr xine-lib-1.2.4_git20140612.orig/include/xine/buffer.h xine-lib-1.2.4_git20140612/include/xine/buffer.h
+--- xine-lib-1.2.4_git20140612.orig/include/xine/buffer.h	2014-11-07 21:58:06.435708887 +0800
++++ xine-lib-1.2.4_git20140612/include/xine/buffer.h	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/include/xine/video_overlay.h xine-lib-1.2.4_git20140612/include/xine/video_overlay.h
+--- xine-lib-1.2.4_git20140612.orig/include/xine/video_overlay.h	2014-11-07 21:58:06.435708887 +0800
++++ xine-lib-1.2.4_git20140612/include/xine/video_overlay.h	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -61,7 +61,17 @@
+ 
+ video_overlay_manager_t *_x_video_overlay_new_manager(xine_t *) XINE_MALLOC XINE_PROTECTED;
+ 
+-void _x_overlay_clut_yuv2rgb(vo_overlay_t *overlay, int color_matrix) XINE_PROTECTED;
++/* Transport color matrix setting inside those unused "foo" fields.
++   Guard against uninitialized values. */
++#define _X_SET_CLUT_CM(clut,color_matrix) { \
++  uint8_t *q = (uint8_t *)clut; \
++  q[3]  = 'X'; \
++  q[7]  = 'C'; \
++  q[11] = 'M'; \
++  q[15] = color_matrix; \
++}
++
++void _x_overlay_clut_yuv2rgb(vo_overlay_t *overlay, int video_color_matrix) XINE_PROTECTED;
+ void _x_overlay_to_argb32(const vo_overlay_t *overlay, uint32_t *rgba, int stride, const char *format) XINE_PROTECTED;
+ 
+ #endif
+diff -uNr xine-lib-1.2.4_git20140612.orig/m4/video_out.m4 xine-lib-1.2.4_git20140612/m4/video_out.m4
+--- xine-lib-1.2.4_git20140612.orig/m4/video_out.m4	2014-11-07 21:58:06.435708887 +0800
++++ xine-lib-1.2.4_git20140612/m4/video_out.m4	2014-11-07 21:58:24.887800383 +0800
+@@ -77,12 +77,20 @@
+     dnl Color AsCii Art
+     XINE_ARG_WITH([caca], [enable support for CACA])
+     if test x"$with_caca" != x"no"; then
+-        PKG_CHECK_MODULES([CACA], [caca >= 0.99beta14 cucul >= 0.99beta14], [have_caca="yes"], [have_caca="no"])
++        have_cucul=yes
++        PKG_CHECK_MODULES([CACA], [caca >= 0.99beta19],
++                          [have_caca="yes"
++                           have_cucul="no"],
++                          [PKG_CHECK_MODULES([CACA], [caca >= 0.99beta14 cucul >= 0.99beta14], [have_caca="yes"], [have_caca="no"])])
+         if test x"$hard_with_caca" = x"yes" && test x"$have_caca" != x"yes"; then
+             AC_MSG_ERROR([CACA support requested, but libcaca 0.99 not found])
+         fi
+     fi
+     AM_CONDITIONAL([ENABLE_CACA], [test x"$have_caca" = x"yes"])
++    if test x"$have_caca$have_cucul" = x"yesyes"; then
++        HAVE_CUCUL=1
++        AC_SUBST([HAVE_CUCUL])
++    fi
+ 
+ 
+     dnl dha (Linux only)
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_a52_decoder.c xine-lib-1.2.4_git20140612/src/audio_dec/xine_a52_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_a52_decoder.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/audio_dec/xine_a52_decoder.c	2014-11-07 21:58:24.887800383 +0800
+@@ -900,7 +900,7 @@
+ 
+ static const decoder_info_t dec_info_audio = {
+   audio_types,         /* supported types */
+-  5                    /* priority        */
++  8                    /* priority        */
+ };
+ 
+ const plugin_info_t xine_plugin_info[] EXPORTED = {
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_dts_decoder.c xine-lib-1.2.4_git20140612/src/audio_dec/xine_dts_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_dts_decoder.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/audio_dec/xine_dts_decoder.c	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a unix video player.
+  *
+@@ -580,7 +580,7 @@
+ 
+ static const decoder_info_t dec_info_audio = {
+   audio_types,         /* supported types */
+-  1                    /* priority        */
++  8                    /* priority        */
+ };
+ 
+ const plugin_info_t xine_plugin_info[] EXPORTED = {
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_faad_decoder.c xine-lib-1.2.4_git20140612/src/audio_dec/xine_faad_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/audio_dec/xine_faad_decoder.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/audio_dec/xine_faad_decoder.c	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/demux_avformat.c xine-lib-1.2.4_git20140612/src/combined/ffmpeg/demux_avformat.c
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/demux_avformat.c	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/demux_avformat.c	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2013 the xine project
++ * Copyright (C) 2013-2014 the xine project
+  * Copyright (C) 2013 Petri Hintukainen <phintuka@users.sourceforge.net>
+  *
+  * This file is part of xine, a free video player.
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ff_audio_decoder.c xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ff_audio_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ff_audio_decoder.c	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ff_audio_decoder.c	2014-11-07 21:58:24.887800383 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2001-2013 the xine project
++ * Copyright (C) 2001-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -1117,11 +1117,11 @@
+   free16 (this->buf);
+   free16 (this->decode_buffer);
+ 
+-  if(this->context && this->context->extradata)
+-    free(this->context->extradata);
+-
+-  if(this->context)
+-    av_free(this->context);
++  if (this->context) {
++    _x_freep (&this->context->extradata);
++    this->context->extradata_size = 0;
++    avcodec_free_context (&this->context);
++  }
+ 
+   free (this_gen);
+ }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_compat.h xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_compat.h
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_compat.h	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_compat.h	2014-11-07 21:58:24.891800406 +0800
+@@ -23,20 +23,29 @@
+ #ifndef XINE_AVCODEC_COMPAT_H
+ #define XINE_AVCODEC_COMPAT_H
+ 
+-#ifndef LIBAVCODEC_VERSION_MAJOR
+-#  ifdef LIBAVCODEC_VERSION_INT
+-#    define LIBAVCODEC_VERSION_MAJOR ((LIBAVCODEC_VERSION_INT)>>16)
+-#    define LIBAVCODEC_VERSION_MINOR (((LIBAVCODEC_VERSION_INT)>>8) & 0xff)
++#define AV_INT_VERSION(major,minor,micro) ((major<<16)|(minor<<8)|micro)
++
++#ifndef LIBAVCODEC_VERSION_INT
++#  if defined(LIBAVCODEC_VERSION_MAJOR) && defined(LIBAVCODEC_VERSION_MINOR)
++#    define LIBAVCODEC_VERSION_INT AV_INT_VERSION(LIBAVCODEC_VERSION_MAJOR,LIBAVCODEC_VERSION_MINOR,0)
++#  else
++#    error ffmpeg headers must be included first !
++#  endif
++#endif
++
++#ifndef LIBAVUTIL_VERSION_INT
++#  if defined(LIBAVUTIL_VERSION_MAJOR) && defined(LIBAVUTIL_VERSION_MINOR)
++#    define LIBAVUTIL_VERSION_INT AV_INT_VERSION(LIBAVUTIL_VERSION_MAJOR,LIBAVUTIL_VERSION_MINOR,0)
+ #  else
+ #    error ffmpeg headers must be included first !
+ #  endif
+ #endif
+ 
+-#if LIBAVCODEC_VERSION_MAJOR > 51
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,0,0)
+ #  define bits_per_sample bits_per_coded_sample
+ #endif
+ 
+-#if LIBAVCODEC_VERSION_MAJOR >= 53 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 32)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,32,0)
+ #else
+ #  define pp_context	pp_context_t
+ #  define pp_mode	pp_mode_t
+@@ -44,27 +53,27 @@
+ 
+ /* reordered_opaque appeared in libavcodec 51.68.0 */
+ #define AVCODEC_HAS_REORDERED_OPAQUE
+-#if LIBAVCODEC_VERSION_INT < 0x334400
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(51,68,0)
+ # undef AVCODEC_HAS_REORDERED_OPAQUE
+ #endif
+ 
+ /* colorspace and color_range were added before 52.29.0 */
+-#if LIBAVCODEC_VERSION_MAJOR > 52 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 29)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,29,0)
+ # define AVCODEC_HAS_COLORSPACE
+ #endif
+ 
+ /* "unused" as of v54 */
+-#if LIBAVCODEC_VERSION_MAJOR < 54
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(54,0,0)
+ # define AVCODEC_HAS_SUB_ID
+ #endif
+ 
+ /**/
+-#if LIBAVCODEC_VERSION_MAJOR > 53 || (LIBAVCODEC_VERSION_MAJOR == 53 && LIBAVCODEC_VERSION_MINOR >= 8)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(53,8,0)
+ #  define avcodec_init() do {} while(0)
+ #endif
+ 
+ /* avcodec_alloc_context() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 54 || (LIBAVCODEC_VERSION_MAJOR == 53 && LIBAVCODEC_VERSION_MINOR >= 6)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(53,6,0)
+ #  define AVCONTEXT 3
+ #  define avcodec_alloc_context() avcodec_alloc_context3(NULL)
+ #else
+@@ -72,7 +81,7 @@
+ #endif
+ 
+ /* avcodec_open() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 54 || (LIBAVCODEC_VERSION_MAJOR == 53 && LIBAVCODEC_VERSION_MINOR >= 6)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(53,6,0)
+ #  define AVOPEN 2
+ #  define avcodec_open(ctx,codec) avcodec_open2(ctx, codec, NULL)
+ #else
+@@ -80,50 +89,50 @@
+ #endif
+ 
+ /* avcodec_thread_init() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 53 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 112)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,112,0)
+ #  define DEPRECATED_AVCODEC_THREAD_INIT 1
+ #endif
+ 
+ /* av_parser_parse() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 53 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 94)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,94,0)
+ #  define AVPARSE 2
+ #else
+ #  define AVPARSE 1
+ #endif
+ 
+ /* avcodec_decode_video() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 53 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 32)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,32,0)
+ #  define AVVIDEO 2
+ #else
+ #  define AVVIDEO 1
+ #endif
+ 
+ /* avcodec_decode_audio() */
+-#if LIBAVCODEC_VERSION_MAJOR >= 54
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(54,0,0)
+ #  define AVAUDIO 4
+-#elif LIBAVCODEC_VERSION_MAJOR >= 53 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 32)
++#elif LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(52,32,0)
+ #  define AVAUDIO 3
+ #else
+ #  define AVAUDIO 2
+ #endif
+ 
+ /* avcodec_encode_video(), av_packet_unref */
+-#if LIBAVCODEC_VERSION_INT >= ((55<<16)|(25<<8)|100)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(55,25,100)
+ #  define AVENCVIDEO 2
+ #else
+ #  define AVENCVIDEO 1
+ #endif
+ 
+ /* AVFrame.age */
+-#if LIBAVCODEC_VERSION_INT >= 0x351C01 && LIBAVCODEC_VERSION_INT < 0x360000 // not sure about this - original condition was broken
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(53,28,1) && LIBAVCODEC_VERSION_INT < AV_INT_VERSION(54,0,0) // not sure about this - original condition was broken
+ #  define AVFRAMEAGE 1
+ #endif
+ 
+-#if LIBAVCODEC_VERSION_MAJOR < 53
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(53,0,0)
+ /* release 0.7.x (libavcodec 52) has deprecated AVCodecContext.palctrl but for backwards compatibility no
+    working alternative. */
+ #  define AVPALETTE 1
+-#elif LIBAVCODEC_VERSION_INT < ((54<<16)|(92<<8)|100)
++#elif LIBAVCODEC_VERSION_INT < AV_INT_VERSION(54,92,100)
+ /* pass palette as AVPacket side data, free with av_destruct_packet () after NULLing main data pointer */
+ #  define AVPALETTE 2
+ #else
+@@ -131,7 +140,7 @@
+ #  define AVPALETTE 3
+ #endif
+ 
+-#if defined LIBAVUTIL_VERSION_MAJOR && LIBAVUTIL_VERSION_MAJOR >= 52
++#if LIBAVUTIL_VERSION_INT >= AV_INT_VERSION(52,0,0)
+ #  define PIX_FMT_NONE      AV_PIX_FMT_NONE
+ #  define PIX_FMT_YUV420P   AV_PIX_FMT_YUV420P
+ #  define PIX_FMT_YUVJ420P  AV_PIX_FMT_YUVJ420P
+@@ -155,7 +164,7 @@
+ #  define PIX_FMT_VAAPI_MOCO AV_PIX_FMT_VAAPI_MOCO
+ #endif
+ 
+-#if defined LIBAVCODEC_VERSION_INT && LIBAVCODEC_VERSION_INT >= ((54<<16)|(25<<8))
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(54,25,0)
+ /* dxr3/ffmpeg_encoder */
+ #  define CODEC_ID_MPEG1VIDEO AV_CODEC_ID_MPEG1VIDEO
+ /* video_out/video_out_vaapi */
+@@ -185,12 +194,26 @@
+ #  define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
+ #endif
+ 
+-#if LIBAVCODEC_VERSION_INT < ((52<<16)|(66<<8))
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(52,66,0)
+ #  define avcodec_get_edge_width() (16)
++#elif LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(55,48,102)
++/* edges not needed anymore supposedly */
++#  define avcodec_get_edge_width() (0)
+ #endif
+ 
+-#if LIBAVCODEC_VERSION_INT >= ((55<<16)|100)
++#if LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(55,0,100)
+ #  define AV_BUFFER 1
+ #endif
+ 
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(55,63,100)
++#  define avcodec_free_context(pp) av_free(*(pp))
++#endif
++
++#if LIBAVCODEC_VERSION_INT < AV_INT_VERSION(54,59,100)
++#  define avcodec_free_frame(pp) av_free(*(pp))
++#elif LIBAVCODEC_VERSION_INT >= AV_INT_VERSION(55,45,101)
++#  define avcodec_alloc_frame() av_frame_alloc()
++#  define avcodec_free_frame(pp) av_frame_free(pp)
++#endif
++
+ #endif /* XINE_AVCODEC_COMPAT_H */
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_decoder.c xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_decoder.c	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_decoder.c	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2001-2014 the xine project
++ * Copyright (C) 2001-2013 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_decoder.h xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_decoder.h
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ffmpeg_decoder.h	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ffmpeg_decoder.h	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2001-2013 the xine project
++ * Copyright (C) 2001-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ff_video_decoder.c xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ff_video_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/ff_video_decoder.c	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/ff_video_decoder.c	2014-11-07 21:58:24.891800406 +0800
+@@ -59,6 +59,11 @@
+ 
+ #include "ffmpeg_compat.h"
+ 
++#if (defined(ARCH_X86) || defined(ARCH_X86_64)) && defined(HAVE_MMX)
++#include "xine_mmx.h"
++#define ENABLE_EMMS
++#endif
++
+ #define VIDEOBUFSIZE        (128*1024)
+ #define SLICE_BUFFER_SIZE   (1194*1024)
+ 
+@@ -112,7 +117,9 @@
+   int               size;
+   int               skipframes;
+ 
++  int              *slice_offset_table;
+   int               slice_offset_size;
++  int               slice_offset_pos;
+ 
+   AVFrame          *av_frame;
+   AVCodecContext   *context;
+@@ -170,6 +177,11 @@
+ #define STATE_FRAME_SENT    3
+ #define STATE_FLUSHED       4
+   int               state;
++
++#ifdef ENABLE_EMMS
++  /* see get_buffer () */
++  int               use_emms;
++#endif
+ };
+ 
+ /* import color matrix names */
+@@ -281,6 +293,14 @@
+   int top_edge;
+   int guarded_render = 0;
+ 
++#ifdef ENABLE_EMMS
++  /* some background thread may call this while still in mmx mode.
++    this will trash "double" aspect ratio values, even when only
++    passing them to vo_get_frame () verbatim. */
++  if (this->use_emms)
++    emms ();
++#endif
++
+   /* multiple threads have individual contexts !! */
+ #ifdef AVCODEC_HAS_COLORSPACE
+   if (context != this->context) {
+@@ -896,6 +916,10 @@
+   ff_video_class_t   *class = (ff_video_class_t *) user_data;
+ 
+   class->thread_count = entry->num_value;
++  if (class->thread_count < 1)
++    class->thread_count = 1;
++  else if (class->thread_count > 8)
++    class->thread_count = 8;
+ }
+ 
+ static void pp_quality_cb(void *user_data, xine_cfg_entry_t *entry) {
+@@ -1031,6 +1055,51 @@
+     "ffmpeg_video_dec: converting %s -> %s yuy2\n", fmt, cm_names[cm]);
+ }
+ 
++#if defined(AV_PIX_FMT_YUV420P9) || defined(AV_PIX_FMT_YUV420P10)
++static void ff_get_deep_color (uint8_t *src, int sstride, uint8_t *dest, int dstride,
++  int width, int height, int sbits, uint8_t *tab) {
++  uint16_t *p = (uint16_t *) src;
++  uint8_t  *q = dest;
++  int       spad = sstride / 2 - width;
++  int       dpad = dstride - width;
++  int       i;
++
++  if (sbits == 9) {
++    if (tab) {
++      while (height--) {
++        for (i = width; i; i--)
++          *q++ = tab[(*p++) >> 1];
++        p += spad;
++        q += dpad;
++      }
++    } else {
++      while (height--) {
++        for (i = width; i; i--)
++          *q++ = (*p++) >> 1;
++        p += spad;
++        q += dpad;
++      }
++    }
++  } else if (sbits == 10) {
++    if (tab) {
++      while (height--) {
++        for (i = width; i; i--)
++          *q++ = tab[(*p++) >> 2];
++        p += spad;
++        q += dpad;
++      }
++    } else {
++      while (height--) {
++        for (i = width; i; i--)
++          *q++ = (*p++) >> 2;
++        p += spad;
++        q += dpad;
++      }
++    }
++  }
++}
++#endif
++
+ static void ff_convert_frame(ff_video_decoder_t *this, vo_frame_t *img, AVFrame *av_frame) {
+   int         y;
+   uint8_t    *dy, *du, *dv, *sy, *su, *sv;
+@@ -1054,6 +1123,33 @@
+    */
+ 
+   switch (this->context->pix_fmt) {
++#ifdef AV_PIX_FMT_YUV420P9
++    case AV_PIX_FMT_YUV420P9:
++      /* Y */
++      ff_get_deep_color (av_frame->data[0], av_frame->linesize[0], img->base[0], img->pitches[0],
++        img->width, this->bih.biHeight, 9, this->full2mpeg ? this->ytab : NULL);
++      /* U */
++      ff_get_deep_color (av_frame->data[1], av_frame->linesize[1], img->base[1], img->pitches[1],
++        img->width / 2, this->bih.biHeight / 2, 9, this->full2mpeg ? this->ctab : NULL);
++      /* V */
++      ff_get_deep_color (av_frame->data[2], av_frame->linesize[2], img->base[2], img->pitches[2],
++        img->width / 2, this->bih.biHeight / 2, 9, this->full2mpeg ? this->ctab : NULL);
++    break;
++#endif
++#ifdef AV_PIX_FMT_YUV420P10
++    case AV_PIX_FMT_YUV420P10:
++      /* Y */
++      ff_get_deep_color (av_frame->data[0], av_frame->linesize[0], img->base[0], img->pitches[0],
++        img->width, this->bih.biHeight, 10, this->full2mpeg ? this->ytab : NULL);
++      /* U */
++      ff_get_deep_color (av_frame->data[1], av_frame->linesize[1], img->base[1], img->pitches[1],
++        img->width / 2, this->bih.biHeight / 2, 10, this->full2mpeg ? this->ctab : NULL);
++      /* V */
++      ff_get_deep_color (av_frame->data[2], av_frame->linesize[2], img->base[2], img->pitches[2],
++        img->width / 2, this->bih.biHeight / 2, 10, this->full2mpeg ? this->ctab : NULL);
++    break;
++#endif
++
+     case PIX_FMT_YUV410P:
+       yuv9_to_yv12(
+        /* Y */
+@@ -1381,9 +1477,6 @@
+ #ifdef AVCODEC_HAS_SUB_ID
+         this->context->sub_id = _X_BE_32(&this->buf[30]);
+ #endif
+-        this->context->slice_offset = calloc(SLICE_OFFSET_SIZE, sizeof(int));
+-        this->slice_offset_size = SLICE_OFFSET_SIZE;
+-
+         this->context->extradata_size = this->size - 26;
+ 	if (this->context->extradata_size < 8) {
+ 	  this->context->extradata_size= 8;
+@@ -1474,22 +1567,32 @@
+ #endif
+   }
+   else if (buf->decoder_info[1] == BUF_SPECIAL_RV_CHUNK_TABLE) {
+-    int i;
++    /* o dear. Multiple decoding threads use individual contexts.
++      av_decode_video2 () does only copy the _pointer_ to the offsets,
++      not the offsets themselves. So we must not overwrite anything
++      that another thread has not yet read. */
++    int i, l, total;
+ 
+     lprintf("BUF_SPECIAL_RV_CHUNK_TABLE\n");
+-    this->context->slice_count = buf->decoder_info[2]+1;
++    l = buf->decoder_info[2] + 1;
+ 
+-    lprintf("slice_count=%d\n", this->context->slice_count);
+-
+-    if(this->context->slice_count > this->slice_offset_size) {
+-      this->context->slice_offset = realloc(this->context->slice_offset,
+-                                            sizeof(int)*this->context->slice_count);
+-      this->slice_offset_size = this->context->slice_count;
+-    }
+-
+-    for(i = 0; i < this->context->slice_count; i++) {
+-      this->context->slice_offset[i] =
+-        ((uint32_t *) buf->decoder_info_ptr[2])[(2*i)+1];
++    total = l * this->class->thread_count;
++    if (total < SLICE_OFFSET_SIZE)
++      total = SLICE_OFFSET_SIZE;
++    if (total > this->slice_offset_size) {
++      this->slice_offset_table = realloc (this->slice_offset_table, total * sizeof (int));
++      this->slice_offset_size = total;
++    }
++
++    if (this->slice_offset_pos + l > this->slice_offset_size)
++      this->slice_offset_pos = 0;
++    this->context->slice_offset = this->slice_offset_table + this->slice_offset_pos;
++    this->context->slice_count = l;
++
++    lprintf ("slice_count=%d\n", l);
++    for (i = 0; i < l; i++) {
++      this->slice_offset_table[this->slice_offset_pos++] =
++        ((uint32_t *)buf->decoder_info_ptr[2])[(2 * i) + 1];
+       lprintf("slice_offset[%d]=%d\n", i, this->context->slice_offset[i]);
+     }
+   }
+@@ -1737,7 +1840,7 @@
+   int qstride, qtype;
+   int8_t *qtable;
+ #ifdef AV_BUFFER
+-# if LIBAVUTIL_VERSION_MAJOR < 53
++# if LIBAVUTIL_VERSION_INT < AV_INT_VERSION(53,0,0)
+   qtable = av_frame_get_qp_table (this->av_frame, &qstride, &qtype);
+ # else
+   /* Why should they keep these long deprecated fields, and remove
+@@ -2440,17 +2543,17 @@
+     this->decoder_ok = 0;
+   }
+ 
+-  if(this->context && this->context->slice_offset)
+-    free(this->context->slice_offset);
+-
+-  if(this->context && this->context->extradata)
+-    free(this->context->extradata);
++  if (this->slice_offset_table)
++    free (this->slice_offset_table);
+ 
+-  if( this->context )
+-    av_free( this->context );
++  if (this->context) {
++    _x_freep (&this->context->extradata);
++    this->context->extradata_size = 0;
++    avcodec_free_context (&this->context);
++  }
+ 
+   if( this->av_frame )
+-    av_free( this->av_frame );
++    avcodec_free_frame( &this->av_frame );
+ 
+   if (this->buf)
+     free(this->buf);
+@@ -2519,6 +2622,10 @@
+   this->pix_fmt           = -1;
+   this->rgb2yuy2          = NULL;
+ 
++#ifdef ENABLE_EMMS
++  this->use_emms = !!(xine_mm_accel () & (MM_ACCEL_X86_MMX | MM_ACCEL_X86_MMXEXT));
++#endif
++
+ #ifdef LOG
+   this->debug_fmt = -1;
+ #endif
+@@ -2592,6 +2699,10 @@
+       "decoding thread per logical CPU (typically 1 to 4).\n"
+       "A change of this setting will take effect with playing the next stream."),
+     10, thread_count_cb, this);
++  if (this->thread_count < 1)
++    this->thread_count = 1;
++  else if (this->thread_count > 8)
++    this->thread_count = 8;
+ 
+   this->skip_loop_filter_enum = xine->config->register_enum(config, "video.processing.ffmpeg_skip_loop_filter", 0,
+     (char **)skip_loop_filter_enum_names,
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/input_avio.c xine-lib-1.2.4_git20140612/src/combined/ffmpeg/input_avio.c
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/input_avio.c	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/input_avio.c	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2013 the xine project
++ * Copyright (C) 2013-2014 the xine project
+  * Copyright (C) 2013 Petri Hintukainen <phintuka@users.sourceforge.net>
+  *
+  * This file is part of xine, a free video player.
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/xine_audio.list xine-lib-1.2.4_git20140612/src/combined/ffmpeg/xine_audio.list
+--- xine-lib-1.2.4_git20140612.orig/src/combined/ffmpeg/xine_audio.list	2014-11-07 21:58:06.383708627 +0800
++++ xine-lib-1.2.4_git20140612/src/combined/ffmpeg/xine_audio.list	2014-11-07 21:58:24.891800406 +0800
+@@ -41,15 +41,16 @@
+ WAVPACK			WAVPACK			WavPack
+ AMR_NB			AMR_NB			AMR narrow band
+ AMR_WB			AMR_WB			AMR wide band
++A52			AC3			AC-3
+ EAC3			EAC3			E-AC-3
+ AAC			AAC			MPEG4
+ AAC_LATM		AAC_LATM		AAC LATM
+ ADPCM_G726		ADPCM_G726		ADPCM G726
+ QCLP			QCELP			QualComm Purevoice
+ OPUS			OPUS			Opus Audio
++DTS			DTS			DTS
+ 
+ # disabled codecs (ref. configure.ac)
+-!			AC3
+ !			ADPCM_ADX
+ !			ADPCM_G726
+ !			DSICINAUDIO
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_asf.c xine-lib-1.2.4_git20140612/src/demuxers/demux_asf.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_asf.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/demux_asf.c	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2012 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_matroska.c xine-lib-1.2.4_git20140612/src/demuxers/demux_matroska.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_matroska.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/demux_matroska.c	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -364,6 +364,7 @@
+         lprintf("ContentCompression\n");
+         if (!ebml_read_master (ebml, &elem))
+           return 0;
++	track->compress_algo = 0; /* default */
+         if ((elem.len > 0) && !parse_content_compression(this, track))
+           return 0;
+         break;
+@@ -990,34 +991,22 @@
+ }
+ 
+ 
+-/* Note: This function assumes that the VobSub track is compressed with zlib.
+- * This is not necessarily true - or not enough. The Matroska 'content
+- * encoding' elements allow for a layer of changes applied to the contents,
+- * e.g. compression or encryption. Anyway, only zlib compression is used
+- * at the moment, and everyone compresses the VobSubs.
+- */
+-static void handle_vobsub (demux_plugin_t *this_gen, matroska_track_t *track,
+-                           int decoder_flags,
+-                           uint8_t *data, size_t data_len,
+-                           int64_t data_pts, int data_duration,
+-                           int input_normpos, int input_time) {
+-  demux_matroska_t *this = (demux_matroska_t *) this_gen;
+-  buf_element_t *buf;
+-
+-  if (track->compress_algo == MATROSKA_COMPRESS_ZLIB ||
+-      track->compress_algo == MATROSKA_COMPRESS_UNKNOWN) {
++static int uncompress_zlib(demux_matroska_t *this,
++                           const uint8_t *data, size_t data_len, uint8_t **out_data, size_t *out_data_len)
++{
+     z_stream zstream;
+     uint8_t *dest;
+-    int old_data_len, result;
++    int result;
++
++    *out_data = NULL;
+ 
+-    old_data_len = data_len;
+     zstream.zalloc = (alloc_func) 0;
+     zstream.zfree = (free_func) 0;
+     zstream.opaque = (voidpf) 0;
+     if (inflateInit (&zstream) != Z_OK) {
+       xprintf(this->stream->xine, XINE_VERBOSITY_LOG,
+-              "demux_matroska: VobSub: zlib inflateInit failed.\n");
+-      return;
++              "demux_matroska: zlib inflateInit failed.\n");
++      return -1;
+     }
+     zstream.next_in = (Bytef *)data;
+     zstream.avail_in = data_len;
+@@ -1031,32 +1020,58 @@
+       result = inflate (&zstream, Z_NO_FLUSH);
+       if ((result != Z_OK) && (result != Z_STREAM_END)) {
+         xprintf(this->stream->xine, XINE_VERBOSITY_LOG,
+-                "demux_matroska: VobSub: zlib decompression failed for track %d (result = %d).\n",
+-                (int)track->track_num, result);
++                "demux_matroska: zlib decompression failed: %d\n", result);
+         free(dest);
+         inflateEnd(&zstream);
+-
+-        if (result == Z_DATA_ERROR && track->compress_algo == MATROSKA_COMPRESS_UNKNOWN) {
+-          track->compress_algo = MATROSKA_COMPRESS_NONE;
+-          data_len = old_data_len;
+-          xprintf(this->stream->xine, XINE_VERBOSITY_LOG,
+-                  "demux_matroska: VobSub: falling back to uncompressed mode.\n");
+-          break;
+-        }
+-        return;
++	return 0;
+       }
+       zstream.avail_out += 4000;
+     } while ((zstream.avail_out == 4000) &&
+             (zstream.avail_in != 0) && (result != Z_STREAM_END));
+ 
+-    if (track->compress_algo != MATROSKA_COMPRESS_NONE) {
+-      data_len = zstream.total_out;
+-      inflateEnd(&zstream);
++    *out_data = dest;
++    *out_data_len = zstream.total_out;
++
++    inflateEnd(&zstream);
+ 
+-      data = dest;
++    return 1;
++}
++
++/* Note: This function assumes that the VobSub track is compressed with zlib.
++ * This is not necessarily true - or not enough. The Matroska 'content
++ * encoding' elements allow for a layer of changes applied to the contents,
++ * e.g. compression or encryption. Anyway, only zlib compression is used
++ * at the moment, and everyone compresses the VobSubs.
++ */
++static void handle_vobsub (demux_plugin_t *this_gen, matroska_track_t *track,
++                           int decoder_flags,
++                           uint8_t *data, size_t data_len,
++                           int64_t data_pts, int data_duration,
++                           int input_normpos, int input_time) {
++  demux_matroska_t *this = (demux_matroska_t *) this_gen;
++  buf_element_t *buf;
++  uint8_t *new_data = NULL;
++  size_t new_data_len = 0;
++
++  if (track->compress_algo == MATROSKA_COMPRESS_ZLIB ||
++      track->compress_algo == MATROSKA_COMPRESS_UNKNOWN) {
++
++    if (uncompress_zlib(this, data, data_len, &new_data, &new_data_len) < 0) {
++      return;
++    }
++
++    if (!new_data) {
++      if (track->compress_algo == MATROSKA_COMPRESS_UNKNOWN) {
++	track->compress_algo = MATROSKA_COMPRESS_NONE;
++	xprintf(this->stream->xine, XINE_VERBOSITY_LOG,
++		"demux_matroska: VobSub: falling back to uncompressed mode.\n");
++      } else {
++	return;
++      }
++    } else {
+       track->compress_algo = MATROSKA_COMPRESS_ZLIB;
+-      lprintf("VobSub: decompression for track %d from %d to %d\n",
+-              (int)track->track_num, old_data_len, data_len);
++      data = new_data;
++      data_len = new_data_len;
+     }
+   }
+   else
+@@ -1088,8 +1103,32 @@
+     buf->free_buffer(buf);
+   }
+ 
+-  if (track->compress_algo == MATROSKA_COMPRESS_ZLIB)
+-    free(data);
++  free(new_data);
++}
++
++static void handle_hdmv_pgs (demux_plugin_t *this_gen, matroska_track_t *track,
++                             int decoder_flags,
++                             uint8_t *data, size_t data_len,
++                             int64_t data_pts, int data_duration,
++                             int input_normpos, int input_time) {
++  demux_matroska_t *this = (demux_matroska_t *) this_gen;
++  uint8_t *new_data = NULL;
++  size_t new_data_len = 0;
++
++  if (track->compress_algo == MATROSKA_COMPRESS_ZLIB) {
++    uncompress_zlib(this, data, data_len, &new_data, &new_data_len);
++    if (!new_data)
++      return;
++    data = new_data;
++    data_len = new_data_len;
++  }
++
++  _x_demux_send_data(track->fifo, data, data_len,
++		     data_pts, track->buf_type, decoder_flags,
++		     input_normpos, input_time,
++		     0, 0);
++
++  free(new_data);
+ }
+ 
+ static void fill_extra_data(matroska_track_t *track, uint32_t fourcc) {
+@@ -1498,6 +1537,7 @@
+     } else if (!strcmp(track->codec_id, MATROSKA_CODEC_ID_S_HDMV_PGS)) {
+       lprintf("MATROSKA_CODEC_ID_S_HDMV_PGS\n");
+       track->buf_type = BUF_SPU_HDMV;
++      track->handle_content = handle_hdmv_pgs;
+       init_codec = init_codec_spu;
+     } else {
+       xprintf(this->stream->xine, XINE_VERBOSITY_DEBUG, "unknown codec %s\n", track->codec_id);
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_mpgaudio.c xine-lib-1.2.4_git20140612/src/demuxers/demux_mpgaudio.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_mpgaudio.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/demux_mpgaudio.c	2014-11-07 21:58:24.891800406 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -872,6 +872,20 @@
+      */
+     int tag_size = _X_BE_32_synchsafe(&buf[6]);
+     lprintf("try to skip id3v2 tag (%d bytes)\n", tag_size);
++    /* id3v2 tags may be larger than preview size (album artwork JPG or something).
++     * try to skip by seeking.
++     */
++    if (INPUT_IS_SEEKABLE (input)) {
++      input->seek (input, 10 + tag_size, SEEK_SET);
++      preview_len = input->read (input, buf, MAX_PREVIEW_SIZE);
++      if (!sniff_buffer_looks_like_mp3 (buf, preview_len, version, layer)) {
++        lprintf ("sniff_buffer_looks_like_mp3 failed\n");
++        return 0;
++      } else {
++        lprintf ("a valid mp3 frame follows the id3v2 tag\n");
++        return 1;
++      }
++    }
+     if ((10 + tag_size) >= preview_len) {
+       lprintf("cannot skip id3v2 tag\n");
+       return 0;
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_qt.c xine-lib-1.2.4_git20140612/src/demuxers/demux_qt.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_qt.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/demux_qt.c	2014-11-07 21:58:24.891800406 +0800
+@@ -201,8 +201,8 @@
+ } qt_frame;
+ 
+ typedef struct {
+-  unsigned int track_duration;
+-  unsigned int media_time;
++  int64_t track_duration;
++  int64_t media_time;
+ } edit_list_table_t;
+ 
+ typedef struct {
+@@ -653,7 +653,7 @@
+ 
+   info->creation_time = 0;
+   info->modification_time = 0;
+-  info->timescale = 0;
++  info->timescale = 1;
+   info->duration = 0;
+ 
+   info->trak_count = 0;
+@@ -784,6 +784,9 @@
+   info->timescale = _X_BE_32(&mvhd_atom[0x14]);
+   info->duration = _X_BE_32(&mvhd_atom[0x18]);
+ 
++  if (info->timescale == 0)
++    info->timescale = 1;
++
+   debug_atom_load("  qt: timescale = %d, duration = %d (%d seconds)\n",
+     info->timescale, info->duration,
+     info->duration / info->timescale);
+@@ -963,7 +966,7 @@
+   trak->frames = NULL;
+   trak->frame_count = 0;
+   trak->current_frame = 0;
+-  trak->timescale = 0;
++  trak->timescale = 1;
+   trak->flags = 0;
+   trak->object_type_id = 0;
+   trak->decoder_config = NULL;
+@@ -1004,21 +1007,39 @@
+   atomsize = sizes[3];
+   if (atomsize >= 16) {
+     trak->edit_list_count = _X_BE_32 (&atom[12]);
+-    if (trak->edit_list_count > (atomsize - 16) / 12)
+-      trak->edit_list_count = (atomsize - 16) / 12;
+     debug_atom_load ("    qt elst atom (edit list atom): %d entries\n", trak->edit_list_count);
+-    /* dont bail on zero items */
+-    trak->edit_list_table = calloc (trak->edit_list_count + 1, sizeof (edit_list_table_t));
+-    if (!trak->edit_list_table) {
+-      last_error = QT_NO_MEMORY;
+-      goto free_trak;
+-    }
+-    /* load the edit list table */
+-    for (j = 0; j < trak->edit_list_count; j++) {
+-      trak->edit_list_table[j].track_duration = _X_BE_32 (&atom[16 + j * 12 + 0]);
+-      trak->edit_list_table[j].media_time     = _X_BE_32 (&atom[16 + j * 12 + 4]);
+-      debug_atom_load ("      %d: track duration = %d, media time = %d\n",
+-        j, trak->edit_list_table[j].track_duration, trak->edit_list_table[j].media_time);
++    if (atom[8] == 1) {
++      if (trak->edit_list_count > (atomsize - 16) / 20)
++        trak->edit_list_count = (atomsize - 16) / 20;
++      trak->edit_list_table = calloc (trak->edit_list_count + 1, sizeof (edit_list_table_t));
++      if (!trak->edit_list_table) {
++        last_error = QT_NO_MEMORY;
++        goto free_trak;
++      }
++      for (j = 0; j < trak->edit_list_count; j++) {
++        trak->edit_list_table[j].track_duration = _X_BE_64 (&atom[16 + j * 20 + 0]);
++        trak->edit_list_table[j].media_time     = _X_BE_64 (&atom[16 + j * 20 + 8]);
++        debug_atom_load ("      %d: track duration = %"PRId64", media time = %"PRId64"\n",
++          j, trak->edit_list_table[j].track_duration, trak->edit_list_table[j].media_time);
++      }
++    } else {
++      if (trak->edit_list_count > (atomsize - 16) / 12)
++        trak->edit_list_count = (atomsize - 16) / 12;
++      /* dont bail on zero items */
++      trak->edit_list_table = calloc (trak->edit_list_count + 1, sizeof (edit_list_table_t));
++      if (!trak->edit_list_table) {
++        last_error = QT_NO_MEMORY;
++        goto free_trak;
++      }
++      /* load the edit list table */
++      for (j = 0; j < trak->edit_list_count; j++) {
++        trak->edit_list_table[j].track_duration = _X_BE_32 (&atom[16 + j * 12 + 0]);
++        trak->edit_list_table[j].media_time     = _X_BE_32 (&atom[16 + j * 12 + 4]);
++        if (trak->edit_list_table[j].media_time == 0xffffffff)
++          trak->edit_list_table[j].media_time = -1ll;
++        debug_atom_load ("      %d: track duration = %"PRId64", media time = %"PRId64"\n",
++          j, trak->edit_list_table[j].track_duration, trak->edit_list_table[j].media_time);
++      }
+     }
+   }
+ 
+@@ -1039,6 +1060,8 @@
+       }
+     }
+   }
++  if (trak->timescale == 0)
++    trak->timescale = 1;
+ 
+   atom     = atoms[5]; /* STSD_ATOM */
+   atomsize = sizes[5];
+@@ -1647,53 +1670,6 @@
+   return QT_OK;
+ }
+ 
+-/* This is a little support function used to process the edit list when
+- * building a frame table. */
+-#define MAX_DURATION 0x7FFFFFFFFFFFFFFFLL
+-static void get_next_edit_list_entry(qt_trak *trak,
+-  unsigned int *edit_list_index,
+-  unsigned int *edit_list_media_time,
+-  int64_t *edit_list_duration,
+-  unsigned int global_timescale) {
+-
+-  *edit_list_media_time = 0;
+-  *edit_list_duration = MAX_DURATION;
+-
+-  /* if there is no edit list, set to max duration and get out */
+-  if (!trak->edit_list_table) {
+-
+-    debug_edit_list("  qt: no edit list table, initial = %d, %"PRId64"\n", *edit_list_media_time, *edit_list_duration);
+-    return;
+-
+-  } else while (*edit_list_index < trak->edit_list_count) {
+-
+-    /* otherwise, find an edit list entries whose media time != -1 */
+-    if (trak->edit_list_table[*edit_list_index].media_time != -1) {
+-
+-      *edit_list_media_time =
+-        trak->edit_list_table[*edit_list_index].media_time;
+-      *edit_list_duration =
+-        trak->edit_list_table[*edit_list_index].track_duration;
+-
+-      /* duration is in global timescale units; convert to trak timescale */
+-      *edit_list_duration *= trak->timescale;
+-      *edit_list_duration /= global_timescale;
+-
+-      *edit_list_index = *edit_list_index + 1;
+-      break;
+-    }
+-
+-    *edit_list_index = *edit_list_index + 1;
+-  }
+-
+-  /* on the way out, check if this is the last edit list entry; if so,
+-   * don't let the duration expire (so set it to an absurdly large value)
+-   */
+-  if (*edit_list_index == trak->edit_list_count)
+-    *edit_list_duration = MAX_DURATION;
+-  debug_edit_list("  qt: edit list table exists, initial = %d, %"PRId64"\n", *edit_list_media_time, *edit_list_duration);
+-}
+-
+ static qt_error build_frame_table(qt_trak *trak,
+ 				  unsigned int global_timescale) {
+ 
+@@ -1709,11 +1685,6 @@
+   unsigned int ptsoffs_left, ptsoffs_countdown;
+   int ptsoffs_value;
+   unsigned int audio_frame_counter = 0;
+-  unsigned int edit_list_media_time;
+-  int64_t edit_list_duration;
+-  int64_t frame_duration = 0;
+-  unsigned int edit_list_index;
+-  unsigned int edit_list_pts_counter;
+   int atom_to_use;
+   qt_frame *frame;
+ 
+@@ -1878,12 +1849,10 @@
+             unsigned int v;
+             ptsoffs_countdown = _X_BE_32 (q); q += 4;
+             v                 = _X_BE_32 (q); q += 4;
+-            /* TJ. this is 32 bit signed. All casts necessary for my gcc 4.5.0 */
++            /* TJ. this is 32 bit signed. */
+             ptsoffs_value = v;
+             if ((sizeof (int) > 4) && (ptsoffs_value & 0x80000000))
+               ptsoffs_value |= ~0xffffffffL;
+-            ptsoffs_value *= (int)90000;
+-            ptsoffs_value /= (int)trak->timescale;
+             ptsoffs_left--;
+           }
+           frame->ptsoffs = ptsoffs_value;
+@@ -1907,45 +1876,79 @@
+         trak->frames[fr].keyframe = 1;
+     }
+ 
+-    /* initialize edit list considerations */
+-    edit_list_index = 0;
+-    get_next_edit_list_entry(trak, &edit_list_index,
+-      &edit_list_media_time, &edit_list_duration, global_timescale);
+-
+     /* fix up pts information w.r.t. the edit list table */
+-    edit_list_pts_counter = 0;
+-    for (i = 0; i < trak->frame_count; i++) {
+-
+-      debug_edit_list("    %d: (before) pts = %"PRId64"...", i, trak->frames[i].pts);
+-
+-      if (trak->frames[i].pts < edit_list_media_time)
+-        trak->frames[i].pts = edit_list_pts_counter;
+-      else {
+-        if (i < trak->frame_count - 1)
+-          frame_duration =
+-            (trak->frames[i + 1].pts - trak->frames[i].pts);
+-
+-        debug_edit_list("duration = %"PRId64"...", frame_duration);
+-        trak->frames[i].pts = edit_list_pts_counter;
+-        edit_list_pts_counter += frame_duration;
+-        edit_list_duration -= frame_duration;
+-      }
+-
+-      debug_edit_list("(fixup) pts = %"PRId64"...", trak->frames[i].pts);
+-
+-      /* reload media time and duration */
+-      if (edit_list_duration <= 0) {
+-        get_next_edit_list_entry(trak, &edit_list_index,
+-          &edit_list_media_time, &edit_list_duration, global_timescale);
++    /* supported: initial trak delay, gaps, and skipped intervals. */
++    /* not supported: repeating and reordering intervals. */
++    if (trak->edit_list_table && (trak->edit_list_count > 0)) {
++      int i = j = 0, edit_list_index, key_index, p;
++      int64_t edit_list_pts = 0;
++      for (edit_list_index = 0; edit_list_index < trak->edit_list_count; edit_list_index++) {
++        int64_t edit_list_media_time, edit_list_duration, offs = 0;
++        /* duration is in global timescale units; convert to trak timescale */
++        edit_list_media_time = trak->edit_list_table[edit_list_index].media_time;
++        edit_list_duration = trak->edit_list_table[edit_list_index].track_duration;
++        edit_list_duration *= trak->timescale;
++        edit_list_duration /= global_timescale;
++        /* insert delay */
++        if (trak->edit_list_table[edit_list_index].media_time == -1ll) {
++          edit_list_pts += edit_list_duration;
++          continue;
++        }
++        /* extend last edit to end of trak, why? */
++        if (edit_list_index == trak->edit_list_count - 1)
++          edit_list_duration = 0x7fffffffffffffffll;
++        /* skip interval */
++        key_index = i;
++        for (; i < trak->frame_count; i++) {
++          offs = trak->frames[i].pts;
++          offs += trak->frames[i].ptsoffs;
++          offs -= edit_list_media_time;
++          if (trak->frames[i].keyframe)
++            key_index = i;
++          if (offs >= 0)
++            break;
++        }
++        if (i == trak->frame_count)
++          break;
++        offs -= trak->frames[i].ptsoffs;
++        edit_list_pts += offs;
++        /* insert decoder preroll area */
++        for (p = key_index; p < i; p++) {
++          if (p != j)
++            trak->frames[j] = trak->frames[p];
++          trak->frames[j++].pts = edit_list_pts;
++        }
++        /* insert interval */
++        for (; i < trak->frame_count - 1; i++) {
++          int64_t d = trak->frames[i + 1].pts - trak->frames[i].pts;
++          if (i != j)
++            trak->frames[j] = trak->frames[i];
++          trak->frames[j++].pts = edit_list_pts;
++          edit_list_pts += d;
++          edit_list_duration -= d;
++          if (edit_list_duration <= 0)
++            break;
++        }
++        if ((i == trak->frame_count - 1) && (edit_list_duration > 0)) {
++          if (i != j)
++            trak->frames[j] = trak->frames[i];
++          trak->frames[j++].pts = edit_list_pts;
++          i++;
++        }
++        edit_list_pts -= offs;
++        edit_list_pts += edit_list_duration;
+       }
+-
+-      debug_edit_list("(after) pts = %"PRId64"...\n", trak->frames[i].pts);
++      trak->frame_count = j;
+     }
+-
++          
+     /* compute final pts values */
+     for (i = 0; i < trak->frame_count; i++) {
+-      trak->frames[i].pts *= 90000;
+-      trak->frames[i].pts /= trak->timescale;
++      trak->frames[i].pts *= (int)90000;
++      trak->frames[i].pts /= (int)trak->timescale;
++      if (trak->frames[i].ptsoffs) {
++        trak->frames[i].ptsoffs *= (int)90000;
++        trak->frames[i].ptsoffs /= (int)trak->timescale;
++      }
+       debug_edit_list("  final pts for sample %d = %"PRId64"\n", i, trak->frames[i].pts);
+     }
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_smjpeg.c xine-lib-1.2.4_git20140612/src/demuxers/demux_smjpeg.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/demux_smjpeg.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/demux_smjpeg.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/ebml.c xine-lib-1.2.4_git20140612/src/demuxers/ebml.c
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/ebml.c	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/ebml.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/Makefile.am xine-lib-1.2.4_git20140612/src/demuxers/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/Makefile.am	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/Makefile.am	2014-11-07 21:58:24.891800406 +0800
+@@ -122,7 +122,7 @@
+ 				demux_aac.c demux_flac.c \
+ 				demux_mpc.c demux_dts.c demux_shn.c \
+ 				demux_tta.c
+-xineplug_dmx_audio_la_LIBADD = $(XINE_LIB)
++xineplug_dmx_audio_la_LIBADD = $(XINE_LIB) $(LTLIBINTL)
+ 
+ xineplug_dmx_modplug_la_SOURCES = demux_mod.c
+ xineplug_dmx_modplug_la_LIBADD = $(XINE_LIB) $(LIBMODPLUG_LIBS)
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/demuxers/matroska.h xine-lib-1.2.4_git20140612/src/demuxers/matroska.h
+--- xine-lib-1.2.4_git20140612.orig/src/demuxers/matroska.h	2014-11-07 21:58:06.387708643 +0800
++++ xine-lib-1.2.4_git20140612/src/demuxers/matroska.h	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/dxr3/ffmpeg_encoder.c xine-lib-1.2.4_git20140612/src/dxr3/ffmpeg_encoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/dxr3/ffmpeg_encoder.c	2014-11-07 21:58:06.355708485 +0800
++++ xine-lib-1.2.4_git20140612/src/dxr3/ffmpeg_encoder.c	2014-11-07 21:58:24.895800422 +0800
+@@ -319,7 +319,7 @@
+   lprintf("flushing buffers\n");
+   if (this->context) {
+     avcodec_close(this->context);
+-    free(this->context);
++    avcodec_free_context (&this->context);
+     free(this->picture);
+     this->context = NULL;
+     this->picture = NULL;
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/http_helper.c xine-lib-1.2.4_git20140612/src/input/http_helper.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/http_helper.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/input/http_helper.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -208,29 +208,13 @@
+   return 1;
+ 
+ error:
+-  if (*proto) {
+-    free (*proto);
+-    *proto = NULL;
+-  }
+-  if (*user) {
+-    free (*user);
+-    *user = NULL;
+-  }
+-  if (*password) {
+-    free (*password);
+-    *password = NULL;
+-  }
+-  if (*host) {
+-    free (*host);
+-    *host = NULL;
+-  }
+-  if (*port) {
+-    *port = 0;
+-  }
+-  if (*uri) {
+-    free (*uri);
+-    *uri = NULL;
+-  }
++  _x_freep (proto);
++  _x_freep (user);
++  _x_freep (password);
++  _x_freep (host);
++  _x_freep (uri);
++  *port = 0;
++
+   return 0;
+ }
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_bluray.c xine-lib-1.2.4_git20140612/src/input/input_bluray.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_bluray.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_bluray.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  * Copyright (C) 2009-2011 Petri Hintukainen <phintuka@users.sourceforge.net>
+  *
+  * This file is part of xine, a free video player.
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_dvb.c xine-lib-1.2.4_git20140612/src/input/input_dvb.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_dvb.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_dvb.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2012 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -2574,6 +2574,9 @@
+       if (n > 0){
+ 	  this->curpos += n;
+ 	  total += n;
++      } else if (n < 0 && errno == EOVERFLOW) {
++	  xprintf(this->class->xine, XINE_VERBOSITY_LOG,
++		  "input_dvb:  EOVERFLOW returned.  Not reading fast/often enough?  \n");
+       } else if (n < 0 && errno!=EAGAIN) {
+ 	  break;
+       }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_dvd.c xine-lib-1.2.4_git20140612/src/input/input_dvd.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_dvd.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_dvd.c	2014-11-07 21:58:24.895800422 +0800
+@@ -569,8 +569,8 @@
+   if (this->freeing && !this->mem_stack) {
+     /* all buffers returned, we can free the plugin now */
+     pthread_mutex_destroy(&this->buf_mutex);
+-    free(this->mem);
+-    free(this->mrl);
++    _x_freep(&this->mem);
++    _x_freep(&this->mrl);
+     free(this);
+   }
+ }
+@@ -1726,7 +1726,7 @@
+   config->unregister_callback(config, "media.dvd.seek_behaviour");
+   config->unregister_callback(config, "media.dvd.play_single_chapter");
+ 
+-  free(this->eject_device);
++  _x_freep(&this->eject_device);
+   free(this);
+ }
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_file.c xine-lib-1.2.4_git20140612/src/input/input_file.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_file.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_file.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -329,7 +329,7 @@
+   if (this->fh != -1)
+     close(this->fh);
+ 
+-  free (this->mrl);
++  _x_freep (&this->mrl);
+ 
+   free (this);
+ }
+@@ -376,7 +376,7 @@
+     return -1;
+   }
+ 
+-  free(filename);
++  _x_freep(&filename);
+ 
+ #ifdef HAVE_MMAP
+   this->mmap_on = 0;
+@@ -915,7 +915,7 @@
+    */
+   while(this->mrls_allocated_entries > num_files) {
+     MRL_ZERO(this->mrls[this->mrls_allocated_entries - 1]);
+-    free(this->mrls[this->mrls_allocated_entries--]);
++    _x_freep(&this->mrls[this->mrls_allocated_entries--]);
+   }
+ 
+   /*
+@@ -947,9 +947,9 @@
+ 
+   while(this->mrls_allocated_entries) {
+     MRL_ZERO(this->mrls[this->mrls_allocated_entries - 1]);
+-    free(this->mrls[this->mrls_allocated_entries--]);
++    _x_freep(&this->mrls[this->mrls_allocated_entries--]);
+   }
+-  free (this->mrls);
++  _x_freep (&this->mrls);
+ 
+   free (this);
+ }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_gnome_vfs.c xine-lib-1.2.4_git20140612/src/input/input_gnome_vfs.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_gnome_vfs.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_gnome_vfs.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  * 2002 Bastien Nocera <hadess@hadess.net>
+  *
+  * This file is part of totem,
+@@ -363,8 +363,10 @@
+ 		return NULL;
+ 	}
+ 
++#if !GLIB_CHECK_VERSION(2,32,0)
+ 	if (!g_thread_supported ())
+ 		g_thread_init (NULL);
++#endif
+ 
+ 	this = g_new0 (gnomevfs_input_class_t, 1);
+ 	this->xine = xine;
+@@ -379,7 +381,7 @@
+ 	return (input_class_t *) this;
+ }
+ 
+-static input_info_t input_info_gnomevfs = {
++static const input_info_t input_info_gnomevfs = {
+ 	100                       /* priority */
+ };
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_http.c xine-lib-1.2.4_git20140612/src/input/input_http.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_http.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_http.c	2014-11-07 21:58:24.895800422 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -287,8 +287,7 @@
+ 
+           lprintf ("http_plugin_read_metainf: songtitle: %s\n", songtitle);
+ 
+-          if (this->shoutcast_songtitle)
+-            free(this->shoutcast_songtitle);
++          free(this->shoutcast_songtitle);
+           this->shoutcast_songtitle = strdup(songtitle);
+ 
+           _x_meta_info_set(this->stream, XINE_META_INFO_TITLE, songtitle);
+@@ -604,12 +603,12 @@
+     this->nbc = NULL;
+   }
+ 
+-  if (this->mrl) free(this->mrl);
+-  if (this->proto) free(this->proto);
+-  if (this->host) free(this->host);
+-  if (this->user) free(this->user);
+-  if (this->password) free(this->password);
+-  if (this->uri) free(this->uri);
++  _x_freep (&this->mrl);
++  _x_freep (&this->proto);
++  _x_freep (&this->host);
++  _x_freep (&this->user);
++  _x_freep (&this->password);
++  _x_freep (&this->uri);
+   free (this);
+ }
+ 
+@@ -1041,7 +1040,7 @@
+ static void http_class_dispose (input_class_t *this_gen) {
+   http_input_class_t  *this = (http_input_class_t *) this_gen;
+ 
+-  free(this->proxyhost_env);
++  _x_freep(&this->proxyhost_env);
+ 
+   free (this);
+ }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/input_test.c xine-lib-1.2.4_git20140612/src/input/input_test.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/input_test.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/input_test.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2012 the xine project
++ * Copyright (C) 2012-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -758,7 +758,7 @@
+   return this;
+ }
+ 
+-static input_info_t input_info_test = {
++static const input_info_t input_info_test = {
+   110                       /* priority */
+ };
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/dvd_input.c xine-lib-1.2.4_git20140612/src/input/libdvdnav/dvd_input.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/dvd_input.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/libdvdnav/dvd_input.c	2014-11-07 21:58:24.899800446 +0800
+@@ -295,12 +295,13 @@
+ {
+   size_t len;
+   ssize_t ret;
++  char *q = buffer;
+   
+   len = (size_t)blocks * DVD_VIDEO_LB_LEN;
+   
+   while(len > 0) {
+     
+-    ret = read(dev->fd, buffer, len);
++    ret = read(dev->fd, q, len);
+     
+     if(ret < 0) {
+       /* One of the reads failed, too bad.  We won't even bother
+@@ -319,7 +320,7 @@
+       return (int) (bytes / DVD_VIDEO_LB_LEN);
+     }
+     
+-    buffer += ret;
++    q += ret;
+     len -= ret;
+   }
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/dvd_udf.c xine-lib-1.2.4_git20140612/src/input/libdvdnav/dvd_udf.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/dvd_udf.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/libdvdnav/dvd_udf.c	2014-11-07 21:58:24.899800446 +0800
+@@ -412,11 +412,16 @@
+  */
+ static int UDFLogVolume( uint8_t *data, char *VolumeDescriptor )
+ {
+-    uint32_t lbsize, MT_L, N_PM;
++    uint32_t lbsize;
++#if 0
++    uint32_t MT_L, N_PM;
++#endif
+     Unicodedecode(&data[84], 128, VolumeDescriptor);
+     lbsize = GETN4(212);  /* should be 2048 */
++#if 0
+     MT_L = GETN4(264);    /* should be 6 */
+     N_PM = GETN4(268);    /* should be 1 */
++#endif
+     if (lbsize != DVD_VIDEO_LB_LEN) return 1;
+     return 0;
+ }
+@@ -782,7 +787,7 @@
+     uint32_t lbnum;
+     uint16_t TagID;
+     struct Partition partition;
+-    struct AD RootICB, File, ICB;
++    struct AD RootICB, File, ICB = {0, 0, 0, 0};
+     char tokenline[ MAX_UDF_FILE_NAME_LEN ];
+     char *token;
+     uint8_t filetype;
+@@ -870,13 +875,14 @@
+   uint32_t lbnum, MVDS_location, MVDS_length;
+   struct avdp_t avdp;
+   uint16_t TagID;
+-  uint32_t lastsector;
+-  int i, terminate;
++#if 0
++  uint32_t lastsector = 0;
++  int terminate = 0;
++#endif
++  int i;
+   int desc_found = 0;
+   /* Find Anchor */
+-  lastsector = 0;
+   lbnum = 256;   /* Try #1, prime anchor */
+-  terminate = 0;
+   if(bufsize < DVD_VIDEO_LB_LEN) {
+     return 0;
+   }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/md5.c xine-lib-1.2.4_git20140612/src/input/libdvdnav/md5.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/md5.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/libdvdnav/md5.c	2014-11-07 21:58:24.899800446 +0800
+@@ -96,7 +96,7 @@
+      void *resbuf;
+ {
+   /* Take yet unprocessed bytes into account.  */
+-  md5_uint32 bytes = ctx->buflen;
++  md5_uint32 bytes = ctx->buflen, temp;
+   size_t pad;
+ 
+   /* Now count remaining bytes.  */
+@@ -108,9 +108,10 @@
+   memcpy (&ctx->buffer[bytes], fillbuf, pad);
+ 
+   /* Put the 64-bit file length in *bits* at the end of the buffer.  */
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad] = SWAP (ctx->total[0] << 3);
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad + 4] = SWAP ((ctx->total[1] << 3) |
+-							(ctx->total[0] >> 29));
++  temp = SWAP (ctx->total[0] << 3);
++  memcpy (&ctx->buffer[bytes + pad], &temp, 4);
++  temp = SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 29));
++  memcpy (&ctx->buffer[bytes + pad + 4], &temp, 4);
+ 
+   /* Process last bytes.  */
+   md5_process_block (ctx->buffer, bytes + pad + 8, ctx);
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/remap.c xine-lib-1.2.4_git20140612/src/input/libdvdnav/remap.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/libdvdnav/remap.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/libdvdnav/remap.c	2014-11-07 21:58:24.899800446 +0800
+@@ -148,7 +148,7 @@
+     long tmp;
+     char *tok;
+     char *epos;
+-    char *marker[]={"domain", "title", "program", "start", "end"};
++    const char *marker[]={"domain", "title", "program", "start", "end"};
+     int st = 0;
+     tok = strtok( buf, " ");
+     while (st < 5) {
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/Makefile.am xine-lib-1.2.4_git20140612/src/input/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/input/Makefile.am	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/Makefile.am	2014-11-07 21:58:24.895800422 +0800
+@@ -101,7 +101,7 @@
+ xineplug_inp_test_la_LDFLAGS = $(xineplug_ldflags)
+ 
+ xineplug_inp_dvd_la_SOURCES = input_dvd.c media_helper.c
+-xineplug_inp_dvd_la_LIBADD = $(XINE_LIB) $(link_dvdnav) $(PTHREAD_LIBS) $(DYNAMIC_LD_LIBS)
++xineplug_inp_dvd_la_LIBADD = $(XINE_LIB) $(link_dvdnav) $(PTHREAD_LIBS) $(DYNAMIC_LD_LIBS) $(LTLIBINTL)
+ xineplug_inp_dvd_la_CFLAGS = $(AM_CFLAGS) $(DVD_CFLAGS)
+ 
+ xineplug_inp_net_la_SOURCES = input_net.c net_buf_ctrl.c
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/net_buf_ctrl.c xine-lib-1.2.4_git20140612/src/input/net_buf_ctrl.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/net_buf_ctrl.c	2014-11-07 21:58:06.371708564 +0800
++++ xine-lib-1.2.4_git20140612/src/input/net_buf_ctrl.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2012 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -237,11 +237,11 @@
+   }
+   /* take actions */
+   used = fifo->fifo_size;
+-  if (((mode >> this->dvbspeed) & 1) || !*fill) return;
++  if ((mode >> this->dvbspeed) & 1) return;
+   switch (this->dvbspeed) {
+     case 1:
+     case 4:
+-      if ((*fill < this->dvbs_center - this->dvbs_width) &&
++      if (*fill && (*fill < this->dvbs_center - this->dvbs_width) &&
+         (100 * used < 38 * fifo->buffer_pool_capacity)) {
+         _x_set_fine_speed (this->stream, XINE_FINE_SPEED_NORMAL * 199 / 200);
+         this->dvbspeed += 1;
+@@ -251,9 +251,18 @@
+ #endif
+       }
+     break;
++    case 2:
++    case 5:
++      if (used <= 1) {
++        this->dvbspeed = 7;
++#ifdef LOG_DVBSPEED
++        printf ("net_buf_ctrl: signal lost\n");
++#endif
++      }
++    break;
+     case 3:
+     case 6:
+-      if ((*fill < this->dvbs_center) && (100 * used < 73 * fifo->buffer_pool_capacity)) {
++      if (*fill && (*fill < this->dvbs_center) && (100 * used < 73 * fifo->buffer_pool_capacity)) {
+         _x_set_fine_speed (this->stream, XINE_FINE_SPEED_NORMAL);
+         this->dvbspeed -= 2;
+ #ifdef LOG_DVBSPEED
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/input/pnm.c xine-lib-1.2.4_git20140612/src/input/pnm.c
+--- xine-lib-1.2.4_git20140612.orig/src/input/pnm.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/input/pnm.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2010 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -613,7 +613,7 @@
+   /* a server message */
+   if (p->buffer[0] == 'X')
+   {
+-    int size=be2me_16(*(uint16_t*)(&p->buffer[1]));
++    int size=_X_BE_16 (&p->buffer[1]);
+ 
+     _x_io_tcp_read (p->stream, p->s, &p->buffer[8], size-5);
+     p->buffer[size+3]=0;
+@@ -653,8 +653,8 @@
+   }
+ 
+   /* check offsets */
+-  fof1=be2me_16(*(uint16_t*)(&p->buffer[1]));
+-  fof2=be2me_16(*(uint16_t*)(&p->buffer[3]));
++  fof1=_X_BE_16 (&p->buffer[1]);
++  fof2=_X_BE_16 (&p->buffer[3]);
+   if (fof1 != fof2)
+   {
+     xprintf(p->stream->xine, XINE_VERBOSITY_DEBUG,
+@@ -663,7 +663,7 @@
+   }
+ 
+   /* get first index */
+-  p->seq_current[0]=be2me_16(*(uint16_t*)(&p->buffer[5]));
++  p->seq_current[0]=_X_BE_16 (&p->buffer[5]);
+ 
+   /* now read the rest of stream chunk */
+   n = _x_io_tcp_read (p->stream, p->s, (char*)&p->recv[5], fof1-5);
+@@ -673,7 +673,7 @@
+   p->seq_current[1]=p->recv[5];
+ 
+   /* get timestamp */
+-  p->ts_current=be2me_32(*(uint32_t*)(&p->recv[6]));
++  p->ts_current=_X_BE_32 (&p->recv[6]);
+ 
+   /* get stream number */
+   stream=pnm_calc_stream(p);
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/libw32dll/w32codec.c xine-lib-1.2.4_git20140612/src/libw32dll/w32codec.c
+--- xine-lib-1.2.4_git20140612.orig/src/libw32dll/w32codec.c	2014-11-07 21:58:06.379708603 +0800
++++ xine-lib-1.2.4_git20140612/src/libw32dll/w32codec.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2010 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/post/audio/Makefile.am xine-lib-1.2.4_git20140612/src/post/audio/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/post/audio/Makefile.am	2014-11-07 21:58:06.363708524 +0800
++++ xine-lib-1.2.4_git20140612/src/post/audio/Makefile.am	2014-11-07 21:58:24.899800446 +0800
+@@ -12,4 +12,4 @@
+ xineplug_post_audio_filters_la_SOURCES = \
+         upmix.c upmix_mono.c filter.c window.c stretch.c volnorm.c audio_filters.c
+ xineplug_post_audio_filters_la_CFLAGS = $(AM_CFLAGS) -fno-strict-aliasing
+-xineplug_post_audio_filters_la_LIBADD = $(XINE_LIB) $(PTHREAD_LIBS) -lm
++xineplug_post_audio_filters_la_LIBADD = $(XINE_LIB) $(PTHREAD_LIBS) $(LTLIBINTL) -lm
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/post/deinterlace/xine_plugin.c xine-lib-1.2.4_git20140612/src/post/deinterlace/xine_plugin.c
+--- xine-lib-1.2.4_git20140612.orig/src/post/deinterlace/xine_plugin.c	2014-11-07 21:58:06.359708509 +0800
++++ xine-lib-1.2.4_git20140612/src/post/deinterlace/xine_plugin.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -86,15 +86,15 @@
+  * description of params struct
+  */
+ START_PARAM_DESCR( deinterlace_parameters_t )
+-PARAM_ITEM( POST_PARAM_TYPE_INT, method, enum_methods, 0, 0, 0,
++PARAM_ITEM( POST_PARAM_TYPE_INT, method, (char **)enum_methods, 0, 0, 0,
+             "deinterlace method" )
+ PARAM_ITEM( POST_PARAM_TYPE_BOOL, enabled, NULL, 0, 1, 0,
+             "enable/disable" )
+-PARAM_ITEM( POST_PARAM_TYPE_INT, pulldown, enum_pulldown, 0, 0, 0,
++PARAM_ITEM( POST_PARAM_TYPE_INT, pulldown, (char **)enum_pulldown, 0, 0, 0,
+             "pulldown algorithm" )
+ PARAM_ITEM( POST_PARAM_TYPE_INT, pulldown_error_wait, NULL, 0, 0, 0,
+             "number of frames of telecine pattern sync required before mode change" )
+-PARAM_ITEM( POST_PARAM_TYPE_INT, framerate_mode, enum_framerate, 0, 0, 0,
++PARAM_ITEM( POST_PARAM_TYPE_INT, framerate_mode, (char **)enum_framerate, 0, 0, 0,
+             "framerate output mode" )
+ PARAM_ITEM( POST_PARAM_TYPE_BOOL, judder_correction, NULL, 0, 1, 0,
+             "make frames evenly spaced for film mode (24 fps)" )
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/post/planar/eq2.c xine-lib-1.2.4_git20140612/src/post/planar/eq2.c
+--- xine-lib-1.2.4_git20140612.orig/src/post/planar/eq2.c	2014-11-07 21:58:06.359708509 +0800
++++ xine-lib-1.2.4_git20140612/src/post/planar/eq2.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/post/planar/noise.c xine-lib-1.2.4_git20140612/src/post/planar/noise.c
+--- xine-lib-1.2.4_git20140612.orig/src/post/planar/noise.c	2014-11-07 21:58:06.359708509 +0800
++++ xine-lib-1.2.4_git20140612/src/post/planar/noise.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -337,9 +337,9 @@
+     "Amount of noise to add to luma channel" )
+ PARAM_ITEM( POST_PARAM_TYPE_INT, chroma_strength, NULL, 0, 100, 0,
+     "Amount of noise to add to chroma channel" )
+-PARAM_ITEM( POST_PARAM_TYPE_INT, quality, enum_quality, 0, 0, 0,
++PARAM_ITEM( POST_PARAM_TYPE_INT, quality, (char **)enum_quality, 0, 0, 0,
+     "Quality level of noise" )
+-PARAM_ITEM( POST_PARAM_TYPE_INT, type, enum_types, 0, 0, 0,
++PARAM_ITEM( POST_PARAM_TYPE_INT, type, (char **)enum_types, 0, 0, 0,
+     "Type of noise" )
+ PARAM_ITEM( POST_PARAM_TYPE_BOOL, pattern, NULL, 0, 1, 0,
+     "Mix random noise with a (semi)regular pattern" )
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/spu_dec/cc_decoder.c xine-lib-1.2.4_git20140612/src/spu_dec/cc_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/spu_dec/cc_decoder.c	2014-11-07 21:58:06.391708667 +0800
++++ xine-lib-1.2.4_git20140612/src/spu_dec/cc_decoder.c	2014-11-07 21:58:24.899800446 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * Copyright (C) Christian Vogler
+  *               cvogler@gradient.cis.upenn.edu - December 2001
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/spu_dec/Makefile.am xine-lib-1.2.4_git20140612/src/spu_dec/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/spu_dec/Makefile.am	2014-11-07 21:58:06.391708667 +0800
++++ xine-lib-1.2.4_git20140612/src/spu_dec/Makefile.am	2014-11-07 21:58:24.899800446 +0800
+@@ -14,7 +14,7 @@
+ 	xineplug_sputext.la
+ 
+ xineplug_decode_spucc_la_SOURCES = cc_decoder.c cc_decoder.h xine_cc_decoder.c
+-xineplug_decode_spucc_la_LIBADD = $(XINE_LIB)
++xineplug_decode_spucc_la_LIBADD = $(XINE_LIB) $(LTLIBINTL)
+ xineplug_decode_spucc_la_CFLAGS = $(AM_CFLAGS)
+ 
+ xineplug_decode_spucmml_la_SOURCES = cmml_decoder.c
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/spu_dec/spudvb_decoder.c xine-lib-1.2.4_git20140612/src/spu_dec/spudvb_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/spu_dec/spudvb_decoder.c	2014-11-07 21:58:06.391708667 +0800
++++ xine-lib-1.2.4_git20140612/src/spu_dec/spudvb_decoder.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2010-2013 the xine project
++ * Copyright (C) 2010-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -40,6 +40,151 @@
+ #define SPU_MAX_WIDTH 1920
+ #define SPU_MAX_HEIGHT 1080
+ 
++/* sparse_array - handle large arrays efficiently when only a few entries are used */
++
++typedef struct {
++  uint32_t key, value;
++} sparse_array_entry_t;
++
++typedef struct {
++  uint32_t sorted_entries, used_entries, max_entries;
++  sparse_array_entry_t *entries;
++} sparse_array_t;
++
++static void sparse_array_new (sparse_array_t *sa) {
++  sa->sorted_entries =
++  sa->used_entries   =
++  sa->max_entries    = 0;
++  sa->entries        = NULL;
++}
++
++static void sparse_array_delete (sparse_array_t *sa) {
++  sa->sorted_entries =
++  sa->used_entries   =
++  sa->max_entries    = 0;
++  free (sa->entries);
++  sa->entries        = NULL;
++}
++
++static int _sparse_array_find (sparse_array_t *sa, uint32_t key, uint32_t *pos) {
++  uint32_t b = 0, m, e = sa->sorted_entries, l = e, k;
++  while (1) {
++    m = (b + e) >> 1;
++    if (m == l)
++      break;
++    l = m;
++    k = sa->entries[m].key;
++    if (k > key)
++      e = m;
++    else if (k < key)
++      b = m;
++    else {
++      *pos = m;
++      return 1;
++    }
++  }
++  *pos = e;
++  return 0;
++}
++
++static void _sparse_array_sort (sparse_array_t *sa) {
++  uint32_t left = sa->max_entries - sa->used_entries;
++  /* move unsorted part to end of buf */
++  uint32_t i = left + sa->sorted_entries;
++  memmove (sa->entries + i, sa->entries + sa->sorted_entries,
++    (sa->used_entries - sa->sorted_entries) * sizeof (sparse_array_entry_t));
++  /* iterate it */
++  while (i < sa->max_entries) {
++    uint32_t j, pos, startkey, stopkey, lastkey;
++    startkey = sa->entries[i].key;
++    if (_sparse_array_find (sa, startkey, &pos)) {
++      /* eliminate duplicate */
++      sa->entries[pos].value = sa->entries[i].value;
++      i++;
++      continue;
++    }
++    /* find sorted range */
++    stopkey = pos < sa->sorted_entries ? sa->entries[pos].key : 0xffffffff;
++    lastkey = startkey;
++    for (j = i + 1; j < sa->max_entries; j++) {
++      uint32_t thiskey = sa->entries[j].key;
++      if ((thiskey <= lastkey) || (thiskey >= stopkey))
++        break;
++      lastkey = thiskey;
++    }
++    j -= i;
++    if (j > left)
++      j = left;
++    /* insert it */
++    if (pos < sa->sorted_entries)
++      memmove (sa->entries + pos + j, sa->entries + pos,
++        (sa->sorted_entries - pos) * sizeof (sparse_array_entry_t));
++    memcpy (sa->entries + pos, sa->entries + i, j * sizeof (sparse_array_entry_t));
++    sa->sorted_entries += j;
++    i += j;
++  }
++  sa->used_entries = sa->sorted_entries;
++  lprintf ("sparse_array_sort: %u entries\n", (unsigned int)sa->used_entries);
++}
++
++static int sparse_array_set (sparse_array_t *sa, uint32_t key, uint32_t value) {
++  /* give some room for later sorting too */
++  if (!sa->entries || (sa->used_entries + 8 >= sa->max_entries)) {
++    uint32_t n = sa->max_entries + 128;
++    sparse_array_entry_t *se = realloc (sa->entries, n * sizeof (sparse_array_entry_t));
++    if (!se)
++      return 0;
++    sa->max_entries = n;
++    sa->entries = se;
++  }
++  sa->entries[sa->used_entries].key = key;
++  sa->entries[sa->used_entries++].value = value;
++  return 1;
++}
++
++static int sparse_array_get (sparse_array_t *sa, uint32_t key, uint32_t *value) {
++  uint32_t pos;
++  if (sa->sorted_entries != sa->used_entries)
++    _sparse_array_sort (sa);
++  if (!_sparse_array_find (sa, key, &pos))
++    return 0;
++  *value = sa->entries[pos].value;
++  return 1;
++}
++
++static void sparse_array_unset (sparse_array_t *sa, uint32_t key, uint32_t mask) {
++  sparse_array_entry_t *here = sa->entries, *p = NULL, *q = sa->entries;
++  uint32_t i, n = 0;
++  if (sa->sorted_entries != sa->used_entries)
++    _sparse_array_sort (sa);
++  key &= mask;
++  for (i = sa->used_entries; i > 0; i--) {
++    if ((here->key & mask) == key) {
++      if (p) {
++        n = here - p;
++        if (n && (p != q))
++          memmove (q, p, n * sizeof (sparse_array_entry_t));
++        p = NULL;
++        q += n;
++      }
++    } else {
++      if (!p)
++        p = here;
++    }
++    here++;
++  }
++  if (p) {
++    n = here - p;
++    if (n && (p != q))
++      memmove (q, p, n * sizeof (sparse_array_entry_t));
++    q += n;
++  }
++  sa->sorted_entries =
++  sa->used_entries   = q - sa->entries;
++}
++
++/* ! sparse_array */
++
+ typedef struct {
+   int			x, y;
+   unsigned char	is_visible;
+@@ -61,7 +206,6 @@
+   int			CLUT_id;
+   int			objects_start;
+   int			objects_end;
+-  unsigned int		object_pos[65536];
+   unsigned char	*img;
+   osd_object_t          *osd;
+ } region_t;
+@@ -82,6 +226,7 @@
+   int			i_bits;
+   int			in_scanline;
+   int			compat_depth;
++  int                   max_regions;
+   page_t		page;
+   region_t		regions[MAX_REGIONS];
+   clut_union_t		colours[MAX_REGIONS*256];
+@@ -89,6 +234,7 @@
+   struct {
+     unsigned char	  lut24[4], lut28[4], lut48[16];
+   }			lut[MAX_REGIONS];
++  sparse_array_t	object_pos;
+ } dvbsub_func_t;
+ 
+ typedef struct		dvb_spu_class_s {
+@@ -476,7 +622,7 @@
+   int i;
+ 
+   _x_spu_get_opacity (this->stream->xine, &opacity);
+-  for (i = 0; i < MAX_REGIONS * 256; ++i) {
++  for (i = 0; i < dvbsub->max_regions * 256; ++i) {
+     /* ETSI-300-743 says "full transparency if Y == 0". */
+     if (dvbsub->colours[i].c.y == 0)
+       dvbsub->trans[i] = 0;
+@@ -555,7 +701,7 @@
+   }
+ }
+ 
+-static void process_pixel_data_sub_block (dvb_spu_decoder_t * this, int r, int o, int ofs, int n)
++static void process_pixel_data_sub_block (dvb_spu_decoder_t * this, int r, int o, unsigned int pos, int ofs, int n)
+ {
+   int data_type;
+   int j;
+@@ -564,8 +710,8 @@
+ 
+   j = dvbsub->i + n;
+ 
+-  dvbsub->x = (dvbsub->regions[r].object_pos[o]) >> 16;
+-  dvbsub->y = ((dvbsub->regions[r].object_pos[o]) & 0xffff) + ofs;
++  dvbsub->x = pos >> 16;
++  dvbsub->y = (pos & 0xffff) + ofs;
+   while (dvbsub->i < j) {
+     data_type = dvbsub->buf[dvbsub->i++];
+ 
+@@ -599,7 +745,7 @@
+       break;
+     case 0xf0:
+       dvbsub->in_scanline = 0;
+-      dvbsub->x = (dvbsub->regions[r].object_pos[o]) >> 16;
++      dvbsub->x = pos >> 16;
+       dvbsub->y += 2;
+       break;
+     default:
+@@ -635,7 +781,7 @@
+   dvbsub->i++;
+ 
+   int r;
+-  for (r=0; r<MAX_REGIONS; r++) { /* reset */
++  for (r=0; r<dvbsub->max_regions; r++) { /* reset */
+     dvbsub->page.regions[r].is_visible = 0;
+   }
+ 
+@@ -648,6 +794,10 @@
+     dvbsub->i += 2;
+     lprintf ("process_page_composition_segment: page_id %d, region_id %d, x %d, y %d\n",
+       dvbsub->page.page_id, region_id, region_x, region_y);
++    if (region_id >= MAX_REGIONS)
++      continue;
++    if (region_id >= dvbsub->max_regions)
++      dvbsub->max_regions = region_id + 1;
+ 
+     dvbsub->page.regions[region_id].x = region_x;
+     dvbsub->page.regions[region_id].y = region_y;
+@@ -665,7 +815,6 @@
+     /*region_8_bit_pixel_code,*/ region_4_bit_pixel_code /*, region_2_bit_pixel_code*/;
+   int object_id, object_type, /*object_provider_flag,*/ object_x, object_y /*, foreground_pixel_code, background_pixel_code*/;
+   int j;
+-  int o;
+   dvbsub_func_t *dvbsub = this->dvbsub;
+ 
+   dvbsub->page.page_id = (dvbsub->buf[dvbsub->i] << 8) | dvbsub->buf[dvbsub->i + 1];
+@@ -696,6 +845,9 @@
+   if(region_id>=MAX_REGIONS)
+     return;
+ 
++  if (region_id >= dvbsub->max_regions)
++    dvbsub->max_regions = region_id + 1;
++
+   if ( dvbsub->regions[region_id].version_number == region_version_number )
+     return;
+ 
+@@ -709,9 +861,7 @@
+   dvbsub->regions[region_id].objects_start = dvbsub->i;
+   dvbsub->regions[region_id].objects_end = j;
+ 
+-  for (o = 0; o < 65536; o++) {
+-    dvbsub->regions[region_id].object_pos[o] = 0xffffffff;
+-  }
++  sparse_array_unset (&dvbsub->object_pos, region_id << 16, 0xff0000);
+ 
+   while (dvbsub->i < j) {
+     object_id = (dvbsub->buf[dvbsub->i] << 8) | dvbsub->buf[dvbsub->i + 1];
+@@ -723,7 +873,7 @@
+     object_y = ((dvbsub->buf[dvbsub->i] & 0x0f) << 8) | dvbsub->buf[dvbsub->i + 1];
+     dvbsub->i += 2;
+ 
+-    dvbsub->regions[region_id].object_pos[object_id] = (object_x << 16) | object_y;
++    sparse_array_set (&dvbsub->object_pos, (region_id << 16) | object_id, (object_x << 16) | object_y);
+ 
+     if ((object_type == 0x01) || (object_type == 0x02)) {
+       /*foreground_pixel_code = dvbsub->buf[*/dvbsub->i++/*]*/;
+@@ -758,11 +908,12 @@
+   dvbsub->i++;
+ 
+   old_i = dvbsub->i;
+-  for (r = 0; r < MAX_REGIONS; r++) {
++  for (r = 0; r < dvbsub->max_regions; r++) {
+ 
+     /* If this object is in this region... */
+     if (dvbsub->regions[r].img) {
+-      if (dvbsub->regions[r].object_pos[object_id] != 0xffffffff) {
++      uint32_t pos;
++      if (sparse_array_get (&dvbsub->object_pos, (r << 16) | object_id, &pos)) {
+ 	dvbsub->i = old_i;
+ 	if (object_coding_method == 0) {
+ 	  top_field_data_block_length = (dvbsub->buf[dvbsub->i] << 8) | dvbsub->buf[dvbsub->i + 1];
+@@ -770,7 +921,7 @@
+ 	  bottom_field_data_block_length = (dvbsub->buf[dvbsub->i] << 8) | dvbsub->buf[dvbsub->i + 1];
+ 	  dvbsub->i += 2;
+ 
+-	  process_pixel_data_sub_block (this, r, object_id, 0, top_field_data_block_length);
++	  process_pixel_data_sub_block (this, r, object_id, pos, 0, top_field_data_block_length);
+ 
+ 	  if (bottom_field_data_block_length == 0)
+ 	  {
+@@ -779,7 +930,7 @@
+ 	    dvbsub->i =  old_i + 4;
+ 	  }
+ 
+-	  process_pixel_data_sub_block (this, r, object_id, 1, bottom_field_data_block_length);
++	  process_pixel_data_sub_block (this, r, object_id, pos, 1, bottom_field_data_block_length);
+ 	}
+       }
+     }
+@@ -835,7 +986,7 @@
+          Hide the OSD, then wait until we're signalled. */
+       if(this && this->stream && this->stream->osd_renderer)
+       {
+-	for ( i=0; i<MAX_REGIONS; i++ ) {
++	for ( i=0; i<this->dvbsub->max_regions; i++ ) {
+ 	  if ( this->dvbsub->regions[i].osd ) {
+ 	    this->stream->osd_renderer->hide( this->dvbsub->regions[i].osd, 0 );
+ 	    lprintf("thread hiding = %d\n",i);
+@@ -876,14 +1027,14 @@
+ 
+   /* render all regions onto the page */
+ 
+-  for ( r=0; r<MAX_REGIONS; r++ ) {
++  for ( r=0; r<this->dvbsub->max_regions; r++ ) {
+     if ( this->dvbsub->page.regions[r].is_visible )
+       display++;
+   }
+   if ( !display )
+     return;
+ 
+-  for (r = 0; r < MAX_REGIONS; r++) {
++  for (r = 0; r < this->dvbsub->max_regions; r++) {
+     if (this->dvbsub->regions[r].img) {
+       if (this->dvbsub->page.regions[r].is_visible && !this->dvbsub->regions[r].empty) {
+         update_osd( this, r );
+@@ -900,6 +1051,8 @@
+ 	  reg = this->dvbsub->regions[r].img;
+ 	  reg_width = this->dvbsub->regions[r].width;
+ 	}
++        /* All DVB subs I have seen so far use same color matrix as main video. */
++        _X_SET_CLUT_CM (&this->dvbsub->colours[this->dvbsub->regions[r].CLUT_id*256].u32, 4);
+ 	this->stream->osd_renderer->set_palette( this->dvbsub->regions[r].osd,
+                                                  &this->dvbsub->colours[this->dvbsub->regions[r].CLUT_id*256].u32,
+                                                  &this->dvbsub->trans[this->dvbsub->regions[r].CLUT_id*256]);
+@@ -910,7 +1063,7 @@
+ 
+   pthread_mutex_lock(&this->dvbsub_osd_mutex);
+   lprintf("this->vpts=%"PRId64"\n",this->vpts);
+-  for ( r=0; r<MAX_REGIONS; r++ ) {
++  for ( r=0; r<this->dvbsub->max_regions; r++ ) {
+     lprintf("region=%d, visible=%d, osd=%d, empty=%d\n", r, this->dvbsub->page.regions[r].is_visible, this->dvbsub->regions[r].osd?1:0, this->dvbsub->regions[r].empty );
+     if ( this->dvbsub->page.regions[r].is_visible && this->dvbsub->regions[r].osd && !this->dvbsub->regions[r].empty ) {
+       this->stream->osd_renderer->set_position( this->dvbsub->regions[r].osd, this->dvbsub->page.regions[r].x, this->dvbsub->page.regions[r].y );
+@@ -948,7 +1101,7 @@
+       if (buf->decoder_info[2] == 0) {
+         /* Hide the osd - note that if the timeout thread times out, it'll rehide, which is harmless */
+         pthread_mutex_lock(&this->dvbsub_osd_mutex);
+-	for ( i=0; i<MAX_REGIONS; i++ ) {
++	for ( i=0; i<this->dvbsub->max_regions; i++ ) {
+ 	  if ( this->dvbsub->regions[i].osd )
+ 	    this->stream->osd_renderer->hide( this->dvbsub->regions[i].osd, 0 );
+ 	}
+@@ -1105,8 +1258,10 @@
+   if (this->pes_pkt)
+     free (this->pes_pkt);
+ 
+-  if (this->dvbsub)
++  if (this->dvbsub) {
++    sparse_array_delete (&this->dvbsub->object_pos);
+     free (this->dvbsub);
++  }
+ 
+   free (this);
+ }
+@@ -1179,6 +1334,8 @@
+       this->dvbsub->colours[i].c.foo = t;
+   }
+ 
++  sparse_array_new (&this->dvbsub->object_pos);
++
+   pthread_mutex_init(&this->dvbsub_osd_mutex, NULL);
+   pthread_cond_init(&this->dvbsub_restart_timeout, NULL);
+   this->dvbsub_hide_timeout.tv_nsec = 0;
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/spu_dec/spuhdmv_decoder.c xine-lib-1.2.4_git20140612/src/spu_dec/spuhdmv_decoder.c
+--- xine-lib-1.2.4_git20140612.orig/src/spu_dec/spuhdmv_decoder.c	2014-11-07 21:58:06.391708667 +0800
++++ xine-lib-1.2.4_git20140612/src/spu_dec/spuhdmv_decoder.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * Copyright (C) 2009 Petri Hintukainen <phintuka@users.sourceforge.net>
+  *
+@@ -374,10 +374,17 @@
+     uint8_t Cr    = segbuf_get_u8 (buf);
+     uint8_t Cb    = segbuf_get_u8 (buf);
+     uint8_t alpha = segbuf_get_u8 (buf);
++#ifdef WORDS_BIGENDIAN
++    clut->color[index] = (Y << 8) | (Cr << 16) | (Cb << 24);
++#else
+     clut->color[index] = (Y << 16) | (Cr << 8) | Cb;
++#endif
+     clut->trans[index] = alpha >> 4;
+   }
+ 
++  /* HDMV subs always use same color matrix as main video. */
++  _X_SET_CLUT_CM (clut->color, 4);
++
+   return clut;
+ }
+ 
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/spu_dec/sputext_demuxer.c xine-lib-1.2.4_git20140612/src/spu_dec/sputext_demuxer.c
+--- xine-lib-1.2.4_git20140612.orig/src/spu_dec/sputext_demuxer.c	2014-11-07 21:58:06.391708667 +0800
++++ xine-lib-1.2.4_git20140612/src/spu_dec/sputext_demuxer.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/vdr/Makefile.am xine-lib-1.2.4_git20140612/src/vdr/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/vdr/Makefile.am	2014-11-07 21:58:06.379708603 +0800
++++ xine-lib-1.2.4_git20140612/src/vdr/Makefile.am	2014-11-07 21:58:24.903800462 +0800
+@@ -11,4 +11,4 @@
+ 
+ xineplug_vdr_la_SOURCES = combined_vdr.c combined_vdr.h input_vdr.c post_vdr_video.c post_vdr_audio.c
+ xineplug_vdr_la_CFLAGS = $(AM_CFLAGS) -fno-strict-aliasing
+-xineplug_vdr_la_LIBADD = $(XINE_LIB) $(PTHREAD_LIBS)
++xineplug_vdr_la_LIBADD = $(XINE_LIB) $(PTHREAD_LIBS) $(LTLIBINTL)
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_dec/Makefile.am xine-lib-1.2.4_git20140612/src/video_dec/Makefile.am
+--- xine-lib-1.2.4_git20140612.orig/src/video_dec/Makefile.am	2014-11-07 21:58:06.363708524 +0800
++++ xine-lib-1.2.4_git20140612/src/video_dec/Makefile.am	2014-11-07 21:58:24.903800462 +0800
+@@ -60,7 +60,7 @@
+ xineplug_decode_gdk_pixbuf_la_CFLAGS = $(AM_CFLAGS) $(GDK_PIXBUF_CFLAGS)
+ 
+ xineplug_decode_libjpeg_la_SOURCES = libjpeg.c
+-xineplug_decode_libjpeg_la_LIBADD = $(XINE_LIB) $(JPEG_LIBS)
++xineplug_decode_libjpeg_la_LIBADD = $(XINE_LIB) $(JPEG_LIBS) $(LTLIBINTL)
+ xineplug_decode_libjpeg_la_CFLAGS = $(AM_CFLAGS) $(JPEG_CFLAGS)
+ 
+ xineplug_decode_libvpx_la_SOURCES = libvpx.c
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_dec/rgb.c xine-lib-1.2.4_git20140612/src/video_dec/rgb.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_dec/rgb.c	2014-11-07 21:58:06.367708548 +0800
++++ xine-lib-1.2.4_git20140612/src/video_dec/rgb.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_caca.c xine-lib-1.2.4_git20140612/src/video_out/video_out_caca.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_caca.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_caca.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2003-2012 the xine project
++ * Copyright (C) 2003-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -34,7 +34,9 @@
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+ #include <sys/time.h>
++#ifdef HAVE_CUCUL
+ #include <cucul.h>
++#endif
+ #include <caca.h>
+ 
+ #ifdef HAVE_FFMPEG_AVUTIL_H
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_fb.c xine-lib-1.2.4_git20140612/src/video_out/video_out_fb.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_fb.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_fb.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2012 the xine project and Fredrik Noring
++ * Copyright (C) 2000-2014 the xine project and Fredrik Noring
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_mmal.c xine-lib-1.2.4_git20140612/src/video_out/video_out_mmal.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_mmal.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_mmal.c	2014-11-07 21:58:24.903800462 +0800
+@@ -33,26 +33,38 @@
+ #include <interface/mmal/mmal.h>
+ #include <interface/mmal/util/mmal_util.h>
+ #include <interface/mmal/util/mmal_default_components.h>
++#include <interface/vmcs_host/vc_dispmanx.h>
+ 
+ #define LOG_MODULE "video_out_mmal"
+ #define LOG_VERBOSE
+ /*
+ #define LOG
+ */
++#define FRAME_ALLOC  /* allocate buffer based on frame size. if not defined, all buffers are suitable for 1920x1088 YUY2. */
++#define HW_OVERLAY   /* draw overlay using HW. if undefined, draw in software. */
+ 
+ #include "xine.h"
+ #include <xine/xine_internal.h>
+ #include <xine/video_out.h>
+ #include <xine/xineutils.h>
+ 
++#ifdef FRAME_ALLOC
++#define MAX_VIDEO_WIDTH  (2*1920)
++#define MAX_VIDEO_HEIGHT (2*1088)
++#define MAX_VIDEO_FRAMES 20
++#else
+ #define MAX_VIDEO_WIDTH  1920
+ #define MAX_VIDEO_HEIGHT 1088
+ #define MAX_VIDEO_FRAMES 20
++#endif
+ 
+ 
+ typedef struct {
+     vo_frame_t            vo_frame;
+ 
++#ifdef FRAME_ALLOC
++    MMAL_PORT_T          *input;
++#endif
+     MMAL_BUFFER_HEADER_T *buffer;
+     int                   width, height, format;
+     double                ratio;
+@@ -60,14 +72,28 @@
+     int                   displayed;
+ } mmal_frame_t;
+ 
++typedef struct mmal_overlay_s mmal_overlay_t;
++struct mmal_overlay_s {
++  mmal_overlay_t *next;
++
++  void     *mem; /* temp storage for rle -> argb */
++  int       src_width, src_height, src_pitch;
++  VC_RECT_T src_rect;
++  VC_RECT_T dst_rect;
++
++  DISPMANX_ELEMENT_HANDLE_T  element;
++  DISPMANX_RESOURCE_HANDLE_T resource;
++};
++
+ typedef struct {
+ 
+   vo_driver_t        vo_driver;
+ 
+   /* xine */
+   xine_t            *xine;
++#ifndef HW_OVERLAY
+   alphablend_t       alphablend_extra_data;
+-  uint32_t           capabilities;
++#endif
+   int                gui_width, gui_height;
+ 
+   /* mmal */
+@@ -76,6 +102,14 @@
+   int                frames_in_renderer;
+   double             renderer_ratio;
+ 
++  /* dispmanx */
++  DISPMANX_DISPLAY_HANDLE_T  dispmanx_handle;
++  DISPMANX_UPDATE_HANDLE_T   overlay_update;
++
++  /* overlays */
++  mmal_overlay_t    *overlays;
++  mmal_overlay_t    *old_overlays;
++
+   pthread_mutex_t    mutex;
+   pthread_cond_t     cond;
+ } mmal_driver_t;
+@@ -120,6 +154,10 @@
+   return 0;
+ }
+ 
++/*
++ *
++ */
++
+ static int config_display(mmal_driver_t *this,
+                           int src_x, int src_y, int src_w, int src_h) {
+ 
+@@ -252,6 +290,14 @@
+   }
+ 
+   if (!this->pool) {
++#ifdef FRAME_ALLOC
++    this->pool = mmal_pool_create(MAX_VIDEO_FRAMES, 0);
++    if (!this->pool) {
++      xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
++              "failed to create MMAL pool for %u buffers\n", MAX_VIDEO_FRAMES);
++      return -1;
++    }
++#else
+     int buffer_size = MAX_VIDEO_WIDTH * MAX_VIDEO_HEIGHT * 2;
+     this->pool = mmal_pool_create_with_allocator(MAX_VIDEO_FRAMES, buffer_size,
+                                   input,
+@@ -263,6 +309,7 @@
+               MAX_VIDEO_FRAMES, buffer_size);
+       return -1;
+     }
++#endif
+   }
+ 
+   return 0;
+@@ -274,9 +321,11 @@
+ 
+ static uint32_t mmal_get_capabilities (vo_driver_t *this_gen) {
+ 
+-  mmal_driver_t *this = (mmal_driver_t *) this_gen;
+-
+-  return this->capabilities;
++  return
++    VO_CAP_YUY2 | VO_CAP_YV12 |
++    VO_CAP_CROP |
++    VO_CAP_UNSCALED_OVERLAY |
++    VO_CAP_CUSTOM_EXTENT_OVERLAY;
+ }
+ 
+ static void mmal_frame_field (vo_frame_t *vo_img, int which_field) {
+@@ -287,6 +336,13 @@
+   mmal_frame_t  *frame = (mmal_frame_t *) vo_img ;
+ 
+   if (frame->buffer) {
++#ifdef FRAME_ALLOC
++    if (frame->buffer->data) {
++      mmal_port_payload_free(frame->input, frame->buffer->data);
++      frame->buffer->data = NULL;
++      frame->buffer->alloc_size = 0;
++    }
++#endif
+     frame->buffer->user_data = NULL;
+     mmal_buffer_header_release(frame->buffer);
+     frame->buffer = NULL;
+@@ -297,6 +353,9 @@
+ 
+ static vo_frame_t *mmal_alloc_frame (vo_driver_t *this_gen) {
+ 
++#ifdef FRAME_ALLOC
++  mmal_driver_t    *this = (mmal_driver_t *) this_gen;
++#endif
+   mmal_frame_t     *frame;
+ 
+   frame = (mmal_frame_t *) calloc(1, sizeof(mmal_frame_t));
+@@ -311,6 +370,10 @@
+   frame->vo_frame.field      = mmal_frame_field;
+   frame->vo_frame.dispose    = mmal_frame_dispose;
+ 
++#ifdef FRAME_ALLOC
++  frame->input = this->renderer->input[0];
++#endif
++
+   return (vo_frame_t *) frame;
+ }
+ 
+@@ -334,7 +397,26 @@
+ 
+   /* alignment */
+   width  = (width + 31) & ~31;
+-  height = (height + 1) & ~1;
++  height = (height + 15) & ~15;
++
++#ifdef FRAME_ALLOC
++  /* required storage */
++  uint32_t size = width * height;
++  if (format == XINE_IMGFMT_YV12) {
++    size = size * 3 / 2;
++  } else if (format == XINE_IMGFMT_YUY2) {
++    size *= 2;
++  }
++
++  /* free buffer if it is too small */
++  if (frame->buffer && frame->buffer->alloc_size < size) {
++    mmal_port_payload_free(this->renderer->input[0], frame->buffer->data);
++    frame->buffer->data = NULL;
++    frame->buffer->user_data = NULL;
++    mmal_buffer_header_release(frame->buffer);
++    frame->buffer = NULL;
++  }
++#endif
+ 
+   if (!frame->buffer) {
+     frame->buffer = mmal_queue_wait(this->pool->queue);
+@@ -344,6 +426,10 @@
+       frame->vo_frame.width = frame->vo_frame.height = 0;
+       return;
+     }
++#ifdef FRAME_ALLOC
++    frame->buffer->data = mmal_port_payload_alloc(this->renderer->input[0], size);
++    frame->buffer->alloc_size = size;
++#endif
+     frame->buffer->user_data = frame;
+   }
+ 
+@@ -360,7 +446,7 @@
+     frame->vo_frame.base[1]    = frame->vo_frame.base[0] + width * height;
+     frame->vo_frame.base[2]    = frame->vo_frame.base[1] + width/2 * height/2;
+   } else if (format == XINE_IMGFMT_YUY2) {
+-    frame->vo_frame.pitches[0] = width;
++    frame->vo_frame.pitches[0] = width * 2;
+     frame->vo_frame.base[0]    = frame->buffer->data;
+   } else {
+     xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
+@@ -371,6 +457,110 @@
+   frame->displayed = 0;
+ }
+ 
++
++/*
++ * overlay
++ */
++
++static void overlay_free(mmal_overlay_t *ovl, DISPMANX_UPDATE_HANDLE_T update) {
++
++  if (ovl->resource != DISPMANX_NO_HANDLE) {
++    vc_dispmanx_element_remove(update, ovl->element);
++    vc_dispmanx_resource_delete(ovl->resource);
++  }
++  free(ovl->mem);
++  free(ovl);
++}
++
++static void overlay_update(mmal_overlay_t *ovl, DISPMANX_UPDATE_HANDLE_T update, uint32_t *argb) {
++
++  vc_dispmanx_resource_write_data(ovl->resource, VC_IMAGE_RGBA32,
++                                  ovl->src_pitch, argb, &ovl->src_rect);
++  vc_dispmanx_element_change_source(update, ovl->element, ovl->resource);
++}
++
++static mmal_overlay_t *overlay_new(mmal_driver_t *this,
++                                   DISPMANX_UPDATE_HANDLE_T update,
++                                   int src_width, int src_height, int src_pitch,
++                                   int x, int y, int width, int height, int layer,
++				   uint32_t *argb) {
++
++  mmal_overlay_t      *ovl = calloc(1, sizeof(mmal_overlay_t));
++  uint32_t             image_handle;
++  static VC_DISPMANX_ALPHA_T  alpha;
++  VC_RECT_T            src_rect;
++  //src_width &= 31;
++  //dst_width &= 15;
++  ovl->src_pitch = src_pitch;
++  ovl->src_width = src_width;
++  ovl->src_height = src_height;
++
++  vc_dispmanx_rect_set(&src_rect, 0, 0, src_width << 16, src_height << 16);
++  vc_dispmanx_rect_set(&ovl->src_rect, 0, 0, src_width, src_height);
++  vc_dispmanx_rect_set(&ovl->dst_rect, x, y, width, height);
++
++  ovl->resource = vc_dispmanx_resource_create(VC_IMAGE_RGBA32,
++					      src_pitch | (src_pitch<<16), src_height | (src_height<<16),
++					      &image_handle);
++  if (ovl->resource == DISPMANX_NO_HANDLE) {
++    xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
++	    "failed to create dispmanx resource for overlay\n");
++    overlay_free(ovl, update);
++    return NULL;
++  }
++  if (vc_dispmanx_resource_write_data(ovl->resource, VC_IMAGE_RGBA32,
++				      src_pitch, argb, &ovl->src_rect)) {
++    xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
++	    "failed to write overlay data to dispmanx resource\n");
++    overlay_free(ovl, update);
++    return NULL;
++  }
++
++  alpha.flags = DISPMANX_FLAGS_ALPHA_FROM_SOURCE /*| DISPMANX_FLAGS_ALPHA_MIX*/;
++  alpha.mask = DISPMANX_NO_HANDLE;
++  ovl->element = vc_dispmanx_element_add(update, this->dispmanx_handle,
++                                         layer, &ovl->dst_rect, ovl->resource,
++                                         &src_rect, DISPMANX_PROTECTION_NONE,
++                                         &alpha, NULL, VC_IMAGE_ROT0);
++
++  if (ovl->element == DISPMANX_NO_HANDLE) {
++    xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
++	    "vc_dispmanx_element_add() failed\n");
++    overlay_free(ovl, update);
++    return NULL;
++  }
++
++  return ovl;
++}
++
++static void close_overlays(mmal_driver_t *this, mmal_overlay_t *ovls) {
++
++  while (ovls) {
++    mmal_overlay_t *tmp = ovls;
++    ovls = ovls->next;
++    overlay_free(tmp, this->overlay_update);
++  }
++}
++
++/*
++ *
++ */
++
++static void mmal_overlay_begin (vo_driver_t *this_gen,
++                                vo_frame_t *frame_gen, int changed) {
++
++#ifdef HW_OVERLAY
++  mmal_driver_t *this = (mmal_driver_t *)this_gen;
++
++  if (changed) {
++    this->overlay_update = vc_dispmanx_update_start(10);
++    /* re-create active overlay list to maintain blending order */
++    this->old_overlays = this->overlays;
++    this->overlays = NULL;
++  }
++#endif
++}
++
+ static void mmal_overlay_blend (vo_driver_t *this_gen, vo_frame_t *frame, vo_overlay_t *overlay) {
+ 
+   mmal_driver_t  *this = (mmal_driver_t *) this_gen;
+@@ -378,6 +568,7 @@
+   if (overlay->width <= 0 || overlay->height <= 0 || !overlay->rle)
+     return;
+ 
++#ifndef HW_OVERLAY
+   this->alphablend_extra_data.offset_x = frame->overlay_offset_x;
+   this->alphablend_extra_data.offset_y = frame->overlay_offset_y;
+ 
+@@ -387,8 +578,125 @@
+     else
+       _x_blend_yuy2( frame->base[0], overlay, frame->width, frame->height, frame->pitches[0], &this->alphablend_extra_data);
+   }
++#else
++
++  if (!this->overlay_update) {
++    return;
++  }
++
++  int dst_x = overlay->x, dst_y = overlay->y, dst_w = overlay->width, dst_h = overlay->height;
++
++  /* coordinate system */
++  int extent_width  = overlay->extent_width;
++  int extent_height = overlay->extent_height;
++  if (extent_width < 1 || extent_height < 1) {
++    if (overlay->unscaled) {
++      extent_width = this->gui_width;
++      extent_height = this->gui_height;
++    } else {
++      extent_width = frame->width;
++      extent_height = frame->height;
++    }
++  }
++
++  /* scale dst region if needed */
++  if (extent_width != this->gui_width) {
++    dst_x = dst_x * this->gui_width / extent_width;
++    dst_w = dst_w * this->gui_width / extent_width;
++  }
++  if (extent_height != this->gui_height) {
++    dst_y = dst_y * this->gui_height / extent_height;
++    dst_h = dst_h * this->gui_height / extent_height;
++  }
++
++#ifdef LOG
++  fprintf(stderr, "overlay: %d,%d %dx%d unscaled:%d extent: %dx%d argb: %d-> surface %dx%d\n",
++          overlay->x, overlay->y, overlay->width, overlay->height,
++          overlay->unscaled, overlay->extent_width, overlay->extent_height,
++          (overlay->argb_layer && overlay->argb_layer->buffer),
++          extent_width, extent_height);
++#endif
++
++  /* find suitable region, maintain overlay blending order */
++  mmal_overlay_t *ovl = this->old_overlays, *prev = NULL;
++  while (ovl) {
++    /* source, dst coordinates must be same (= size + location + scaling) */
++    if (ovl->src_width == overlay->width && ovl->src_height == overlay->height &&
++        dst_x == ovl->dst_rect.x && dst_y == ovl->dst_rect.y && dst_w == ovl->dst_rect.width && dst_h == ovl->dst_rect.height) {
++      if (prev) {
++        prev->next = ovl->next;
++      } else {
++        this->old_overlays = ovl->next;
++      }
++      ovl->next = NULL;
++      break;
++    }
++    prev = ovl;
++    ovl = ovl->next;
++  }
++
++  /* new overlay */
++  if (!ovl) {
++    if (overlay->rle) {
++      _x_overlay_clut_yuv2rgb(overlay, 0);
++
++      void *mem = NULL;
++      int src_pitch = (sizeof(uint32_t) * overlay->width + 31) & ~31;
++      mem = malloc(src_pitch * overlay->height);
++      _x_overlay_to_argb32(overlay, mem, src_pitch/4, "RGBA");
++      ovl = overlay_new(this, this->overlay_update, overlay->width, overlay->height, src_pitch,
++                        dst_x, dst_y, dst_w, dst_h, 2, mem);
++      if (!ovl)
++	return;
++      ovl->mem = mem;
++    }
++  }
++
++  /* update overlay */
++  else if (overlay->rle) {
++    _x_overlay_clut_yuv2rgb(overlay, 0);
++ 
++    if (!ovl->mem) {
++      int src_pitch = (sizeof(uint32_t) * overlay->width + 31) & ~31;
++      ovl->mem = malloc(src_pitch * overlay->height);
++      ovl->src_pitch = src_pitch;
++    }
++    _x_overlay_to_argb32(overlay, ovl->mem, ovl->src_pitch/4, "RGBA");
++    overlay_update(ovl, this->overlay_update, ovl->mem);
++  }
++
++  /* add to list */
++  mmal_overlay_t **tail = &this->overlays;
++  while (*tail) {
++    tail = &(*tail)->next;
++  }
++  *tail = ovl;
++#endif /* HW_OVERLAY */
++}
++
++static void mmal_overlay_end (vo_driver_t *this_gen, vo_frame_t *frame_gen) {
++
++#ifdef HW_OVERLAY
++  mmal_driver_t *this  = (mmal_driver_t *)this_gen;
++
++  if (!this->overlay_update) {
++    return;
++  }
++
++  /* remove handles not in use */
++  close_overlays(this, this->old_overlays);
++  this->old_overlays = NULL;
++
++  /* commit updates */
++  vc_dispmanx_update_submit_sync(this->overlay_update);
++  this->overlay_update = 0;
++#endif
+ }
+ 
++/*
++ *
++ */
++
+ static int mmal_redraw_needed (vo_driver_t *this_gen) {
+ 
+   return 0;
+@@ -487,6 +795,20 @@
+ 
+   mmal_driver_t      *this = (mmal_driver_t*) this_gen;
+ 
++  if (this->dispmanx_handle) {
++
++    if (this->overlays) {
++      this->overlay_update = vc_dispmanx_update_start(10);
++      close_overlays(this, this->overlays);
++      this->overlays = NULL;
++      vc_dispmanx_update_submit_sync(this->overlay_update);
++      this->overlay_update = 0;
++    }
++
++    vc_dispmanx_display_close(this->dispmanx_handle);
++    this->dispmanx_handle = DISPMANX_NO_HANDLE;
++  }
++
+   if (this->renderer) {
+     disable_renderer(this);
+     mmal_component_release(this->renderer);
+@@ -496,7 +818,9 @@
+     mmal_pool_destroy(this->pool);
+   }
+ 
++#ifndef HW_OVERLAY
+   _x_alphablend_free(&this->alphablend_extra_data);
++#endif
+ 
+   pthread_cond_destroy(&this->cond);
+   pthread_mutex_destroy(&this->mutex);
+@@ -517,7 +841,10 @@
+     return NULL;
+ 
+   this->xine          = class->xine;
+-  this->capabilities  = VO_CAP_YUY2 | VO_CAP_YV12 | VO_CAP_CROP;
++
++#ifndef HW_OVERLAY
++  _x_alphablend_init(&this->alphablend_extra_data, class->xine);
++#endif
+ 
+   pthread_mutex_init (&this->mutex, NULL);
+   pthread_cond_init (&this->cond, NULL);
+@@ -538,12 +865,20 @@
+   update_tv_resolution(this);
+   config_display(this, 0, 0, 720, 576);
+ 
++  this->dispmanx_handle = vc_dispmanx_display_open(0);
++  if (this->dispmanx_handle == DISPMANX_NO_HANDLE) {
++    xprintf(this->xine, XINE_VERBOSITY_LOG, LOG_MODULE": "
++	    "failed to open dispmanx display\n");
++    mmal_dispose(&this->vo_driver);
++    return NULL;
++  }
++
+   this->vo_driver.get_capabilities     = mmal_get_capabilities;
+   this->vo_driver.alloc_frame          = mmal_alloc_frame;
+   this->vo_driver.update_frame_format  = mmal_update_frame_format;
+-  this->vo_driver.overlay_begin        = NULL;
++  this->vo_driver.overlay_begin        = mmal_overlay_begin;
+   this->vo_driver.overlay_blend        = mmal_overlay_blend;
+-  this->vo_driver.overlay_end          = NULL;
++  this->vo_driver.overlay_end          = mmal_overlay_end;
+   this->vo_driver.display_frame        = mmal_display_frame;
+   this->vo_driver.get_property         = mmal_get_property;
+   this->vo_driver.set_property         = mmal_set_property;
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_none.c xine-lib-1.2.4_git20140612/src/video_out/video_out_none.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_none.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_none.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_raw.c xine-lib-1.2.4_git20140612/src/video_out/video_out_raw.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_raw.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_raw.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,6 +1,6 @@
+ 
+ /*
+- * Copyright (C) 2007-2013 the xine project
++ * Copyright (C) 2007-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_sdl.c xine-lib-1.2.4_git20140612/src/video_out/video_out_sdl.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_sdl.c	2014-11-07 21:58:06.379708603 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_sdl.c	2014-11-07 21:58:24.903800462 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2009 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_vdpau.c xine-lib-1.2.4_git20140612/src/video_out/video_out_vdpau.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/video_out_vdpau.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/video_out_vdpau.c	2014-11-07 21:58:41.000000000 +0800
+@@ -188,8 +188,8 @@
+ static VdpDecoderRender *orig_vdp_decoder_render;
+ 
+ #ifdef LOCKDISPLAY
+-#define DO_LOCKDISPLAY          if (guarded_display) XLockDisplay(guarded_display);
+-#define DO_UNLOCKDISPLAY        if (guarded_display) XUnlockDisplay(guarded_display);
++#define DO_LOCKDISPLAY          XLockDisplay(guarded_display)
++#define DO_UNLOCKDISPLAY        XUnlockDisplay(guarded_display)
+ static Display *guarded_display;
+ #else
+ #define DO_LOCKDISPLAY
+@@ -746,46 +746,29 @@
+       this->ovl_video_dest_rect = vid_rect;
+     }
+ 
+-    if (ovl->unscaled==2) {
+-      ovl_rect.x0 = 0;
+-      ovl_rect.y0 = 0;
+-      ovl_rect.x1 = this->sc.gui_width;
+-      ovl_rect.y1 = this->sc.gui_height;
+-      this->ovl_changed = 1;
+-    }
+-    else if (ovl->unscaled==0) {
++    if (!ovl->unscaled) {
+       double rx, ry;
+-      VdpRect clip_rect;
+-      if (ovl->extent_width > 0 && ovl->extent_height > 0) {
+-        if (zoom) {
++
++      if (zoom) {
++        VdpRect clip_rect;
++        if (ovl->extent_width > 0 && ovl->extent_height > 0) {
+           /* compute frame size to extend size scaling factor */
+           rx = (double)ovl->extent_width / (double)this->sc.delivered_width;
+           ry = (double)ovl->extent_height / (double)this->sc.delivered_height;
+-
+           /* scale displayed video window coordinates to extend coordinates */
+           clip_rect.x0 = vid_src_rect.x0 * rx + 0.5;
+           clip_rect.y0 = vid_src_rect.y0 * ry + 0.5;
+           clip_rect.x1 = vid_src_rect.x1 * rx + 0.5;
+           clip_rect.y1 = vid_src_rect.y1 * ry + 0.5;
+-
+           /* compute displayed size to output size scaling factor */
+           rx = (double)this->sc.output_width / (double)(clip_rect.x1 - clip_rect.x0);
+           ry = (double)this->sc.output_height / (double)(clip_rect.y1 - clip_rect.y0);
+-
+         } else {
+-          /* compute extend size to output size scaling factor */
+-          rx = (double)this->sc.output_width / (double)ovl->extent_width;
+-          ry = (double)this->sc.output_height / (double)ovl->extent_height;
+-        }
+-      } else {
+-        if (zoom)
+           clip_rect = vid_src_rect;
+-
+-        /* compute displayed size to output size scaling factor */
+-        rx = (double)this->sc.output_width / (double)this->sc.displayed_width;
+-        ry = (double)this->sc.output_height / (double)this->sc.displayed_height;
+-      }
+-      if (zoom) {
++          /* compute displayed size to output size scaling factor */
++          rx = (double)this->sc.output_width / (double)this->sc.displayed_width;
++          ry = (double)this->sc.output_height / (double)this->sc.displayed_height;
++        }
+         /* clip overlay window to margins of displayed video window */
+         if (ovl_rect.x0 < clip_rect.x0) {
+           ovl_src_rect.x0 = clip_rect.x0 - ovl_rect.x0;
+@@ -803,26 +786,20 @@
+           ovl_src_rect.y1 -= (ovl_rect.y1 - clip_rect.y1);
+           ovl_rect.y1 = clip_rect.y1;
+         }
+-
+         ovl_rect.x0 -= clip_rect.x0;
+         ovl_rect.y0 -= clip_rect.y0;
+         ovl_rect.x1 -= clip_rect.x0;
+         ovl_rect.y1 -= clip_rect.y0;
+-      }
+-
+-      /* scale overlay window coordinates to output window coordinates */
+-      ovl_rect.x0 = (double)ovl_rect.x0 * rx + 0.5;
+-      ovl_rect.y0 = (double)ovl_rect.y0 * ry + 0.5;
+-      ovl_rect.x1 = (double)ovl_rect.x1 * rx + 0.5;
+-      ovl_rect.y1 = (double)ovl_rect.y1 * ry + 0.5;
+-
+-      ovl_rect.x0 += this->sc.output_xoffset;
+-      ovl_rect.y0 += this->sc.output_yoffset;
+-      ovl_rect.x1 += this->sc.output_xoffset;
+-      ovl_rect.y1 += this->sc.output_yoffset;
+-
+-      if (ovl->video_window_width > 0 && ovl->video_window_height > 0) {
+-        if (zoom) {
++        /* scale overlay window coordinates to output window coordinates */
++        ovl_rect.x0 = (double)ovl_rect.x0 * rx + 0.5;
++        ovl_rect.y0 = (double)ovl_rect.y0 * ry + 0.5;
++        ovl_rect.x1 = (double)ovl_rect.x1 * rx + 0.5;
++        ovl_rect.y1 = (double)ovl_rect.y1 * ry + 0.5;
++        ovl_rect.x0 += this->sc.output_xoffset;
++        ovl_rect.y0 += this->sc.output_yoffset;
++        ovl_rect.x1 += this->sc.output_xoffset;
++        ovl_rect.y1 += this->sc.output_yoffset;
++        if (ovl->video_window_width > 0 && ovl->video_window_height > 0) {
+           /* clip osd video window to margins of displayed video window */
+           if (vid_rect.x0 < clip_rect.x0)
+             vid_rect.x0 = clip_rect.x0;
+@@ -832,30 +809,67 @@
+             vid_rect.x1 = clip_rect.x1;
+           if (vid_rect.y1 > clip_rect.y1)
+             vid_rect.y1 = clip_rect.y1;
+-
+           vid_rect.x0 -= clip_rect.x0;
+           vid_rect.y0 -= clip_rect.y0;
+           vid_rect.x1 -= clip_rect.x0;
+           vid_rect.y1 -= clip_rect.y0;
++          /* scale osd video window coordinates to output window coordinates */
++          vid_rect.x0 = (double)vid_rect.x0 * rx + 0.5;
++          vid_rect.y0 = (double)vid_rect.y0 * ry + 0.5;
++          vid_rect.x1 = (double)vid_rect.x1 * rx + 0.5;
++          vid_rect.y1 = (double)vid_rect.y1 * ry + 0.5;
++          vid_rect.x0 += this->sc.output_xoffset;
++          vid_rect.y0 += this->sc.output_yoffset;
++          vid_rect.x1 += this->sc.output_xoffset;
++          vid_rect.y1 += this->sc.output_yoffset;
++          /* take only visible osd video windows into account */
++          if (vid_rect.x0 < vid_rect.x1 && vid_rect.y0 < vid_rect.y1)
++            this->ovl_video_dest_rect = vid_rect;
+         }
++        this->ovl_changed = 1;
+ 
+-        /* scale osd video window coordinates to output window coordinates */
+-        vid_rect.x0 = (double)vid_rect.x0 * rx + 0.5;
+-        vid_rect.y0 = (double)vid_rect.y0 * ry + 0.5;
+-        vid_rect.x1 = (double)vid_rect.x1 * rx + 0.5;
+-        vid_rect.y1 = (double)vid_rect.y1 * ry + 0.5;
+-
+-        vid_rect.x0 += this->sc.output_xoffset;
+-        vid_rect.y0 += this->sc.output_yoffset;
+-        vid_rect.x1 += this->sc.output_xoffset;
+-        vid_rect.y1 += this->sc.output_yoffset;
+-
+-        /* take only visible osd video windows into account */
+-        if (vid_rect.x0 < vid_rect.x1 && vid_rect.y0 < vid_rect.y1)
+-          this->ovl_video_dest_rect = vid_rect;
+-      }
++      } else { /* no zoom */
++
++        if (ovl->extent_width > 0 && ovl->extent_height > 0) {
++          /* compute extend size to output size scaling factor */
++          rx = (double)this->sc.output_width / (double)ovl->extent_width;
++          ry = (double)this->sc.output_height / (double)ovl->extent_height;
++        } else {
++          /* compute displayed size to output size scaling factor */
++          rx = (double)this->sc.output_width / (double)this->sc.displayed_width;
++          ry = (double)this->sc.output_height / (double)this->sc.displayed_height;
++        }
++        /* scale overlay window coordinates to output window coordinates */
++        ovl_rect.x0 = (double)ovl_rect.x0 * rx + 0.5;
++        ovl_rect.y0 = (double)ovl_rect.y0 * ry + 0.5;
++        ovl_rect.x1 = (double)ovl_rect.x1 * rx + 0.5;
++        ovl_rect.y1 = (double)ovl_rect.y1 * ry + 0.5;
++
++        ovl_rect.x0 += this->sc.output_xoffset;
++        ovl_rect.y0 += this->sc.output_yoffset;
++        ovl_rect.x1 += this->sc.output_xoffset;
++        ovl_rect.y1 += this->sc.output_yoffset;
++
++        if (ovl->video_window_width > 0 && ovl->video_window_height > 0) {
++
++          /* scale osd video window coordinates to output window coordinates */
++          vid_rect.x0 = (double)vid_rect.x0 * rx + 0.5;
++          vid_rect.y0 = (double)vid_rect.y0 * ry + 0.5;
++          vid_rect.x1 = (double)vid_rect.x1 * rx + 0.5;
++          vid_rect.y1 = (double)vid_rect.y1 * ry + 0.5;
++
++          vid_rect.x0 += this->sc.output_xoffset;
++          vid_rect.y0 += this->sc.output_yoffset;
++          vid_rect.x1 += this->sc.output_xoffset;
++          vid_rect.y1 += this->sc.output_yoffset;
++
++          /* take only visible osd video windows into account */
++          if (vid_rect.x0 < vid_rect.x1 && vid_rect.y0 < vid_rect.y1)
++            this->ovl_video_dest_rect = vid_rect;
++        }
+ 
+-      this->ovl_changed = 1;
++        this->ovl_changed = 1;
++      }
+     }
+ 
+     ovl_rects[i] = ovl_rect;
+@@ -2164,12 +2178,6 @@
+       this->deinterlace = value;
+       vdpau_set_deinterlace( this_gen );
+       break;
+-    case VO_PROP_DEINTERLACE_SD:
+-      this->deinterlace_method_sd = value;
+-      break;
+-    case VO_PROP_DEINTERLACE_HD:
+-      this->deinterlace_method_hd = value;
+-      break;
+     case VO_PROP_ZOOM_X:
+       if ((value >= XINE_VO_ZOOM_MIN) && (value <= XINE_VO_ZOOM_MAX)) {
+         this->zoom_x = value;
+@@ -2643,12 +2651,7 @@
+     return NULL;
+ 
+ #ifdef LOCKDISPLAY
+-  int buggy_xcb_workaround = config->register_bool( config, "video.output.vdpau_enable_buggy_xcb_workaround", 1,
+-    _("vdpau: Use lock display synchronization for some vdpau calls (workaround for buggy libX11/xcb)"),
+-    _("Enable this if you have a buggy libX11/xcb."),
+-      10, NULL, this );
+-  guarded_display     = buggy_xcb_workaround ? visual->display: NULL;
+-  fprintf( stderr, "vo_vdpau: %s lock display synchronization for some vdpau calls\n", buggy_xcb_workaround ? "Use": "Do not use" );
++  guarded_display     = visual->display;
+ #endif
+ 
+   this->display       = visual->display;
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/x11osd.c xine-lib-1.2.4_git20140612/src/video_out/x11osd.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/x11osd.c	2014-11-07 21:58:06.379708603 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/x11osd.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2003-2009 the xine project
++ * Copyright (C) 2003-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/video_out/xcbosd.c xine-lib-1.2.4_git20140612/src/video_out/xcbosd.c
+--- xine-lib-1.2.4_git20140612.orig/src/video_out/xcbosd.c	2014-11-07 21:58:06.375708588 +0800
++++ xine-lib-1.2.4_git20140612/src/video_out/xcbosd.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2003-2009 the xine project
++ * Copyright (C) 2003-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/xine-engine/buffer_types.c xine-lib-1.2.4_git20140612/src/xine-engine/buffer_types.c
+--- xine-lib-1.2.4_git20140612.orig/src/xine-engine/buffer_types.c	2014-11-07 21:58:06.407708745 +0800
++++ xine-lib-1.2.4_git20140612/src/xine-engine/buffer_types.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/xine-engine/load_plugins.c xine-lib-1.2.4_git20140612/src/xine-engine/load_plugins.c
+--- xine-lib-1.2.4_git20140612.orig/src/xine-engine/load_plugins.c	2014-11-07 21:58:06.407708745 +0800
++++ xine-lib-1.2.4_git20140612/src/xine-engine/load_plugins.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2012 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -2202,7 +2202,13 @@
+ 
+     ad = ((audio_decoder_class_t *)node->plugin_class)->open_plugin(node->plugin_class, stream);
+ 
+-    if (ad) {
++    if (ad == (audio_decoder_t*)1) {
++      /* HACK: plugin failed to instantiate because required resources are unavailable at that time,
++         but may be available later, so don't remove this plugin from catalog. */
++      xprintf(stream->xine, XINE_VERBOSITY_DEBUG,
++          "load_plugins: plugin %s failed to instantiate, resources temporarily unavailable.\n", node->info->id);
++    }
++    else if (ad) {
+       inc_node_ref(node);
+       ad->node = node;
+       xprintf(stream->xine, XINE_VERBOSITY_DEBUG,
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/xine-engine/video_out.c xine-lib-1.2.4_git20140612/src/xine-engine/video_out.c
+--- xine-lib-1.2.4_git20140612.orig/src/xine-engine/video_out.c	2014-11-07 21:58:06.403708722 +0800
++++ xine-lib-1.2.4_git20140612/src/xine-engine/video_out.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/xine-engine/video_overlay.c xine-lib-1.2.4_git20140612/src/xine-engine/video_overlay.c
+--- xine-lib-1.2.4_git20140612.orig/src/xine-engine/video_overlay.c	2014-11-07 21:58:06.407708745 +0800
++++ xine-lib-1.2.4_git20140612/src/xine-engine/video_overlay.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2011 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+@@ -494,15 +494,23 @@
+   return processed;
+ }
+ 
+-void _x_overlay_clut_yuv2rgb(vo_overlay_t *overlay, int color_matrix)
++void _x_overlay_clut_yuv2rgb(vo_overlay_t *overlay, int video_color_matrix)
+ {
++  int cm = 10; /* ITU-R 601 (SD) */
++
+   if (!overlay->rgb_clut) {
+-    _x_clut_yuv2rgb(overlay->color, sizeof(overlay->color) / sizeof (overlay->color[0]), color_matrix);
++    uint8_t *p = (uint8_t *)overlay->color;
++    if ((p[3] == 'X') && (p[7] == 'C') && (p[11] == 'M')) {
++      cm = p[15];
++      if ((cm >> 1) == 2) /* undefined */
++        cm = video_color_matrix;
++    }
++    _x_clut_yuv2rgb(overlay->color, sizeof(overlay->color) / sizeof (overlay->color[0]), cm);
+     overlay->rgb_clut++;
+   }
+ 
+   if (!overlay->hili_rgb_clut) {
+-    _x_clut_yuv2rgb(overlay->hili_color, sizeof (overlay->color) / sizeof (overlay->color[0]), color_matrix);
++    _x_clut_yuv2rgb(overlay->hili_color, sizeof (overlay->color) / sizeof (overlay->color[0]), cm);
+     overlay->hili_rgb_clut++;
+   }
+ }
+diff -uNr xine-lib-1.2.4_git20140612.orig/src/xine-utils/color.c xine-lib-1.2.4_git20140612/src/xine-utils/color.c
+--- xine-lib-1.2.4_git20140612.orig/src/xine-utils/color.c	2014-11-07 21:58:06.403708722 +0800
++++ xine-lib-1.2.4_git20140612/src/xine-utils/color.c	2014-11-07 21:58:24.907800485 +0800
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2000-2013 the xine project
++ * Copyright (C) 2000-2014 the xine project
+  *
+  * This file is part of xine, a free video player.
+  *
+diff -uNr xine-lib-1.2.4_git20140612.orig/version.sh xine-lib-1.2.4_git20140612/version.sh
+--- xine-lib-1.2.4_git20140612.orig/version.sh	2014-11-07 21:58:06.427708841 +0800
++++ xine-lib-1.2.4_git20140612/version.sh	2014-11-07 21:58:24.911800501 +0800
+@@ -30,14 +30,14 @@
+ 
+ XINE_VERSION_MAJOR=1
+ XINE_VERSION_MINOR=2
+-XINE_VERSION_SUB=5
++XINE_VERSION_SUB=6
+ XINE_VERSION_PATCH=
+ # Release series number (usually $XINE_MAJOR.$XINE_MINOR)
+ XINE_VERSION_SERIES=1.2
+ 
+-XINE_LT_CURRENT=6
++XINE_LT_CURRENT=7
+ XINE_LT_REVISION=0
+-XINE_LT_AGE=4
++XINE_LT_AGE=5
+ 
+ test -f "`dirname $0`/.cvsversion" && XINE_VERSION_SUFFIX="openpliPC-e2"
+ XINE_VERSION_SPEC="${XINE_VERSION_MAJOR}.${XINE_VERSION_MINOR}.${XINE_VERSION_SUB}${XINE_VERSION_PATCH}${XINE_VERSION_SUFFIX}"

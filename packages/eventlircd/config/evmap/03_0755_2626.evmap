@@ -94,8 +94,8 @@
  KEY_POWER         = KEY_POWER         # Power
 
  alt+KEY_F4        = KEY_CLOSE         # Close
- meta+KEY_D        = KEY_INFO          # Desktop, remapped to Info in XBMC
- KEY_COMPOSE       = KEY_EPG           # More, remapped to Context Menu in XBMC
+ meta+KEY_D        = KEY_INFO          # Desktop, remapped to Info in KODI
+ KEY_COMPOSE       = KEY_EPG           # More, remapped to Context Menu in KODI
  ctrl+KEY_R        = KEY_RECORD        # Record
  KEY_BACK          = KEY_BACK          # Previous
  KEY_FORWARD       = KEY_FORWARD       # Next

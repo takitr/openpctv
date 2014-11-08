@@ -1,0 +1,42 @@
+#!/bin/sh
+
+pre_umount () {
+  [ -f /lib/systemd/system/automounter-nfs.service ] && systemctl stop automounter-nfs.service
+  [ -f /lib/systemd/system/automounter-smb.service ] && systemctl stop automounter-smb.service
+}
+
+VIDEOID=$(cat /sys/class/drm/card0/device/vendor)
+
+if [ $VIDEOID = "0x10de" -o $VIDEOID = "0x1002" ]; then
+  sed -i -e 's#<vsync>.*#<vsync>2</vsync>#' \
+       -e 's#<deinterlacemode>.*#<deinterlacemode>2</deinterlacemode>#' \
+       /root/.kodi/userdata/guisettings.xml
+else
+  sed -i -e 's#<vsync>.*#<vsync>3</vsync>#' \
+       -e 's#<deinterlacemode>.*#<deinterlacemode>0</deinterlacemode>#' \
+       /root/.kodi/userdata/guisettings.xml
+fi
+
+/usr/bin/videocache
+chvt 4
+[ -n "$LOGFILE" ] || LOGFILE="/dev/null"
+/usr/lib/kodi/kodi.bin $@
+EXIT_CODE=$?
+
+case "$EXIT_CODE" in
+  64) # 64=powerdown
+    echo "kodi exited with EXIT_CODE=$EXIT_CODE at $(date). Shutting down..." >>$LOGFILE
+    pre_umount
+    systemctl poweroff
+    exit 0
+  ;;
+  66) # 66=reboot
+    echo "kodi exited with EXIT_CODE=$EXIT_CODE at $(date). Rebooting..." >>$LOGFILE
+    pre_umount
+    systemctl reboot
+    exit 0
+  ;;
+  *) # 0=quit, 65=restart-app; let systemd restart the service
+    echo "kodi exited with EXIT_CODE=$EXIT_CODE at $(date). Returning -1 to systemd..." >>$LOGFILE
+    exit 1
+esac

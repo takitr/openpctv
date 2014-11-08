@@ -1,5 +1,5 @@
 From 40f4c15370f7027dc5422edcb10e8a3b7e58e83d Mon Sep 17 00:00:00 2001
-From: CrystalP <CrystalP@xbmc.org>
+From: CrystalP <CrystalP@kodi.org>
 Date: Wed, 5 Oct 2011 12:38:30 -0400
 Subject: [PATCH 18/24] dxva-mpeg2 Allocate slices array dynamically - fixes
  videos with > 175 slices. They used to result in

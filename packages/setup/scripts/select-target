@@ -19,10 +19,10 @@ if [ -f /usr/bin/runvdr ]; then
   echo "vdr \"$(gettext "A digital video recorder using standard PC components.")\" \\" >> /tmp/menu.tmp
 fi
 
-if [ -f /usr/bin/runxbmc ]; then
+if [ -f /usr/bin/runkodi ]; then
   i=`expr $i + 1`
-  target=xbmc
-  echo "xbmc \"$(gettext "A free and open source media player developed by the XBMC Foundation")\" \\" >> /tmp/menu.tmp
+  target=kodi
+  echo "kodi \"$(gettext "A free and open source media player developed by the KODI Foundation")\" \\" >> /tmp/menu.tmp
 fi
 
 if [ -f /usr/bin/runbackend ]; then
@@ -47,8 +47,8 @@ if ! grep -q -i arm /proc/cpuinfo; then
   case $target in
     vdr)
       systemctl set-default vdr.target;;
-    xbmc)
-      systemctl set-default xbmc.target;;
+    kodi)
+      systemctl set-default kodi.target;;
     enigma2pc)
       systemctl set-default enigma2pc.target;;
     backend)

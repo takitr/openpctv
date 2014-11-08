@@ -10,7 +10,7 @@ if [ -f /etc/locale.conf ]; then
   default_item="--default-item \"$LANG\""
 fi
 
-echo "dialog --clear --no-cancel $default_item --title \"Set global locale and language\" --menu \"Select a language environment, after this, we'll set the locale and modify XBMC/VDR/Enigma2 depending on selected language\" 50 70 40 \\" > /tmp/menufile
+echo "dialog --clear --no-cancel $default_item --title \"Set global locale and language\" --menu \"Select a language environment, after this, we'll set the locale and modify KODI/VDR/Enigma2 depending on selected language\" 50 70 40 \\" > /tmp/menufile
 grep -v ^# /etc/lang.list | while read line; do
   locale=$(echo $line | cut -d: -f2)
   lang=$(echo $line | cut -d: -f1)
@@ -23,21 +23,21 @@ result=$(cat /tmp/tmpfile)
 rm /tmp/tmpfile
 langline=$(grep $result /etc/lang.list)
 locale=$(echo $langline | cut -d: -f2)
-xbmclang="$(echo $langline | cut -d: -f1 | cut -d\/ -f1)"
-xbmcregion="$(grep  "region\ name=" /usr/share/xbmc/language/"$xbmclang"/langinfo.xml -m1 | cut -d\" -f2)"
+kodilang="$(echo $langline | cut -d: -f1 | cut -d\/ -f1)"
+kodiregion="$(grep  "region\ name=" /usr/share/kodi/language/"$kodilang"/langinfo.xml -m1 | cut -d\" -f2)"
 vdrlang=$(echo $langline | cut -d: -f3)
 e2lang=$(echo $langline | cut -d: -f4)
 
 #echo "langline:$langline"
-#echo "locale:$locale xbmclang:$xbmclang vdrlang:$vdrlang e2lang:$e2lang"
+#echo "locale:$locale kodilang:$kodilang vdrlang:$vdrlang e2lang:$e2lang"
 sed -i "s/^LANG=.*/LANG=$locale/g" /etc/locale.conf
 source /etc/profile
 
-if [ -x /usr/bin/xbmc ]; then
-  sed -i -e "s#<language>.*#<language>$xbmclang</language>#g" \
-         -e "s#<country>.*#<country>$xbmcregion</country>#g" \
+if [ -x /usr/bin/kodi ]; then
+  sed -i -e "s#<language>.*#<language>$kodilang</language>#g" \
+         -e "s#<country>.*#<country>$kodiregion</country>#g" \
          -e "s#<font>Default</font>#<font>Arial</font>#g" \
-         /root/.xbmc/userdata/guisettings.xml
+         /root/.kodi/userdata/guisettings.xml
 fi
 
 if [ -x /usr/bin/vdr ]; then
@@ -86,13 +86,13 @@ rm /tmp/tmpfile /tmp/menufile
 
 ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
 
-if [ -x /usr/bin/xbmc ]; then
+if [ -x /usr/bin/kodi ]; then
   TZ_COUNTRY_CODE=`grep $TZ /usr/share/zoneinfo/zone.tab | cut -f1 | head -1`
   TZ_COUNTRY=`grep $TZ_COUNTRY_CODE /usr/share/zoneinfo/iso3166.tab | cut -f2 | head -1`
 
   sed -i -e "s#<timezone>.*#<timezone>$TZ</timezone>#g" \
          -e "s#<timezonecountry>.*#<timezonecountry>$TZ_COUNTRY</timezonecountry>#g" \
-         /root/.xbmc/userdata/guisettings.xml
+         /root/.kodi/userdata/guisettings.xml
 fi
 
 if [ -x /usr/bin/enigma2 ]; then

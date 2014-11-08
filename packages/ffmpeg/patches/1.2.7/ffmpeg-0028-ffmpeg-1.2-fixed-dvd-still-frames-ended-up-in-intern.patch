@@ -1,5 +1,5 @@
 From a356770e3a73d79c9e4a451366930f557e3a2fa6 Mon Sep 17 00:00:00 2001
-From: Voyager1 <voyager@xbmc.org>
+From: Voyager1 <voyager@kodi.org>
 Date: Sat, 13 Apr 2013 15:38:10 +0200
 Subject: [PATCH 4/4] ffmpeg 1.2 - fixed dvd still frames ended up in internal
  lavf

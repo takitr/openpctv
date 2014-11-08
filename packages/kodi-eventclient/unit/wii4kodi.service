@@ -1,0 +1,12 @@
+[Unit]
+Description=wiiremote for kodi
+After=kodi.service
+Requires=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/start-wiiremote
+RemainAfterExit=yes
+
+[Install]
+WantedBy=kodi.service

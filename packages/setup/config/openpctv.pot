@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-19 18:40+0800\n"
+"POT-Creation-Date: 2014-11-08 11:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -501,10 +501,6 @@ msgid "Support all the DVBSky DVB-C devices"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:145
-msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:146
 msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 
@@ -910,14 +906,14 @@ msgid "Searching for wireless networks, please wait ..."
 msgstr ""
 
 #: packages/setup/scripts/select-backend:8
-msgid "Select the default PVR backend for XBMC"
+msgid "Select the default PVR backend for KODI"
 msgstr ""
 
 #: packages/setup/scripts/select-backend:8
 msgid ""
 "Now you can select VDR/TVheadend streaming server for Linux supporting DVB-"
 "S, DVB-S2, DVB-C, DVB-T, ATSC as input sources and can be used as a PVR "
-"backend of XBMC. Note you need to enable a PVR addon in XBMC, for VDR you "
+"backend of KODI. Note you need to enable a PVR addon in KODI, for VDR you "
 "can enable vnsi or xvdr PVR frontend."
 msgstr ""
 
@@ -982,7 +978,7 @@ msgid ""
 msgstr ""
 
 #: packages/setup/scripts/select-target:25
-msgid "A free and open source media player developed by the XBMC Foundation"
+msgid "A free and open source media player developed by the KODI Foundation"
 msgstr ""
 
 #: packages/setup/scripts/select-target:31
@@ -1007,7 +1003,7 @@ msgstr ""
 
 #: packages/setup/scripts/setup.sh:85
 msgid ""
-"The following configuration is for the VDR (note the XBMC uses VDR as a PVR "
+"The following configuration is for the VDR (note the KODI uses VDR as a PVR "
 "backend), if you only use Engima2, then you do not need to configure or re-"
 "configure VDR later."
 msgstr ""
@@ -1060,7 +1056,7 @@ msgid "Auto scan channels"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:114
-msgid "Start XBMC pvr with VDR/TVheadend backend"
+msgid "Start KODI pvr with VDR/TVheadend backend"
 msgstr ""
 
 #: packages/setup/scripts/setup.sh:115
