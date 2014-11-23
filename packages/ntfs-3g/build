@@ -3,12 +3,14 @@
 . config/options
 
 cd $BUILD/$1*
-do_configure
-#            --disable-dependency-tracking \
-#            --with-fuse=external \
-#            --disable-library \
-#            --enable-posix-acls \
-#            --disable-mtab \
+do_configure --disable-dependency-tracking \
+             --disable-library \
+             --enable-posix-acls \
+             --enable-mtab \
+             --enable-ntfsprogs \
+             --disable-crypto \
+             --with-fuse=external \
+             --with-uuid
 
 make
 make_install

@@ -1,6 +1,6 @@
 PKG_NAME=enigma2pc-skin-metrixhd
-PKG_URL_REV=5ab431b
-PKG_VERSION=20140825+${PKG_URL_REV}
+PKG_URL_REV=fee914b
+PKG_VERSION=20141120+${PKG_URL_REV}
 PKG_URL_PROTO=git
 PKG_URL="https://github.com/openatv/MetrixHD"
 PKG_REV=1

@@ -1,5 +1,5 @@
 PKG_NAME=vdr-iptv
-PKG_VERSION=2.0.2
+PKG_VERSION=2.0.3
 PKG_URL="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/files/vdr-iptv-${PKG_VERSION}.tgz"
 PKG_REV=2
 PKG_BUILD_DEPENDS="toolchain curl"

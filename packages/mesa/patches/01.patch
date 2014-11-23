@@ -1,0 +1,33 @@
+diff -uNr Mesa-10.4.0-rc2.orig/src/gallium/drivers/radeon/r600_buffer_common.c Mesa-10.4.0-rc2/src/gallium/drivers/radeon/r600_buffer_common.c
+--- Mesa-10.4.0-rc2.orig/src/gallium/drivers/radeon/r600_buffer_common.c	2014-11-23 13:45:13.528767018 +0800
++++ Mesa-10.4.0-rc2/src/gallium/drivers/radeon/r600_buffer_common.c	2014-11-23 13:51:10.992753723 +0800
+@@ -110,13 +110,11 @@
+ 	enum radeon_bo_flag flags = 0;
+ 
+ 	switch (res->b.b.usage) {
+-	case PIPE_USAGE_STREAM:
+-		flags = RADEON_FLAG_GTT_WC;
+-		/* fall through */
+ 	case PIPE_USAGE_STAGING:
+ 		/* Transfers are likely to occur more often with these resources. */
+ 		res->domains = RADEON_DOMAIN_GTT;
+ 		break;
++	case PIPE_USAGE_STREAM:
+ 	case PIPE_USAGE_DYNAMIC:
+ 		/* Older kernels didn't always flush the HDP cache before
+ 		 * CS execution
+diff -uNr Mesa-10.4.0-rc2.orig/src/gallium/drivers/radeonsi/si_descriptors.c Mesa-10.4.0-rc2/src/gallium/drivers/radeonsi/si_descriptors.c
+--- Mesa-10.4.0-rc2.orig/src/gallium/drivers/radeonsi/si_descriptors.c	2014-11-23 13:45:13.512767019 +0800
++++ Mesa-10.4.0-rc2/src/gallium/drivers/radeonsi/si_descriptors.c	2014-11-23 13:47:27.324762042 +0800
+@@ -422,11 +422,6 @@
+ 				si_set_sampler_view(sctx, shader, SI_FMASK_TEX_OFFSET + slot,
+ 						    NULL, NULL);
+ 			}
+-		} else {
+-			samplers->depth_texture_mask &= ~(1 << slot);
+-			samplers->compressed_colortex_mask &= ~(1 << slot);
+-			si_set_sampler_view(sctx, shader, SI_FMASK_TEX_OFFSET + slot,
+-					    NULL, NULL);
+ 		}
+ 	}
+ 
