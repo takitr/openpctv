@@ -1,0 +1,1460 @@
+diff --git a/Makefile b/Makefile
+index 18826a0..8834c95 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,8 +1,9 @@
+ CC=gcc
++CFLAGS=-g -Wall
+ 
+-SRC=atsc_psip_section.c diseqc.c dump-vdr.c dump-zap.c lnb.c scan.c section.c 
+-HED=atsc_psip_section.h diseqc.h dump-vdr.h dump-zap.h lnb.h scan.h section.h list.h
+-OBJ=atsc_psip_section.o diseqc.o dump-vdr.o dump-zap.o lnb.o scan.o section.o
++SRC=atsc_psip_section.c diseqc.c dump-vdr.c dump-zap.c lnb.c scan.c section.c htable.c bouquet.c
++HED=atsc_psip_section.h diseqc.h dump-vdr.h dump-zap.h lnb.h scan.h section.h list.h htable.h bouquet.h
++OBJ=atsc_psip_section.o diseqc.o dump-vdr.o dump-zap.o lnb.o scan.o section.o htable.o bouquet.o
+ 
+ BIND=/usr/local/bin/
+ INCLUDE=-I../s2/linux/include
+@@ -26,4 +27,4 @@ clean:
+ 	rm -f $(OBJ) $(TARGET) *~
+ 
+ %.o: %.c
+-	$(CC) $(INCLUDE) -c $< -o $@
++	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+diff --git a/README b/README
+index 0a87e62..98e463a 100644
+--- a/README
++++ b/README
+@@ -136,6 +136,9 @@ usage: scan-s2 [options...] [-c | initial-tuning-data-file]
+ 		      support DVB-S2 systems)
+ 	-X	Disable AUTOs for initial transponders (esp. for hardware which
+ 		not support it). Instead try each value of any free parameters.
++	-B opts	Parse BAT and create channel groups for VDR output.
++		Use -B help for options.
++	-b	The same as -B, default options.
+ 
+ 
+ Example of command line:
+diff --git a/bouquet.c b/bouquet.c
+new file mode 100644
+index 0000000..de78b74
+--- /dev/null
++++ b/bouquet.c
+@@ -0,0 +1,837 @@
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <stdint.h>
++#include <fnmatch.h>
++
++#include "list.h"
++#include "scan.h"
++#include "section.h"
++#include "htable.h"
++
++extern char * dvbtext2utf8(char* dvbtext, int dvbtextlen);
++
++// only video/audio streams for VDR output
++#define SERVICE_CHECK(s)		(((((s)->video_pid != 0) | (((s)->audio_pid[0] != 0) << 1)) & ctx->serv_select) && !(ctx->ca_select == 0 && (s)->scrambled))
++
++struct bouquet {
++	struct htable_entry hash;
++	unsigned char hash_key[2];
++	int bouquet_id;
++	char *bouquet_name;
++	char *bouquet_ml_name;
++	struct htable services;
++};
++
++struct bouquet_service {
++	struct htable_entry hash;
++	unsigned char hash_key[6];
++	struct transponder *tp;
++	struct service *sp;
++};
++
++#define	STAGE_PRE_SCAN		1
++#define	STAGE_POST_SCAN		2
++#define	STAGE_PRE_OUTPUT	4
++
++struct bouquet_ctx;
++
++struct bouquet_option_params {
++	const char *option_name;
++	int min_args;
++	int max_args;
++	int priority;
++	int stage;
++	void (*action)(struct bouquet_ctx *ctx, int argc, char **argv);
++};
++
++struct bouquet_option {
++	char **argv;
++	int argc;
++	struct bouquet_option_params *params;
++};
++
++struct bouquet_config {
++	const char **languages;
++	struct bouquet_option **options;
++	// option strings are allocated here
++	char *opt_buf;
++};
++
++struct bouquet_ctx {
++	struct bouquet_config cfg;
++	struct htable bouquets;
++	struct list_head *scanned_transponders;
++	int serv_select;
++	int ca_select;
++};
++
++#define ARRAY(var, type, size_incr)	struct {type (*buf); int len; int _size; int _incr;} var = {NULL, 0, 0, (size_incr)}
++#define ARRAY_RESET(arr)	(arr).len = 0
++#define ARRAY_APPEND(arr, val)			\
++	if ((arr).len == (arr)._size) {		\
++		(arr)._size += (arr)._incr;		\
++		(arr).buf = realloc((arr).buf, (arr)._size * sizeof(*((arr).buf)));	\
++	}									\
++	(arr).buf[(arr).len++] = val
++#define ARRAY_FOREACH(arr, var, action) 			\
++do {												\
++	int __idx;										\
++	for (__idx = 0; __idx < (arr).len; __idx++) {	\
++		var = (arr).buf[__idx];						\
++		{action}									\
++	}												\
++} while(0)
++#define ARRAY_CLEAN(arr)		free((arr).buf); (arr).buf = NULL; (arr)._size = 0; (arr).len = 0
++
++static void bouquet_init_key(struct bouquet *bp, int id)
++{
++	bp->hash_key[0] = id & 0xff;
++	bp->hash_key[1] = id>>8 & 0xff;
++	htable_entry_init(&bp->hash, bp->hash_key, sizeof(bp->hash_key));
++}
++
++static void init_service(struct bouquet_service *s, int nid, int tid, int sid)
++{
++	s->hash_key[0] = sid & 0xff;
++	s->hash_key[1] = sid>>8 & 0xff;
++	s->hash_key[2] = tid & 0xff;
++	s->hash_key[3] = tid>>8 & 0xff;
++	s->hash_key[4] = nid & 0xff;
++	s->hash_key[5] = nid>>8 & 0xff;
++	htable_entry_init(&s->hash, s->hash_key, sizeof(s->hash_key));
++	s->tp = NULL;
++	s->sp = NULL;
++}
++
++static struct bouquet *bouquet_entry_create(int id, const char *name, const char *ml_name)
++{
++	struct bouquet *bp;
++
++	bp = malloc(sizeof(struct bouquet));
++	bp->bouquet_id = id;
++	bp->bouquet_name = (name)? strdup(name) : NULL;
++	bp->bouquet_ml_name = (ml_name)? strdup(ml_name) : NULL;
++	bouquet_init_key(bp, id);
++	htable_init(&bp->services, 256, 0);
++	return bp;
++}
++
++static void bouquet_entry_free(struct bouquet *bp)
++{
++	struct bouquet_service *sp;
++
++	if (bp->bouquet_name) free(bp->bouquet_name);
++	if (bp->bouquet_ml_name) free(bp->bouquet_ml_name);
++	HTABLE_FOREACH(&bp->services, sp, struct bouquet_service, hash,
++		free(sp);
++	);
++	htable_free(&bp->services);
++	free(bp);
++}
++
++// strip leading and trailing space
++static char *strip_space(char *s)
++{
++	char *e = s + strlen(s) - 1;
++	while (s <= e && (*s == ' ' || *s == '\t'))
++		s++;
++	while (e > s && (*e == ' ' || *e == '\t'))
++		e--;
++	*(e + 1) = '\0';
++	return s;
++}
++
++static int pattern_match(const char *pattern, const char *string)
++{
++	return fnmatch(pattern, string, 0);
++}
++
++// lang=string,string,...
++static void opt_lang(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	int i;
++
++	ctx->cfg.languages = malloc(argc * sizeof(char *));
++	for (i = 1; i < argc; i++)
++		ctx->cfg.languages[i - 1] = argv[i];
++	ctx->cfg.languages[argc - 1] = NULL;
++}
++
++// merge=target,pattern,pattern,...
++static void opt_merge(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	char *target_name = argv[1];
++	struct bouquet *bp, *target_ptr = NULL;
++	struct bouquet_service *sp;
++	int i;
++
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		for (i = 2; i < argc; i++) {
++			if (pattern_match(argv[i], bp->bouquet_name) == 0)
++				break;
++		}
++		if (i < argc) {
++			// matched
++			if (target_ptr == NULL) {
++				// becomes a new target
++				target_ptr = bp;
++				free(bp->bouquet_name);
++				bp->bouquet_name = strdup(target_name);
++			} else {
++				HTABLE_FOREACH(&bp->services, sp, struct bouquet_service, hash,
++					htable_remove_noresize(&bp->services, &sp->hash);
++					if (htable_lookup(&target_ptr->services, &sp->hash) == NULL)
++						htable_insert(&target_ptr->services, &sp->hash);
++					else
++						free(sp);
++				);
++				htable_remove_noresize(&ctx->bouquets, &bp->hash);
++				bouquet_entry_free(bp);
++			}
++		}
++	);
++}
++
++// rename=old,new
++static void opt_rename(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	struct bouquet *bp;
++
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		if (strcmp(argv[1], bp->bouquet_name) == 0) {
++			free(bp->bouquet_name);
++			bp->bouquet_name = strdup(argv[2]);
++			break;
++		}
++	);
++}
++
++//  add=bouquet,pattern,pattern,...
++// move=bouquet,pattern,pattern,...
++static void opt_add(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	struct list_head *p1, *p2;
++	struct transponder *tp;
++	struct service *sp;
++	struct bouquet *bp, *bp2;
++	struct bouquet_service *bsp, *bsp2;
++	int i, found;
++
++	found = 0;
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		if (strcmp(argv[1], bp->bouquet_name) == 0) {
++			found = 1;
++			break;
++		}
++	);
++	if (!found) {
++		bp = bouquet_entry_create(-1, argv[1], NULL);
++		htable_insert(&ctx->bouquets, &bp->hash);
++	}
++	list_for_each(p1, ctx->scanned_transponders) {
++		tp = list_entry(p1, struct transponder, list);
++		list_for_each(p2, &tp->services) {
++			sp = list_entry(p2, struct service, list);
++			if (!SERVICE_CHECK(sp))
++				continue;
++			for (i = 2; i < argc; i++) {
++				if (pattern_match(argv[i], sp->service_name) == 0)
++					break;
++			}
++			if (i < argc) {
++				// matched
++				struct htable_entry *e;
++				bsp = malloc(sizeof(struct bouquet_service));
++				init_service(bsp, tp->original_network_id, tp->transport_stream_id, sp->service_id);
++				if ((e = htable_lookup(&bp->services, &bsp->hash)) != NULL) {
++					free(bsp);
++					bsp = container_of(e, struct bouquet_service, hash);
++				} else {
++					htable_insert(&bp->services, &bsp->hash);
++				}
++				bsp->tp = tp;
++				bsp->sp = sp;
++				if (strcmp(argv[0], "move") == 0) {
++					// remove from other bouquets
++					HTABLE_FOREACH(&ctx->bouquets, bp2, struct bouquet, hash,
++						if (bp2 == bp)
++							continue;
++						e = htable_remove(&bp2->services, &bsp->hash);
++						if (e) {
++							bsp2 = container_of(e, struct bouquet_service, hash);
++							free(bsp2);
++						}
++					);
++				}
++			}
++		}
++	}
++}
++
++struct substring_pair {
++	char *buf;
++	int len;
++};
++
++static char *replace(char *src, char *sub, char *repl)
++{
++	char *start, *end, *pos;
++	int newlen, sublen, replen, modified, i;
++	struct substring_pair p;
++	ARRAY(chunks, struct substring_pair, 16);
++
++	start = src;
++	end = start + strlen(start);
++	sublen = strlen(sub);
++	replen = strlen(repl);
++	if (sublen == 0)
++		return NULL;
++	modified = 0;
++	while (start < end) {
++		if ((pos = strstr(start, sub)) != NULL) {
++			modified = 1;
++			p.buf = start; p.len = pos - start; ARRAY_APPEND(chunks, p);
++			p.buf = repl; p.len = replen; ARRAY_APPEND(chunks, p);
++			start = pos + sublen;
++		} else
++			break;
++	}
++	if (!modified)
++		return NULL;
++	p.buf = start; p.len = end - start; ARRAY_APPEND(chunks, p);
++	for (newlen = 0, i = 0; i < chunks.len; i++)
++		newlen += chunks.buf[i].len;
++	start = malloc(newlen + 1);
++	for (pos = start, i = 0; i < chunks.len; i++)
++		if (chunks.buf[i].len) {
++			memcpy(pos, chunks.buf[i].buf, chunks.buf[i].len);
++			pos += chunks.buf[i].len;
++		}
++	start[newlen] = '\0';
++	ARRAY_CLEAN(chunks);
++	return start;
++}
++
++// s=substring,substitution
++static void opt_s(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	struct list_head *p1, *p2;
++	struct transponder *tp;
++	struct service *sp;
++	char *p;
++
++	list_for_each(p1, ctx->scanned_transponders) {
++		tp = list_entry(p1, struct transponder, list);
++		list_for_each(p2, &tp->services) {
++			sp = list_entry(p2, struct service, list);
++			if (!SERVICE_CHECK(sp))
++				continue;
++			if ((p = replace(sp->service_name, argv[1], argv[2])) != NULL) {
++				free(sp->service_name);
++				sp->service_name = p;
++			}
++		}
++	}
++}
++
++// remove=pattern,pattern,...
++// ignore=pattern,pattern,...
++static void opt_remove(struct bouquet_ctx *ctx, int argc, char **argv)
++{
++	struct bouquet *bp;
++	int i;
++
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		for (i = 1; i < argc; i++) {
++			if (pattern_match(argv[i], bp->bouquet_name) == 0) {
++				htable_remove_noresize(&ctx->bouquets, &bp->hash);
++				bouquet_entry_free(bp);
++			}
++		}
++	);
++}
++
++static struct bouquet_option_params option_params[] = {
++	{"lang", 1, -1, 10, STAGE_PRE_SCAN, opt_lang},
++	{"merge", 2, -1, 10, STAGE_POST_SCAN, opt_merge},
++	{"rename", 2, 2, 10, STAGE_POST_SCAN, opt_rename},
++	{"add", 2, -1, 20, STAGE_POST_SCAN, opt_add},
++	{"move", 2, -1, 20, STAGE_POST_SCAN, opt_add},
++	{"s", 2, 2, 30, STAGE_POST_SCAN, opt_s},
++	{"ignore", 1, -1, 10, STAGE_POST_SCAN, opt_remove},
++	{"remove", 1, -1, 10, STAGE_PRE_OUTPUT, opt_remove},
++};
++
++static int cmp_option(const void *a, const void *b){
++	return (*((struct bouquet_option **)b))->params->priority - (*((struct bouquet_option **)a))->params->priority;
++}
++
++static int bouquet_parse_options(struct bouquet_config *cfg, const char *optstring)
++{
++	struct bouquet_option *opt;
++	char *s1, *s2, *tok1, *tok2, *save1, *save2;
++	struct bouquet_option_params *params;
++	int i, ret;
++	ARRAY(args, char *, 16);
++	ARRAY(opts, struct bouquet_option *, 16);
++
++	cfg->opt_buf = strdup(optstring);
++	for (s1 = cfg->opt_buf; (tok1 = strtok_r(s1, ";", &save1)) != NULL; s1 = NULL) {
++		ARRAY_RESET(args);
++		s2 = strchr(tok1, '=');
++		if (s2 != NULL)
++			*s2++ = '\0';
++		else
++			s2 = tok1 + strlen(tok1);
++		ARRAY_APPEND(args, tok1);
++		for (; (tok2 = strtok_r(s2, ",", &save2)) != NULL; s2 = NULL) {
++			ARRAY_APPEND(args, tok2);
++		}
++		params = NULL;
++		for (i = 0; i < sizeof(option_params)/sizeof(struct bouquet_option_params); i++) {
++			if (strcmp(args.buf[0], option_params[i].option_name) == 0) {
++				params = &option_params[i];
++				break;
++			}
++		}
++		if (params) {
++			if (
++				(params->min_args >= 0 && args.len - 1 < params->min_args) ||
++				(params->max_args >= 0 && args.len - 1 > params->max_args)
++			) {
++				error("Invalid number of arguments for bouquet option '%s'\n", args.buf[0]);
++				goto error;
++			}
++		} else {
++			error("Invalid bouquet option: '%s'\n", args.buf[0]);
++			goto error;
++		}
++		opt = malloc(sizeof(struct bouquet_option));
++		opt->argc = args.len;
++		opt->argv = malloc((opt->argc + 1) * sizeof(char *));
++		for (i = 0; i < opt->argc; i++)
++			opt->argv[i] = args.buf[i];
++		opt->argv[opt->argc] = NULL;
++		opt->params = params;
++		ARRAY_APPEND(opts, opt);
++	}
++	qsort(opts.buf, opts.len, sizeof(struct bouquet_option *), cmp_option);
++	ARRAY_APPEND(opts, NULL);
++	cfg->options = opts.buf;
++	ret = 0;
++	goto cleanup;
++error:
++	ret = -1;
++	for (i = 0; i < opts.len; i++)
++		free(opts.buf[i]->argv);
++	ARRAY_CLEAN(opts);
++cleanup:
++	ARRAY_CLEAN(args);
++	return ret;
++}
++
++static void bouquet_process_options(struct bouquet_ctx *ctx, int stage)
++{
++	struct bouquet_option **opt;
++
++	for (opt = ctx->cfg.options; *opt != NULL; opt++) {
++		if ((*opt)->params->stage & stage)
++			(*opt)->params->action(ctx, (*opt)->argc, (*opt)->argv);
++	}
++}
++
++void bouquet_free(struct bouquet_ctx *ctx)
++{
++	struct bouquet_option **opt;
++
++	if (ctx->cfg.languages) free(ctx->cfg.languages);
++	if (ctx->cfg.opt_buf) free(ctx->cfg.opt_buf);
++	if (ctx->cfg.options) {
++		for (opt = ctx->cfg.options; *opt != NULL; opt++)
++			free((*opt)->argv);
++		free(ctx->cfg.options);
++	}
++	htable_free(&ctx->bouquets);
++	free(ctx);
++}
++
++struct bouquet_ctx *bouquet_create(const char *optstring)
++{
++	struct bouquet_ctx *ctx;
++
++	ctx = malloc(sizeof(struct bouquet_ctx));
++
++	ctx->cfg.languages = NULL;
++	ctx->cfg.options = NULL;
++	ctx->cfg.opt_buf = NULL;
++
++	htable_init(&ctx->bouquets, 32, 0);
++
++	if (bouquet_parse_options(&ctx->cfg, optstring) != 0) {
++		bouquet_free(ctx);
++		return NULL;
++	}
++
++	bouquet_process_options(ctx, STAGE_PRE_SCAN);
++
++	return ctx;
++}
++
++const char *bouquet_help_msg()
++{
++	static const char *msg = "\n"
++		"Options for organizing and fixing channel groups (aka bouquets).\n"
++		"Format: OPTION=VALUE,VALUE,...;OPTION=VALUE,VALUE,...;...\n"
++		"\n"
++		"Each option can be used more than once. Patterns used for name matching are \n"
++		"shell path patterns, see fnmatch(3).\n"
++		"\n"
++		"Options:\n"
++		"\n"
++		"merge=TARGET,PATTERN,PATTERN,...\n"
++		"    Merge channel groups matching PATTERN into a new group TARGET.\n"
++		"\n"
++		"remove=PATTERN,PATTERN,...\n"
++		"ignore=PATTERN,PATTERN,...\n"
++		"   Remove channel groups matching PATTERN. The only difference between 'ignore'\n"
++		"   and 'remove' is that with 'ignore' channels which belongs to a group to \n"
++		"   remove and don't belong to any other group are added to the 'UNSORTED' group.\n"
++		"\n"
++		"rename=OLD,NEW\n"
++		"    Rename a channel group OLD to NEW.\n"
++		"\n"
++		"add=GROUP,PATTERN,PATTERN,...\n"
++		"    Add channels matching PATTERN to GROUP. If this group doesn't exist\n"
++		"    a new group is created.\n"
++		"\n"
++		"move=GROUP,PATTERN,PATTERN,...\n"
++		"   Same as 'add' but remove matching channels from their original groups.\n"
++		"\n"
++		"s=SUBSTRING,REPLACEMENT\n"
++		"   Replace all occurrences of SUBSTRING in channel names. No patterns here.\n"
++		"\n"
++		"lang=LANG,...\n"
++		"    Set languages for multilingual bouquet names. LANG is a three character\n"
++		"    language code as defined by ISO 639-2, e.g. lang=deu,ger. You should\n"
++		"    set this option if your provider broadcasts bouquet names in your native\n"
++		"    language as multilingual.\n"
++		"\n"
++		"\n";
++	return msg;
++}
++
++static char *name_utf8(const unsigned char *desc_buf, int desc_len)
++{
++	char *r;
++	char *dvbtext = malloc(desc_len + 1);
++	memcpy(dvbtext, desc_buf, desc_len);
++	dvbtext[desc_len] = '\0';
++	r = dvbtext2utf8(dvbtext, desc_len + 1);
++	free(dvbtext);
++	return r;
++}
++
++static void add_service(struct bouquet *bp, int nid, int tid, int sid, int stype)
++{
++	struct bouquet_service s, *sp;
++
++	init_service(&s, nid, tid, sid);
++	if (htable_lookup(&bp->services, &s.hash) == NULL) {
++		sp = malloc(sizeof(struct bouquet_service));
++		init_service(sp, nid, tid, sid);
++		htable_insert(&bp->services, &sp->hash);
++		debug("== bouquet(%d):%s<--tid=%d,sid=%d,nid=%d,type=%d\n", bp->bouquet_id, (bp->bouquet_name)? bp->bouquet_name : "NULL", tid, sid, nid, stype);
++	}
++}
++
++#define DESCRIPTORS_VARS \
++const unsigned char *desc_buf;	\
++int desc_tag, desc_len, descriptors_loop_len;
++
++// input: buf, descriptors_loop_len
++// sets (desc_tag, desc_buf, desc_len) for every descriptor
++// action can have 'break'
++// advances buf pointer
++#define DESCRIPTORS_LOOP(action)		\
++do {									\
++while (descriptors_loop_len > 0) {		\
++	desc_tag = (unsigned)buf[0];		\
++	desc_len = (unsigned)buf[1];		\
++	desc_buf = buf + 2;					\
++	descriptors_loop_len -= desc_len + 2;	\
++	buf += desc_len + 2;				\
++	{ action }							\
++}										\
++buf += descriptors_loop_len;			\
++} while(0)
++
++void bouquet_parse_bat(struct bouquet_ctx *ctx, const unsigned char *buf, 
++		int section_length, int bouquet_id, int version_number)
++{
++	DESCRIPTORS_VARS
++
++	const unsigned char *transports_end;
++	int tid, sid, nid, service_type, name_found;
++	int transports_loop_len, ml_name_len;
++	char lang[4];
++	const char **lp;
++
++	struct bouquet b, *bp;
++	struct htable_entry *p;
++
++	bouquet_init_key(&b, bouquet_id);
++	if ((p = htable_lookup(&ctx->bouquets, &b.hash)) == NULL) {
++		bp = bouquet_entry_create(bouquet_id, NULL, NULL);
++		htable_insert(&ctx->bouquets, &bp->hash);
++	} else {
++		bp = container_of(p, struct bouquet, hash);
++	}
++
++	// bouquet descriptors - look for a bouquet name
++	descriptors_loop_len = getBits(buf, 4, 12);
++	buf += 2;
++
++	name_found = 0;
++	DESCRIPTORS_LOOP(
++		switch (desc_tag) {
++			// bouquet name
++			case 0x47:
++				name_found = 1;
++				if (!bp->bouquet_name)
++					bp->bouquet_name = name_utf8(desc_buf, desc_len);
++				break;
++			// multilingual bouquet name
++			case 0x5c:
++				name_found = 1;
++				if (!bp->bouquet_ml_name) {
++					while (desc_len > 0) {
++						memcpy(lang, desc_buf, 3);
++						lang[3] = '\0';
++						ml_name_len = getBits(desc_buf + 3, 0, 8);
++						desc_buf += 4;
++						for (lp = ctx->cfg.languages; lp != NULL; lp++) {
++							if (pattern_match(*lp, lang) == 0) {
++								bp->bouquet_ml_name = name_utf8(desc_buf, ml_name_len);
++								break;
++							}
++						}
++						info("  Multilingual bouquet name (%s)\n", lang);
++						desc_buf += ml_name_len;
++						desc_len -= ml_name_len + 4;
++					}
++				}
++				break;
++			// Some providers put their service list into a user-defined
++			// descriptor in the bouquet descriptors section and set
++			// transport_stream_loop_length to 0. The internal format of
++			// this user-defined descriptor is provider specific.
++
++			// Tricolor TV service list. (tid_16, nid_16, sid_16)
++			case 0x86:
++				for (;desc_len >= 6; desc_len -= 6, desc_buf += 6) {
++					tid = getBits(desc_buf + 0, 0, 16);
++					nid = getBits(desc_buf + 2, 0, 16);
++					sid = getBits(desc_buf + 4, 0, 16);
++					add_service(bp, nid, tid, sid, -1);
++				}
++				break;
++		}
++	);
++	if (!name_found)
++		warning("parse_bat(): bouquet name descriptor not found, bouquet_id: %d\n", bouquet_id);
++
++	transports_loop_len = getBits(buf, 4, 12);
++	buf += 2;
++	transports_end = buf + transports_loop_len;
++
++	// transport stream loop
++	while (buf < transports_end) {
++		tid = getBits(buf, 0, 16);
++		nid = getBits(buf + 2, 0, 16);
++		descriptors_loop_len = getBits(buf + 4, 4, 12);
++		buf += 6;
++		// service list descriptors loop (actually only one descriptor)
++		DESCRIPTORS_LOOP(
++			if (desc_tag == 0x41) {
++				// service list
++				for (;desc_len >= 3; desc_len -= 3, desc_buf += 3) {
++					sid = getBits(desc_buf, 0, 16);
++					service_type = getBits(desc_buf + 2, 0, 8);
++					add_service(bp, nid, tid, sid, service_type);
++				}
++			}
++		);
++	}
++}
++
++struct bouquet_service_pair {
++	struct transponder *tp;
++	struct service *sp;
++};
++
++static int cmp_bouquet_name(const void *a, const void *b)
++{
++	//return (*(struct bouquet **)a)->bouquet_id - (*(struct bouquet **)b)->bouquet_id;
++	return strcmp(
++		(*(struct bouquet **)a)->bouquet_name,
++		(*(struct bouquet **)b)->bouquet_name
++	);
++}
++
++static int cmp_bouquet_service(const void *a, const void *b)
++{
++//	return ((struct bouquet_service_pair *)a)->sp->service_id - ((struct bouquet_service_pair *)b)->sp->service_id;
++	return strcmp(
++		((struct bouquet_service_pair *)a)->sp->service_name,
++		((struct bouquet_service_pair *)b)->sp->service_name
++	);
++}
++
++#define STRIP_SPACE(var, tmpvar) 	\
++	if ((var)) {					\
++		tmpvar = strip_space(var);	\
++		if ((tmpvar) != (var)) {	\
++			free(var);				\
++			var = strdup(tmpvar);	\
++		}							\
++	} else {						\
++		var = strdup("");			\
++	}
++
++
++void bouquet_dump(struct bouquet_ctx *ctx, struct list_head *scanned_transponders,
++		int ca_select, int serv_select,
++		void (*dump_service_cb)(struct transponder *, struct service *))
++{
++	struct list_head *p1, *p2;
++	struct transponder *tp;
++	struct service *sp;
++	struct bouquet *bp;
++	struct bouquet_service bs, *bsp;
++	struct bouquet_service_pair pair;
++	int n_bouquets, n_mapped, n_unmapped;
++	char *str;
++	struct htable uniq_channels;
++
++	ARRAY(barr, struct bouquet *, 32);
++	ARRAY(sarr, struct bouquet_service_pair, 1000);
++	ARRAY(uarr, struct bouquet_service_pair, 1000);
++
++	// set bouquet name, strip leading and trailing spaces
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		if (bp->bouquet_ml_name) {
++			if (bp->bouquet_name)
++				free(bp->bouquet_name);
++			bp->bouquet_name = bp->bouquet_ml_name;
++			bp->bouquet_ml_name = NULL;
++		}
++		STRIP_SPACE(bp->bouquet_name, str);
++	);
++
++	// strip leading and trailing spaces
++	list_for_each(p1, scanned_transponders) {
++		tp = list_entry(p1, struct transponder, list);
++		list_for_each(p2, &tp->services) {
++			sp = list_entry(p2, struct service, list);
++			STRIP_SPACE(sp->service_name, str);
++		}
++	}
++
++	ctx->scanned_transponders = scanned_transponders;
++	ctx->serv_select = serv_select;
++	ctx->ca_select = ca_select;
++	bouquet_process_options(ctx, STAGE_POST_SCAN);
++
++	n_bouquets = 0;
++	n_mapped = 0;
++	n_unmapped = 0;
++
++	// map to bouquet services
++	list_for_each(p1, scanned_transponders) {
++		tp = list_entry(p1, struct transponder, list);
++		list_for_each(p2, &tp->services) {
++			struct htable_entry *entry;
++			int mapped;
++
++			sp = list_entry(p2, struct service, list);
++			if (!SERVICE_CHECK(sp))
++				continue;
++			init_service(&bs, tp->original_network_id, tp->transport_stream_id, sp->service_id);
++			mapped = 0;
++			HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++				if ((entry = htable_lookup(&bp->services, &bs.hash)) != NULL) {
++					bsp = container_of(entry, struct bouquet_service, hash);
++					bsp->tp = tp;
++					bsp->sp = sp;
++					mapped = 1;
++					//debug("-- MAP:%s->%s=\n", sp->service_name, bp->bouquet_name);
++				}
++			);
++			if (!mapped) {
++				struct bouquet_service_pair tmp = {tp, sp};
++				ARRAY_APPEND(uarr, tmp);
++				n_unmapped++;
++				//debug("-- UNSORTED:%s\n", sp->service_name);
++			} else
++				n_mapped++;
++		}
++	}
++
++	bouquet_process_options(ctx, STAGE_PRE_OUTPUT);
++
++	HTABLE_FOREACH(&ctx->bouquets, bp, struct bouquet, hash,
++		ARRAY_APPEND(barr, bp);
++		n_bouquets++;
++	);
++	qsort(barr.buf, barr.len, sizeof(struct bouquet *), cmp_bouquet_name);
++
++	htable_init(&uniq_channels, 256, 0);
++
++	// output per bouquet
++	ARRAY_FOREACH(barr, bp,
++		ARRAY_RESET(sarr);
++		HTABLE_FOREACH(&bp->services, bsp, struct bouquet_service, hash,
++			struct bouquet_service_pair tmp;
++			if (bsp->tp == NULL || bsp->sp == NULL)
++				continue;
++			tmp.tp = bsp->tp;
++			tmp.sp = bsp->sp;
++			ARRAY_APPEND(sarr, tmp);
++			if (!htable_lookup(&uniq_channels, &bsp->hash))
++				htable_insert(&uniq_channels, &bsp->hash);
++		);
++		if (sarr.len) {
++			qsort(sarr.buf, sarr.len, sizeof(struct bouquet_service_pair), cmp_bouquet_service);
++			fprintf(stdout, ":%s\n", bp->bouquet_name);
++			ARRAY_FOREACH(sarr, pair,
++				dump_service_cb(pair.tp, pair.sp);
++			);
++		}
++	);
++
++	// unsorted
++	if (uarr.len) {
++		qsort(uarr.buf, uarr.len, sizeof(struct bouquet_service_pair), cmp_bouquet_service);
++		fprintf(stdout, ":==UNSORTED==\n");
++		ARRAY_FOREACH(uarr, pair,
++			dump_service_cb(pair.tp, pair.sp);
++		);
++	}
++
++	info("\
++==============================\n\
++Bouquets:           %d\n\
++Mapped services:    %d\n\
++Unmapped services:  %d\n\
++Channels:           %d\n\
++==============================\n\
++",
++		n_bouquets, n_mapped, n_unmapped, htable_len(&uniq_channels));
++
++	ARRAY_CLEAN(barr);
++	ARRAY_CLEAN(sarr);
++	ARRAY_CLEAN(uarr);
++	htable_free(&uniq_channels);
++}
++
+diff --git a/bouquet.h b/bouquet.h
+new file mode 100644
+index 0000000..765183b
+--- /dev/null
++++ b/bouquet.h
+@@ -0,0 +1,19 @@
++#ifndef __BOUQUET_H__
++#define __BOUQUET_H__
++
++struct bouquet_ctx;
++
++extern struct bouquet_ctx *bouquet_create(const char *optstring);
++extern void bouquet_free(struct bouquet_ctx *ctx);
++
++extern void bouquet_parse_bat(struct bouquet_ctx *ctx, const unsigned char *buf, 
++		int section_length, int bouquet_id, int version_number);
++
++extern void bouquet_dump(struct bouquet_ctx *ctx, struct list_head *scanned_transponders,
++		int ca_select, int serv_select,
++		void (*dump_service_cb)(struct transponder *, struct service *));
++
++extern const char *bouquet_help_msg();
++
++#endif
++
+diff --git a/dump-vdr.c b/dump-vdr.c
+index af23f26..a5beb10 100644
+--- a/dump-vdr.c
++++ b/dump-vdr.c
+@@ -79,7 +79,13 @@ static const char *west_east_flag_name [] = {
+ 
+ static char sat_polarisation(transponder_t *t)
+ {
+-	return t->polarisation == POLARISATION_VERTICAL ? 'V' : 'H';
++	switch (t->polarisation) {
++		case POLARISATION_VERTICAL: return 'V';
++		case POLARISATION_HORIZONTAL: return 'H';
++		case POLARISATION_CIRCULAR_RIGHT: return 'R';
++		case POLARISATION_CIRCULAR_LEFT: return 'L';
++		default: return 'U';
++	}
+ }
+ 
+ extern enum format output_format;
+diff --git a/dump-zap.c b/dump-zap.c
+index 45e97af..8ed0c41 100644
+--- a/dump-zap.c
++++ b/dump-zap.c
+@@ -63,9 +63,16 @@ static const char *hierarchy_name [] = {
+ 
+ static char sat_polarisation(transponder_t *t)
+ {
+-	return t->polarisation == POLARISATION_VERTICAL ? 'v' : 'h';
++	switch (t->polarisation) {
++		case POLARISATION_VERTICAL: return 'V';
++		case POLARISATION_HORIZONTAL: return 'H';
++		case POLARISATION_CIRCULAR_RIGHT: return 'R';
++		case POLARISATION_CIRCULAR_LEFT: return 'L';
++		default: return 'U';
++	}
+ }
+ 
++
+ void zap_dump_dvb_parameters (FILE *f, transponder_t *t, int sat_number)
+ {
+ 	switch (t->delivery_system) {
+diff --git a/htable.c b/htable.c
+new file mode 100644
+index 0000000..cb4ffee
+--- /dev/null
++++ b/htable.c
+@@ -0,0 +1,190 @@
++#include <stdlib.h>
++#include <string.h>
++
++#include "htable.h"
++
++#define	HASH_MINSIZE	2
++
++typedef uint32_t Fnv32_t;
++#define FNV_32_PRIME ((Fnv32_t)0x01000193)
++static Fnv32_t fnv_32a_buf(void *buf, size_t len)
++{
++	Fnv32_t hval = (Fnv32_t)0x811c9dc5;
++	unsigned char *bp = (unsigned char *)buf;
++	unsigned char *be = bp + len;
++	while (bp < be) {
++		hval ^= (Fnv32_t)*bp++;
++		hval *= FNV_32_PRIME;
++	}
++	return hval;
++}
++
++static hash_value_t hash_simple(void *key, int len)
++{
++	unsigned char *b = (unsigned char *)key;
++	return (unsigned int)(b[1]<<8) | b[0];
++}
++
++#define hash_function	fnv_32a_buf
++//#define hash_function	hash_simple
++
++// size must be power of 2
++void htable_init(struct htable *h, int size, int resize)
++{
++	if (size < HASH_MINSIZE)
++		size = HASH_MINSIZE;
++	h->size = size;
++	h->count = 0;
++	h->resize = resize;
++	h->arr = malloc(size * sizeof(struct htable_entry *));
++	memset(h->arr, '\0', size * sizeof(struct htable_entry *));
++}
++
++void htable_free(struct htable *h)
++{
++	if (h->arr) free(h->arr);
++	h->arr = NULL;
++}
++
++struct htable_entry *htable_lookup(struct htable *h, struct htable_entry *e)
++{
++	int i;
++	struct htable_entry *p;
++	i = e->hash & (h->size - 1);
++	for(p = h->arr[i];
++		p != NULL && (p->key_len != e->key_len || memcmp(p->key, e->key, e->key_len) != 0);
++		p = p->next
++	);
++	return p;
++}
++
++static void htable_resize(struct htable *h, int newsize)
++{
++	int i, old_size, old_count, idx;
++	struct htable_entry **old_arr, *p;
++
++	if (newsize < HASH_MINSIZE)
++		newsize = HASH_MINSIZE;
++	old_arr = h->arr;
++	old_size = h->size;
++	old_count = h->count;
++	if (old_size == newsize)
++		return;
++	htable_init(h, newsize, h->resize);
++	for (i = 0; i < old_size; i++) {
++		while (old_arr[i] != NULL) {
++			p = old_arr[i];
++			idx = p->hash & (h->size - 1);
++			old_arr[i] = p->next;
++			p->next = h->arr[idx];
++			h->arr[idx] = p;
++		}
++	}
++	h->count = old_count;
++	free(old_arr);
++}
++
++void htable_insert(struct htable *h, struct htable_entry *e)
++{
++	int i;
++
++	if (h->resize && h->count >= h->size) {
++		htable_resize(h, h->size * 2);
++	}
++	i = e->hash & (h->size - 1);
++	e->next = h->arr[i];
++	h->arr[i] = e;
++	h->count++;
++}
++
++static struct htable_entry *htable_remove_int(struct htable *h, struct htable_entry *e, int noresize)
++{
++	int i;
++	struct htable_entry *p, **link;
++
++	i = e->hash & (h->size - 1);
++	link = &(h->arr[i]);
++	for(p = h->arr[i]; p != NULL && (p->key_len != e->key_len || memcmp(p->key, e->key, e->key_len)); p = p->next)
++		link = &(p->next);
++	if (p != NULL) {
++		*link = p->next;
++		h->count--;
++		if (h->resize && noresize == 0 && h->count <= h->size / 2)
++			htable_resize(h, h->size / 2);
++	}
++	return p;
++}
++
++struct htable_entry *htable_remove_noresize(struct htable *h, struct htable_entry *e)
++{
++	return htable_remove_int(h, e, 1);
++}
++
++struct htable_entry *htable_remove(struct htable *h, struct htable_entry *e)
++{
++	return htable_remove_int(h, e, 0);
++}
++
++void htable_entry_init(struct htable_entry *e, void *key, int len)
++{
++	e->key = key;
++	e->key_len = len;
++	e->hash = hash_function(key, len);
++	e->next = NULL;
++}
++
++int htable_len(struct htable *h)
++{
++	return h->count;
++}
++
++#ifdef HASH_TEST
++#include <stdio.h>
++
++int main (int argc, char **argv)
++{
++	struct entry {
++		unsigned char key[6];
++		struct htable_entry hash;
++	};
++	int nid, tid, sid, i, count, max_probes, n_probes, n_buckets, n_dup = 0;
++	struct entry e, *ep;
++	struct htable ht;
++	struct htable_entry *p;
++
++	htable_init(&ht, atoi(argv[1]), 0);
++	while (fscanf(stdin, "%d:%d:%d", &sid, &nid, &tid) == 3) {
++		e.key[0] = sid & 0xff;
++		e.key[1] = sid>>8 & 0xff;
++		e.key[2] = tid & 0xff;
++		e.key[3] = tid>>8 & 0xff;
++		e.key[4] = nid & 0xff;
++		e.key[5] = nid>>8 & 0xff;
++		htable_entry_init(&e.hash, e.key, 6);
++		if (htable_lookup(&ht, &e.hash) == NULL) {
++			ep = malloc(sizeof(struct entry));
++			memcpy(ep, &e, sizeof(e));
++			htable_entry_init(&ep->hash, ep->key, 6);
++			htable_insert(&ht, &ep->hash);
++		} else {
++			n_dup++;
++		}
++	}
++
++	max_probes = 0; n_probes = 0; n_buckets = 0;
++	for (i = 0; i < ht.size; i++) {
++		count = 0;
++		for (p = ht.arr[i]; p != NULL; p = p->next)
++			count++;
++		if (count != 0)
++			n_buckets++;
++		n_probes += count;
++		if (count > max_probes)
++			max_probes = count;
++		printf("%d %d\n", i, count);
++	}
++	fprintf(stderr, "dup: %d\nmax: %d\navg: %.2f\n", n_dup, max_probes, (double)n_probes / n_buckets);
++
++	return 0;
++}
++#endif
+diff --git a/htable.h b/htable.h
+new file mode 100644
+index 0000000..f4f3a5e
+--- /dev/null
++++ b/htable.h
+@@ -0,0 +1,66 @@
++#ifndef __HTABLE_H__
++#define __HTABLE_H__
++
++#include <stdint.h>
++#include <stddef.h>
++
++typedef uint32_t hash_value_t;
++
++struct htable_entry {
++	void *key;
++	int key_len;
++	hash_value_t hash;
++	struct htable_entry *next;
++};
++
++struct htable {
++	struct htable_entry **arr;
++	int size;
++	int count;
++	int resize;
++};
++
++#ifndef container_of
++#define container_of(ptr, type, member) ({ \
++				const typeof( ((type *)0)->member ) *__mptr = (ptr); \
++				(type *)( (char *)__mptr - offsetof(type,member) );})
++#endif
++
++// no inner loop - allows break and continue from the action code
++#define HTABLE_FOREACH(htable_ptr, var, type, member, action) \
++do {														\
++	int __idx; struct htable_entry *__cur;					\
++	__idx = -1;												\
++	__cur = NULL;											\
++	while (1) {												\
++		if (__cur == NULL) {								\
++			__idx++;										\
++			if (__idx >= (htable_ptr)->size)				\
++				break;										\
++			__cur = (htable_ptr)->arr[__idx];				\
++			continue;										\
++		}													\
++		var = container_of(__cur, type, member);			\
++		__cur = __cur->next;								\
++		{action}											\
++	}														\
++} while (0)
++
++extern void htable_entry_init(struct htable_entry *e, void *key, int len);
++
++// size must be power of 2
++extern void htable_init(struct htable *h, int size, int resize);
++extern void htable_free(struct htable *h);
++// returns entry found or NULL
++extern struct htable_entry *htable_lookup(struct htable *h, struct htable_entry *e);
++// only unique entries, call htable_lookup() first
++extern void htable_insert(struct htable *h, struct htable_entry *e);
++// returns the pointer to a removed entry or NULL if not found
++extern struct htable_entry *htable_remove(struct htable *h, struct htable_entry *e);
++// for removals inside HTABLE_FOREACH()
++extern struct htable_entry *htable_remove_noresize(struct htable *h, struct htable_entry *e);
++extern int htable_len(struct htable *h);
++
++
++#endif
++
+diff --git a/scan.c b/scan.c
+index 3c96681..4bd9caa 100644
+--- a/scan.c
++++ b/scan.c
+@@ -41,6 +41,7 @@
+ #include "dump-vdr.h"
+ #include "scan.h"
+ #include "lnb.h"
++#include "bouquet.h"
+ 
+ #include "atsc_psip_section.h"
+ 
+@@ -137,6 +138,7 @@ enum format output_format = OUTPUT_VDR;
+ static int output_format_set = 0;
+ static int disable_s1 = FALSE;
+ static int disable_s2 = FALSE;
++static int use_bouquets = 0;
+ 
+ static rotorslot_t rotor[49];
+ 
+@@ -164,7 +166,7 @@ struct section_buf {
+ static LIST_HEAD(scanned_transponders);
+ static LIST_HEAD(new_transponders);
+ static struct transponder *current_tp;
+-
++static struct bouquet_ctx *bouquets = NULL;
+ 
+ static void dump_dvb_parameters (FILE *f, struct transponder *p);
+ 
+@@ -573,7 +575,7 @@ static void parse_satellite_delivery_system_descriptor (const unsigned char *buf
+ 	if (verbosity >= 5) {
+ 		debug("%#04x/%#04x ", t->network_id, t->transport_stream_id);
+ 		dump_dvb_parameters (stderr, t);
+-		printf("\n");
++		dprintf(5, "\n");
+ 		if (t->scan_done)
+ 			dprintf(5, " (done)");
+ 		if (t->last_tuning_failed)
+@@ -1673,6 +1675,11 @@ static int parse_section(struct section_buf *sb, unsigned char *buf)
+ 			parse_psip_vct(sb, buf, section_length, table_id, table_id_ext);
+ 			break;
+ 
++		case TID_BAT:
++			verbose("BAT bouquet_id: %d (0x%04X)\n", table_id_ext, table_id_ext);
++			bouquet_parse_bat(bouquets, buf, section_length, table_id_ext, section_version_number);
++			break;
++
+ 		default:
+ 			break;
+ 		};
+@@ -1975,7 +1982,7 @@ static int __tune_to_transponder (int frontend_fd, struct transponder *t)
+ 
+ 				setup_switch (frontend_fd,
+ 					switch_pos,
+-					t->polarisation == POLARISATION_VERTICAL ? 0 : 1,
++					(t->polarisation == POLARISATION_VERTICAL || t->polarisation == POLARISATION_CIRCULAR_RIGHT)? 0 : 1,
+ 					hiband,
+ 					uncommitted_switch_pos);
+ 
+@@ -1987,7 +1994,7 @@ static int __tune_to_transponder (int frontend_fd, struct transponder *t)
+ 					if_freq = abs(t->frequency - lnb_type.low_val);
+ 			} else {
+ 				/* C-Band Multipoint LNBf */
+-				if_freq = abs(t->frequency - (t->polarisation == POLARISATION_VERTICAL ? 
++				if_freq = abs(t->frequency - ((t->polarisation == POLARISATION_VERTICAL || t->polarisation == POLARISATION_CIRCULAR_RIGHT)? 
+ 					lnb_type.low_val: lnb_type.high_val));
+ 			}
+ 		} else	{
+@@ -2005,7 +2012,7 @@ static int __tune_to_transponder (int frontend_fd, struct transponder *t)
+ 			err = rotate_rotor(	frontend_fd,
+ 						curr_rotor_pos, 
+ 						rotor_pos,
+-						t->polarisation == POLARISATION_VERTICAL ? 0 : 1,
++						(t->polarisation == POLARISATION_VERTICAL || t->polarisation == POLARISATION_CIRCULAR_RIGHT)? 0 : 1,
+ 						hiband);
+ 			if (err)
+ 				error("Error in rotate_rotor err=%i\n",err); 
+@@ -2644,11 +2651,19 @@ static int tune_initial (int frontend_fd, const char *initial)
+ 							switch(pol[0]) 
+ 							{
+ 							case 'H':
+-							case 'L':
+ 								t->polarisation = POLARISATION_HORIZONTAL;
+ 								break;
++							case 'V':
++								t->polarisation = POLARISATION_VERTICAL;
++								break;
++							case 'L':
++								t->polarisation = POLARISATION_CIRCULAR_LEFT;
++								break;
++							case 'R':
++								t->polarisation = POLARISATION_CIRCULAR_RIGHT;
++								break;
+ 							default:
+-								t->polarisation = POLARISATION_VERTICAL;;
++								t->polarisation = POLARISATION_VERTICAL;
+ 								break;
+ 							}
+ 							t->inversion = spectral_inversion;
+@@ -2801,6 +2816,7 @@ static void scan_tp_dvb (void)
+ 	struct section_buf s1;
+ 	struct section_buf s2;
+ 	struct section_buf s3;
++	struct section_buf s4;
+ 
+ 	/**
+ 	*  filter timeouts > min repetition rates specified in ETR211
+@@ -2824,6 +2840,11 @@ static void scan_tp_dvb (void)
+ 		}
+ 	}
+ 
++	if (use_bouquets) {
++		setup_filter (&s4, demux_devname, PID_SDT_BAT_ST, TID_BAT, -1, 1, 1, 15);
++		add_filter (&s4);
++	}
++
+ 	do {
+ 		read_filters ();
+ 	} while (!(list_empty(&running_filters) &&
+@@ -2890,6 +2911,29 @@ static int sat_number (struct transponder *t)
+ 	return switch_pos + uncommitted_switch_pos*4;
+ }
+ 
++static void dump_service(struct transponder *t, struct service *s)
++{
++	switch (output_format)
++	{
++	case OUTPUT_VDR:
++		vdr_dump_service_parameter_set(stdout, s, t, override_orbital_pos, vdr_dump_channum, vdr_dump_provider, ca_select);
++		break;
++
++	case OUTPUT_VDR_16x:
++		if(t->delivery_system != SYS_DVBS2) {
++			vdr_dump_service_parameter_set(stdout, s, t, override_orbital_pos, vdr_dump_channum, vdr_dump_provider, ca_select);
++		}
++		break;
++
++	case OUTPUT_ZAP:
++		zap_dump_service_parameter_set (stdout, s, t, sat_number(t));
++		break;
++
++	default:
++		break;
++	}
++}
++
+ static void dump_lists (void)
+ {
+ 	struct list_head *p1, *p2;
+@@ -2958,27 +3002,14 @@ static void dump_lists (void)
+ 			if(s->audio_pid[0] == 0 && s->ac3_pid != 0)
+ 				s->audio_pid[0] = s->ac3_pid;
+ 
+-			switch (output_format)
+-			{
+-			case OUTPUT_VDR:
+-				vdr_dump_service_parameter_set(stdout, s, t, override_orbital_pos, vdr_dump_channum, vdr_dump_provider, ca_select);
+-				break;
+-
+-			case OUTPUT_VDR_16x:
+-				if(t->delivery_system != SYS_DVBS2) {
+-					vdr_dump_service_parameter_set(stdout, s, t, override_orbital_pos, vdr_dump_channum, vdr_dump_provider, ca_select);
+-				}
+-				break;
+-
+-			case OUTPUT_ZAP:
+-				zap_dump_service_parameter_set (stdout, s, t, sat_number(t));
+-				break;
+-
+-			default:
+-				break;
+-			}
++			if (!use_bouquets)
++				dump_service(t, s);
+ 		}
+ 	}
++
++	if (use_bouquets)
++		bouquet_dump(bouquets, &scanned_transponders, ca_select, serv_select, dump_service);
++
+ 	info("Done.\n");
+ }
+ 
+@@ -3062,7 +3093,10 @@ static const char *usage = "\n"
+ "		s=S2  Disable DVB-S2 scan (good for owners of cards that do not\n"
+ "		      support DVB-S2 systems)\n"
+ "	-X	Disable AUTOs for initial transponders (esp. for hardware which\n"
+-"		not support it). Instead try each value of any free parameters.\n";
++"		not support it). Instead try each value of any free parameters.\n"
++"	-B opts	Parse BAT and create channel groups for VDR output.\n"
++"		Use -B help for options.\n"
++"	-b	The same as -B, default options.\n";
+ 
+ 
+ void bad_usage(char *pname, int problem)
+@@ -3116,13 +3150,27 @@ int main (int argc, char **argv)
+ 
+ 	/* start with default lnb type */
+ 	lnb_type = *lnb_enum(0);
+-	while ((opt = getopt(argc, argv, "5cnXpa:f:d:O:k:I:S:s:r:R:o:D:x:t:i:l:vquPA:U")) != -1) {
++	while ((opt = getopt(argc, argv, "5cnXpa:f:d:O:k:I:S:s:r:R:o:D:x:t:i:l:vquPA:UbB:")) != -1) {
+ 		switch (opt) 
+ 		{
+ 		case 'a':
+ 			adapter = strtoul(optarg, NULL, 0);
+ 			break;
+ 
++		case 'b':
++		case 'B':
++			if (opt == 'B' && optarg && strcmp(optarg, "help") == 0) {
++				fprintf(stderr, "%s", bouquet_help_msg());
++				return -1;
++			}
++			if (!use_bouquets) {
++				bouquets = bouquet_create((opt == 'B')? optarg : "");
++				if (!bouquets)
++					return -1;
++				use_bouquets = 1;
++			}
++			break;
++
+ 		case 'c':
+ 			current_tp_only = 1;
+ 			if (!output_format_set)
+@@ -3256,6 +3304,11 @@ int main (int argc, char **argv)
+ 		};
+ 	}
+ 
++	if (use_bouquets && !(output_format == OUTPUT_VDR || output_format == OUTPUT_VDR_16x)) {
++		fprintf(stderr, "Bouquets require a VDR output format.\n");
++		return -1;
++	}
++
+ 	if (optind < argc)
+ 		initial = argv[optind];
+ 	if ((!initial && !current_tp_only) || (initial && current_tp_only) ||
+@@ -3362,6 +3415,9 @@ int main (int argc, char **argv)
+ 
+ 	dump_lists ();
+ 
++	if (bouquets)
++		bouquet_free(bouquets);
++
+ 	return 0;
+ }
+ 

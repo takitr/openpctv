@@ -1,8 +1,0 @@
-PKG_NAME=firmware-dvb-dvbsky-S9xx
-PKG_VERSION=140618
-PKG_URL="http://www.dvbsky.net/download/linux/dvbsky-firmware.tar.gz"
-PKG_BUILD_DEPENDS="toolchain"
-PKG_PRIORITY=optional
-PKG_SECTION=firmware
-PKG_SHORTDESC="DVBSky S9xx DVB firmware files"
-PKG_LONGDESC="This package contains DVBSky DVB firmware files for S950 S952 S960 supporting the Montage M88DS3103 DVB-S2 demodulator"

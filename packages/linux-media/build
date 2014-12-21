@@ -1,0 +1,33 @@
+#!/bin/sh
+
+. config/options
+
+$SCRIPTS/build linux
+
+get_meta $1
+cd $PKG_BUILD_DIR
+
+chmod -R +x linux v4l
+
+make \
+  KDIR=$(kernel_path) \
+  KERNELRELEASE=$(kernel_version) \
+  SRCDIR=$(kernel_path) \
+  OUTDIR=$(kernel_path) -j4
+
+install_dir="$PWD/.install"
+debug_dir="$PWD/.install-debuginfo/usr/lib/debug"
+
+mkdir -p $install_dir $debug_dir
+
+make install \
+  DESTDIR=$install_dir \
+  KERNELRELEASE=$(kernel_version) \
+
+mkdir -p $install_dir/firmware
+tar jvfx dvb-firmwares.tar.bz2 -C $install_dir/firmware
+#mv $install_dir/lib/firmware $install_dir/firmware
+#cp $ROOT/$PACKAGES/$1/firmware/* $install_dir/firmware
+#rm -f $install_dir/lib/modules/$(kernel_version)/modules.*
+
+strip_kmods "$install_dir/lib/modules/$(kernel_version)" "$debug_dir"

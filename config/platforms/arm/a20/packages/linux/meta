@@ -2,5 +2,5 @@
 #PKG_VERSION=sunxi-3.4.91+${PKG_URL_REV}
 #PKG_URL_PROTO=git
 #PKG_URL="https://github.com/cubieboard/linux-sunxi"
-PKG_VERSION=sunxi-3.4.103-r0
+PKG_VERSION=sunxi-3.4.104-r0
 PKG_URL="https://github.com/linux-sunxi/linux-sunxi/archive/sunxi-v3.4.103-r0.tar.gz"

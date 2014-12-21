@@ -1,0 +1,8 @@
+PKG_NAME=firmware-dvb-dvbsky
+PKG_VERSION=20141111
+PKG_URL="$SFNET_SRCS/openpctv/sources/dvbsky-firmware-${PKG_VERSION}.tar.xz"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=firmware
+PKG_SHORTDESC="DVBSky S9xx DVB firmware files"
+PKG_LONGDESC="This package contains DVBSky DVB firmware files for dvbsky devices"
