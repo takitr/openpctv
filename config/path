@@ -78,11 +78,12 @@ DISTRONAME_LC=`echo $DISTRONAME | tr '[:upper:]' '[:lower:]'`
 DISTRONAME_UC=`echo $DISTRONAME | tr '[:lower:]' '[:upper:]'`
 DISTRODIR=`echo $DISTRONAME_UC | tr -cd '[:alnum:]' | cut -c -8`
 
-DISTRO_SRCS=http://sources.openbricks.org/$DISTRO_VERSION
-DISTRO_FW=http://firmwares.openbricks.org
+#DISTRO_SRCS=http://sources.openbricks.org/$DISTRO_VERSION
 SFNET_SRCS="http://prdownloads.sourceforge.net"
 XORG_SRCS="http://xorg.freedesktop.org/releases/individual"
 CPAN_SRCS="http://search.cpan.org/CPAN/authors/id"
+DISTRO_SRCS=$SFNET_SRCS/openpctv/sources
+DISTRO_FW=http://firmwares.openbricks.org
 
 if [ "$DISTRO_VERSION" = devel ]; then
   DISTRO_VERSION=$DISTRO_VERSION-`date +%Y%m%d`

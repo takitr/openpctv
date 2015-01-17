@@ -1,0 +1,27 @@
+diff -uNr tbs-atsc-drivers-v140529.orig/linux/sound/pci/bt87x.c tbs-atsc-drivers-v140529/linux/sound/pci/bt87x.c
+--- tbs-atsc-drivers-v140529.orig/linux/sound/pci/bt87x.c	2015-01-13 22:54:58.455041337 +0800
++++ tbs-atsc-drivers-v140529/linux/sound/pci/bt87x.c	2015-01-13 22:59:32.024397893 +0800
+@@ -440,7 +440,11 @@
+ 
+ _error:
+ 	clear_bit(0, &chip->opened);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 18, 0)
+ 	smp_mb__after_clear_bit();
++#else
++	smp_mb__after_atomic();
++#endif
+ 	return err;
+ }
+ 
+@@ -455,7 +459,11 @@
+ 
+ 	chip->substream = NULL;
+ 	clear_bit(0, &chip->opened);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 18, 0)
+ 	smp_mb__after_clear_bit();
++#else
++	smp_mb__after_atomic();
++#endif
+ 	return 0;
+ }
+ 

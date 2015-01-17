@@ -7,3 +7,9 @@ get_meta $1
 mkdir -p $INSTALL/usr/bin
 
 cp -P $ROOT/$PACKAGES/$1/scripts/runbackend $INSTALL/usr/bin
+
+mkdir -p $INSTALL/lib/systemd/system/backend.target.wants/
+ln -s /lib/systemd/system/getty@.service $INSTALL/lib/systemd/system/backend.target.wants/getty@tty1.service
+ln -s /lib/systemd/system/getty@.service $INSTALL/lib/systemd/system/backend.target.wants/getty@tty2.service
+ln -s /lib/systemd/system/getty@.service $INSTALL/lib/systemd/system/backend.target.wants/getty@tty3.service
+ln -s /lib/systemd/system/getty@.service $INSTALL/lib/systemd/system/backend.target.wants/getty@tty4.service

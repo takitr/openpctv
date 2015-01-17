@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. config/options
+
+cd $BUILD/$1*
+
+mkdir -p $INSTALL/usr/bin
+cp blindscan-s2 $INSTALL/usr/bin

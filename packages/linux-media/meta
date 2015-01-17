@@ -4,5 +4,5 @@ PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_REV=1
 PKG_PRIORITY=optional
 PKG_SECTION=drivers
-PKG_SHORTDESC="DVB-S(S2) drivers for Linux - Original code from LinuxTV org"
+PKG_SHORTDESC="DVB drivers for Linux - Original code from LinuxTV org"
 PKG_LONGDESC="The LinuxTV project develops and maintains the media driver Linux Kernel Subsystems, which consists of devices for webcams, analog TV, digital TV and remote controllers. The video4linux subsystem was included on Kernel 2.2, and the dvb and remote controller subsystems was included in the 2.6 Kernel. The Linux kernel and the LinuxTV git tree include a fair number of drivers for commonly available PCI cards and USB devices, but the subsystems are also targeted towards Linux based set-top-boxes and embedded devices, like mobile phones."

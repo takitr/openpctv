@@ -9,7 +9,8 @@ setup_toolchain host
 
 do_configure host \
 	--target=$TARGET_NAME \
-	--datadir=$ROOT/$TOOLCHAIN/share
+	--datadir=$ROOT/$TOOLCHAIN/share \
+	--disable-silent-rules
 
 make
 make_install toolchain

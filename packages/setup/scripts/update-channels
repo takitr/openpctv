@@ -23,11 +23,16 @@ fi
 DIALOGTMP=/tmp/dialogtmp.$$
 RESULTTMP=/tmp/resulttmp.$$
 CMDLINE=/tmp/cmdline.$$
+SATTMP=/tmp/sattmp.$$
 
 getdiseqcline () {
 echo "dialog --backtitle \"$(gettext "Scan channels for VDR")\" --title \"$(gettext "Select Satellite")\"  --checklist \"$(gettext "Please select the satellite you want to scan, and note that the scanning process may take some minutes, please be patient.")\" 15 60 8 \\" > $DIALOGTMP
-for i in $(cat $CMDLINE | awk '{print $4}'); do
-  echo "$i \"\" on \\" >> $DIALOGTMP
+for i in $(cat $SATTMP); do
+  if [ -f /usr/share/vdr/channels/channels.conf.$i ]; then
+     echo "$i \"\" off \\" >> $DIALOGTMP
+  else
+     echo "$i \"\" on \\" >> $DIALOGTMP
+  fi
 done
 echo "2> $RESULTTMP" >> $DIALOGTMP
 . $DIALOGTMP
@@ -78,7 +83,8 @@ cat $DISEQCCONF | while read line; do
       fi
     fi
     if [ "X$LO" = "X" ]; then LO=$HI; SLOF=$HI; fi
-    echo "scan-s2 /usr/share/transponders/${SAT}.ini -O $SAT -a $num -l $LO,$HI,$SLOF $D_F1 $D_F2 -5 -x -2 -o vdr -v -U >> ${CHANNELS}.${SAT}" >> $CMDLINE
+    echo  -n "$SAT " >> $SATTMP
+    echo "scan-s2 /usr/share/transponders/${SAT}.ini -O $SAT -a $num -l $LO,$HI,$SLOF $D_F1 $D_F2 -X -x -2 -o vdr -v -U >> ${CHANNELS}.${SAT}" >> $CMDLINE
   fi
 done
 
@@ -87,17 +93,26 @@ grep -q "^#codeline#" $DISEQCCONF && getdiseqcline
 cat /dev/null > ${CHANNELS}.radio
 cat /dev/null > ${CHANNELS}.tv
 echo "$(gettext "Split channels in TV and Radio...")"
-cat ${CHANNELS}.[DS]* | while read line; do
-  echo $line | grep -i ^:S >> ${CHANNELS}.radio
-  if test "$(echo $line | awk -F: '{print $6}')" = "0" || echo $line | grep -i radio > /dev/null; then
-     echo $line >> ${CHANNELS}.radio
-  else
-     echo $line >> ${CHANNELS}.tv
+for i in $(cat $SATTMP); do
+  if [ -f /etc/vdr/channels.conf.$i ]; then
+     SELECTCHANNELS=/etc/vdr/channels.conf.$i
+  elif [ -f /usr/share/vdr/channels/channels.conf.$i ]; then
+     SELECTCHANNELS=/usr/share/vdr/channels/channels.conf.$i
+     echo -n "$(gettext "Split channels for:")"
+     echo $i
+     cat $SELECTCHANNELS | while read line; do
+        echo $line | grep -i ^:S >> ${CHANNELS}.radio
+        if test "$(echo $line | awk -F: '{print $6}')" = "0" || echo $line | grep -i radio > /dev/null; then
+           echo $line >> ${CHANNELS}.radio
+        else
+           echo $line >> ${CHANNELS}.tv
+        fi
+     done
   fi
 done
 
 cp ${CHANNELS}.tv ${CHANNELS}
 
-for i in $RESULTTMP $RESULTTMP $CMDLINE; do
+for i in $RESULTTMP $RESULTTMP $CMDLINE $SATTMP; do
   [ -f $i ] && rm $i
 done

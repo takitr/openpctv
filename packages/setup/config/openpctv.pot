@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 07:55+0800\n"
+"POT-Creation-Date: 2015-01-17 15:25+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -395,119 +395,6 @@ msgstr ""
 msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr ""
 
-#: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
-msgid "Reboot"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:18
-msgid ""
-"Driver package has been installed successfully. Now you have to reboot to "
-"verify whether the driver works."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:24
-msgid "Select NVIDIA graphics driver"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:25
-msgid ""
-"Both nouveau and nvidia enable VDPAU driver support for hardware-accelerated "
-"video decoding. By default we use the nvidia driver, using the nvidia driver "
-"may get a better experience."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:26
-msgid "NVIDIA's binary Linux graphics driver"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:27
-msgid "Open-source NVIDIA graphics driver"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:96
-#, sh-format
-msgid "Found $field"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:96
-msgid ""
-"Sometimes a board without valid PCI(e) Subsystem ID can't be autodetected. "
-"You can specify the model of the card to pass card=<n> insmod option to "
-"workaround that. Redirect complaints to the vendor of the TV card. Do you "
-"want to do this?"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:101
-#, sh-format
-msgid "Specify the card number of $field board"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:101
-msgid "Here is a list of valid choices for the card=<n> insmod option"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:126
-#: packages/setup/scripts/install-drivers:131
-msgid "Additional DVB driver"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:127
-msgid ""
-"Your DVB devices seem to be normal. Perhaps you do not need to install other "
-"additional drivers. If you want to install additional drivers please select "
-"'Yes'"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:132
-msgid ""
-"Your DVB device does not seem to work properly. Perhaps you should install "
-"another driver. Do you want to install the additional drivers?"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:137
-#: packages/setup/scripts/setup.sh:102
-msgid "Install additional DVB driver"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:138
-msgid ""
-"Before proceeding please confirm your DVB device specific information. "
-"Choose the driver you need to install carefully."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:139
-msgid "I do not want to install now."
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:140
-msgid "Support all the TBS devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:141
-msgid "Support all the DVBSky devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:142
-msgid "DVB drivers for Linux - Original code from LinuxTV org"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:143
-msgid "Support all the TBS DVB-C devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:144
-msgid "Support all the TBS ATSC devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:145
-msgid "Support all the DVBSky DVB-C devices"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:146
-msgid "Support the DVB3221 DVB-C device"
-msgstr ""
-
 #: packages/setup/scripts/installator.sh:15
 msgid "Not found or no block device exists."
 msgstr ""
@@ -755,6 +642,123 @@ msgstr ""
 
 #: packages/setup/scripts/installator.sh:547
 msgid "installator"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:18
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
+msgid "Reboot"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:18
+msgid ""
+"Driver package has been installed successfully. Now you have to reboot to "
+"verify whether the driver works."
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:24
+msgid "Select NVIDIA graphics driver"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:25
+msgid ""
+"Both nouveau and nvidia enable VDPAU driver support for hardware-accelerated "
+"video decoding. By default we use the nvidia driver, using the nvidia driver "
+"may get a better experience."
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:26
+msgid "NVIDIA's binary Linux graphics driver"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:27
+msgid "Open-source NVIDIA graphics driver"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:96
+#, sh-format
+msgid "Found $field"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:96
+msgid ""
+"Sometimes a board without valid PCI(e) Subsystem ID can't be autodetected. "
+"You can specify the model of the card to pass card=<n> insmod option to "
+"workaround that. Redirect complaints to the vendor of the TV card. Do you "
+"want to do this?"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:101
+#, sh-format
+msgid "Specify the card number of $field board"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:101
+msgid "Here is a list of valid choices for the card=<n> insmod option"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:131
+msgid "Additional DVB driver"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:127
+msgid ""
+"Your DVB devices seem to be normal. Perhaps you do not need to install other "
+"additional drivers. If you want to install additional drivers please select "
+"'Yes'"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:132
+msgid ""
+"Your DVB device does not seem to work properly. Perhaps you should install "
+"another driver. Do you want to install the additional drivers?"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:137
+#: packages/setup/scripts/setup.sh:102
+msgid "Install additional DVB driver"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:138
+msgid ""
+"Before proceeding please confirm your DVB device specific information. "
+"Choose the driver you need to install carefully."
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:139
+msgid "Need not install any drivers"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:140
+msgid "Support all the TBS devices"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:141
+msgid "Support all the DVBSky devices"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:142
+msgid "DVB drivers for Linux - Original code from LinuxTV org"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:143
+msgid "Open Source Drivers for TBS cards"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:144
+msgid "Support all the TBS DVB-C devices"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:145
+msgid "Support all the TBS ATSC devices"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:146
+msgid "Support all the DVBSky DVB-C devices"
+msgstr ""
+
+#: packages/setup/scripts/install-drivers:147
+msgid "Support the DVB3221 DVB-C device"
 msgstr ""
 
 #: packages/setup/scripts/monitor.sh:8
@@ -1084,27 +1088,31 @@ msgid ""
 "No DVB devices has been discovered. Please check whether the device is ready."
 msgstr ""
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid "Scan channels for VDR"
 msgstr ""
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid "Select Satellite"
 msgstr ""
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid ""
 "Please select the satellite you want to scan, and note that the scanning "
 "process may take some minutes, please be patient."
 msgstr ""
 
-#: packages/setup/scripts/update-channels:47
-#: packages/setup/scripts/update-channels:54
+#: packages/setup/scripts/update-channels:52
+#: packages/setup/scripts/update-channels:59
 msgid "We'll use w_scan to scan channels, are you ready?"
 msgstr ""
 
-#: packages/setup/scripts/update-channels:89
+#: packages/setup/scripts/update-channels:95
 msgid "Split channels in TV and Radio..."
+msgstr ""
+
+#: packages/setup/scripts/update-channels:101
+msgid "Split channels for:"
 msgstr ""
 
 #: packages/setup/scripts/update-transponders:8

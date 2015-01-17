@@ -13,12 +13,12 @@ chmod 755 $INSTALL/sbin/*
 
 if [ "$TARGET_ARCH" = arm ]; then
   if [ "$TARGET_PLATFORM" = a20 ]; then
-    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg"
+    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg get-vdrchannels"
   else
-    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-target select-backend update-epg"
+    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-target select-backend update-epg get-vdrchannels"
   fi
 else
-  INSTALL_SCRIPTS="diseqcsetup monitor.sh update-channels update-dvbdevice update-transponders install-drivers netconfig select-irdrv select-language select-plugins audio-config videocache getcam select-target select-backend update-epg screenshot"
+  INSTALL_SCRIPTS="diseqcsetup monitor.sh update-channels update-dvbdevice update-transponders install-drivers netconfig select-irdrv select-language select-plugins audio-config videocache getcam select-target select-backend update-epg screenshot get-vdrchannels"
 fi
 
 [ "$TARGET_PLATFORM" = bcm2708 ] && INSTALL_SCRIPTS="$INSTALL_SCRIPTS select-plugins"
@@ -45,6 +45,9 @@ cp -rf $ROOT/$PACKAGES/$1/config/dvbcard $INSTALL/etc
 
 mkdir -p $INSTALL/var/spool/cron/crontabs
 cp $ROOT/$PACKAGES/$1/config/cron_root $INSTALL/var/spool/cron/crontabs/root
+
+mkdir -p $INSTALL/usr/share/vdr
+cp -rf $PACKAGES/$1/config/channels $INSTALL/usr/share/vdr
 
 mkdir -p $INSTALL/usr/share/installator
 cp $PACKAGES/$1/config/grub.cfg  $INSTALL/usr/share/installator
@@ -77,3 +80,6 @@ else
   ln -sf /lib/systemd/system/setup.target \
     $INSTALL/etc/systemd/system/default.target
 fi
+
+mkdir -p $INSTALL/lib/systemd/system/backend.target.wants/
+ln -s /lib/systemd/system/get-channels.service $INSTALL/lib/systemd/system/backend.target.wants/get-channels.service

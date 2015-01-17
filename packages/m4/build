@@ -6,7 +6,7 @@ cd $BUILD/$1*
 
 setup_toolchain host
 
-do_configure host --target=$TARGET_NAME
+do_configure host --target=$TARGET_NAME gl_cv_func_gettimeofday_clobber=no
 
 make
 make_install toolchain

@@ -13,7 +13,8 @@ cd objdir-host
 
 do_configure host \
          --target=$TARGET_NAME \
-         --datadir=$ROOT/$TOOLCHAIN/share
+         --datadir=$ROOT/$TOOLCHAIN/share \
+         --enable-static --disable-shared HELP2MAN=/bin/true
 
 make
 make_install toolchain

@@ -135,11 +135,12 @@ else
 fi
 
 dialog --clear --title "$(gettext "Install additional DVB driver")" --menu \
-"$(gettext "Before proceeding please confirm your DVB device specific information. Choose the driver you need to install carefully.")" 16 80 8 \
- "Exit" "$(gettext "I do not want to install now.")" \
+"$(gettext "Before proceeding please confirm your DVB device specific information. Choose the driver you need to install carefully.")" 17 85 9 \
+ "Exit" "$(gettext "Need not install any drivers")" \
  "tbs-drivers" "$(gettext "Support all the TBS devices")" \
  "dvbsky-drivers" "$(gettext "Support all the DVBSky devices")" \
  "linux-media" "$(gettext "DVB drivers for Linux - Original code from LinuxTV org")" \
+ "linux-media-tbs" "$(gettext "Open Source Drivers for TBS cards")" \
  "tbs-dvbc-drivers" "$(gettext "Support all the TBS DVB-C devices")" \
  "tbs-atsc-drivers" "$(gettext "Support all the TBS ATSC devices")" \
  "dvbsky-dvbc-drivers" "$(gettext "Support all the DVBSky DVB-C devices")" \
@@ -172,6 +173,12 @@ case "$(cat /tmp/driver.tmp)" in
 		opkg install http://sourceforge.net/projects/openpctv/files/packages/linux-media-${kernelver}_Last_${machine}.opk/download --force-overwrite || (echo "Can't download linux-media-${kernelver}_Last_${machine}.opk, check your network settings."; exit)
 		HAS_INSTALLED=yes
 		;;
+  linux-media-tbs)  tar -czf /root/kernel_media_$(date +%Y%m%d%H%M%S)_backup.tgz /lib/modules/$kernelver/kernel/drivers/media
+                rm -rf /lib/modules/$kernelver/kernel/drivers/media
+                echo "Download and install linux-media-tbs-${kernelver}_Last_${machine}.opk, please wait..."
+                opkg install http://sourceforge.net/projects/openpctv/files/packages/linux-media-tbs-${kernelver}_Last_${machine}.opk/download --force-overwrite || (echo "Can't download linux-media-tbs-${kernelver}_Last_${machine}.opk, check your network settings."; exit)
+                HAS_INSTALLED=yes
+                ;;
   tbs-dvbc-drivers)  tar -czf /root/kernel_media_$(date +%Y%m%d%H%M%S)_backup.tgz /lib/modules/$kernelver/kernel/drivers/media
                 rm -rf /lib/modules/$kernelver/kernel/drivers/media
                 echo "Download and install tbs-dvbc-drivers-${kernelver}_Last_${machine}.opk, please wait..."

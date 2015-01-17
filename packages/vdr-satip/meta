@@ -1,0 +1,11 @@
+PKG_NAME=vdr-satip
+PKG_VERSION=1.0.0
+PKG_URL="http://www.saunalahti.fi/~rahrenbe/vdr/satip/files/${PKG_NAME}-${PKG_VERSION}.tgz"
+PKG_REV=1
+PKG_DEPENDS="vdr curl tinyxml"
+PKG_BUILD_DEPENDS="toolchain vdr curl tinyxml"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="SAT>IP plugin for VDR"
+PKG_LONGDESC="This plugin integrates SAT>IP network devices seamlessly into VDR. You can use any SAT>IP channel like any other normal DVB channel for live viewing, recording, etc. The plugin also features full section filtering capabilities which allow for example EIT information to be extracted from the incoming stream."

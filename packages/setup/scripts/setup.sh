@@ -82,7 +82,7 @@ systemctl stop vdr-backend
 [ -f $RUN_EPG ] && $RUN_EPG
 [ -f $RUN_TRANS ] && $RUN_TRANS
 [ -f $RUN_DVB ] && $RUN_DVB
-if dialog --defaultno --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the KODI uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
+if dialog --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the KODI uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
   [ -f $RUN_PLUGINS ] && $RUN_PLUGINS
   [ -f $RUN_DISEQC ] && $RUN_DISEQC
   [ -f $RUN_CHANNELS ] && $RUN_CHANNELS

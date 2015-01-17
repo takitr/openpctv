@@ -119,7 +119,13 @@ echo '/sbin/mdev' > /proc/sys/kernel/hotplug
 mdev -s
 
 # splash
-/bin/ply-image /plymouth/splash.png
+if [ "X$QUIET" != Xyes -a -c /dev/fb0 ]; then
+  /bin/ply-image /plymouth/splash.png
+fi
+#if [ -x /bin/plymouth ] && plymouth --ping; then
+#  /bin/plymouth hide-splash > /dev/null 2>&1
+#  plymouth hide-splash
+#fi
 
 # parse kernel cmdline
 for arg in $(cat /proc/cmdline); do
@@ -173,6 +179,8 @@ for arg in $(cat /proc/cmdline); do
   esac
 done
 
+[ "$QUIET" = yes ] || clear
+
 # if rootro, always mount root as r/o
 # if rootrw, always mount root as r/w
 # if neither, mount root as r/w only if persistent is enabled and we're
@@ -195,7 +203,7 @@ if [ -n "$ROOT" ]; then
   COUNT="0 1 2 3 4 5 6 7 8 9"
   for i in $COUNT; do
     dbg_echo -n "[$i] Trying root=$ROOT as requested..."
-    ROOT_NEW=$(blkid | sed 's/\"//g' | grep -i $ROOT | cut -d: -f1)
+    ROOT_NEW=$(blkid | sed 's/\"//g' | grep -i $ROOT | cut -d: -f1 | sort -r)
     if mount -o $ROOT_MODE $ROOT_NEW /mnt >/dev/null 2>&1; then
       if [ "$ROOTFS" = flat ]; then
         dbg_echo "found."
@@ -280,7 +288,7 @@ fi
 if [ -z "$ROOT" ]; then
   dbg_echo "Scanning for root device:"
   cd /sys/block
-  for i in 0 1 2 3 4 5 6 7 8 9; do
+  for i in 1 2 3 4 5 6 7 8 9; do
     for dev in *; do
       echo $dev | grep -q loop && continue
       echo $dev | grep -q ram && continue
@@ -321,6 +329,7 @@ if [ -z "$ROOT" ]; then
         mkdir -p /cache
         mount -t tmpfs tmpfs /cache
         cp /mnt/$ROOTFS /cache/rootfs
+        cp -rf /mnt/boot /cache/
         ROOTFS=/rootfs
         umount /mnt >/dev/null 2>&1
         eject -s $ROOT_DEV >/dev/null 2>&1 || eject $ROOT_DEV >/dev/null 2>&1
@@ -336,7 +345,7 @@ if [ -z "$ROOT" ]; then
       fi
     done
     [ -n "$FOUND_ROOTFS" ] && break
-    sleep 1
+    sleep $i
   done
   cd /
 fi
@@ -370,11 +379,29 @@ else
   if [ -z "$DATA" -a -z "$EXTERNAL_PERSISTENT" ]; then
     if [ X$ROOT_TYPE != "Xcdrom" ]; then
       if [ ! -f /mnt/loopdisk.img ]; then
-        dd if=/dev/zero of=/mnt/loopdisk.img bs=1M count=256
-        /sbin/mkfs.ext2 -F -q /mnt/loopdisk.img
+        echo 8 > /proc/sys/kernel/printk
+        if [ -f /mnt/loopdisk.zip ]; then
+          echo "Uncompress loopdisk.zip, This may take a longer time, please wait patiently..."
+          unzip /mnt/loopdisk.zip -d /mnt
+          sync
+          sleep 1
+        else
+          echo "Creating loopdisk.img, This may take a longer time, please wait patiently..."
+          dd if=/dev/zero of=/mnt/loopdisk.img bs=1M seek=500 count=0
+          sync
+          sleep 1
+          /sbin/mke2fs -T ext4 -F -q /mnt/loopdisk.img
+          sync
+          sleep 1
+        fi
+        echo 0 > /proc/sys/kernel/printk
       fi
-      mount -o loop /mnt/loopdisk.img /rw
-    else
+      for i in 0 1 2 3 4 5 6 7 8 9; do
+        mount -o loop,sync /mnt/loopdisk.img /rw && break
+        sleep 1
+      done
+    fi
+    if ! mount | grep "\/rw" >/dev/null 2>&1; then
       mount -t tmpfs none /rw
     fi
   fi

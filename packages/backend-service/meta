@@ -1,5 +1,5 @@
 PKG_NAME=backend-service
-PKG_REV=1
+PKG_REV=2
 PKG_RUN_DEPENDS="vdr tvheadend mumudvb dvblast"
 PKG_PRIORITY=optional
 PKG_SECTION=multimedia

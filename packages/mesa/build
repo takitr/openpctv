@@ -43,7 +43,9 @@ fi
 
 setup_toolchain target
 
-NOCONFIGURE=yes ./autogen.sh
+#NOCONFIGURE=yes ./autogen.sh
+#[ -x configure ] || do_autoconf
+do_autoconf
 
 export CXX_FOR_BUILD="$HOST_CXX"
 

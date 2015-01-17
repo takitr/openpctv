@@ -7,14 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-17 22:49+0800\n"
-"PO-Revision-Date: 2014-07-08 17:58+0800\n"
+"POT-Creation-Date: 2015-01-17 09:59+0800\n"
+"PO-Revision-Date: 2015-01-17 10:12+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
 "Language: Simplified Chinese(zh_CN)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: packages/setup/scripts/audio-config:8
 #: packages/setup/scripts/audio-config:48
@@ -411,129 +412,6 @@ msgstr ""
 msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr "你想在这台机器上运行SoftCAM(OScam)吗？"
 
-#: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
-msgid "Reboot"
-msgstr "重新启动"
-
-#: packages/setup/scripts/install-drivers:18
-msgid ""
-"Driver package has been installed successfully. Now you have to reboot to "
-"verify whether the driver works."
-msgstr "驱动包已安装成功，现在你必须重新启动以验证驱动是否能工作。"
-
-#: packages/setup/scripts/install-drivers:24
-msgid "Select NVIDIA graphics driver"
-msgstr "选择NVIDIA显卡驱动"
-
-#: packages/setup/scripts/install-drivers:25
-msgid ""
-"Both nouveau and nvidia enable VDPAU driver support for hardware-accelerated "
-"video decoding. By default we use the nvidia driver, using the nvidia driver "
-"may get a better experience."
-msgstr ""
-"nouveau与nvidia都具备支持硬解码视频的vdpau驱动，缺省情况下我们使用了nvidia驱"
-"动,如果你使用nvidia驱动或许可以获得更佳的体验。"
-
-#: packages/setup/scripts/install-drivers:26
-msgid "NVIDIA's binary Linux graphics driver"
-msgstr "NVIDIA官方二进制Linux显卡驱动"
-
-#: packages/setup/scripts/install-drivers:27
-msgid "Open-source NVIDIA graphics driver"
-msgstr "开源的NVIDIA显卡驱动"
-
-#: packages/setup/scripts/install-drivers:96
-#, sh-format
-msgid "Found $field"
-msgstr "找到$field"
-
-#: packages/setup/scripts/install-drivers:96
-msgid ""
-"Sometimes a board without valid PCI(e) Subsystem ID can't be autodetected. "
-"You can specify the model of the card to pass card=<n> insmod option to "
-"workaround that. Redirect complaints to the vendor of the TV card. Do you "
-"want to do this?"
-msgstr ""
-"有时DVB卡没有有效的PCI(e)硬件ID并且系统不能自动检测到。你可以通过指定insmod加"
-"载驱动时附带的card=<n>参数来使用之加载正常。同时你可以向电视卡商询问其解决方"
-"案。你想继续吗？"
-
-#: packages/setup/scripts/install-drivers:101
-#, sh-format
-msgid "Specify the card number of $field board"
-msgstr "指定$field 卡的序号"
-
-#: packages/setup/scripts/install-drivers:101
-msgid "Here is a list of valid choices for the card=<n> insmod option"
-msgstr "这里是电视卡设备有效的列表，请选择你的卡的正确编号。"
-
-#: packages/setup/scripts/install-drivers:126
-#: packages/setup/scripts/install-drivers:131
-msgid "Additional DVB driver"
-msgstr "附加的DVB驱动"
-
-#: packages/setup/scripts/install-drivers:127
-msgid ""
-"Your DVB devices seem to be normal. Perhaps you do not need to install other "
-"additional drivers. If you want to install additional drivers please select "
-"'Yes'"
-msgstr ""
-"你的DVB设备驱动看上是正常的。也许你并不需要安装其它附加的驱动。如果你想安装附"
-"加驱动，请选择'是'"
-
-#: packages/setup/scripts/install-drivers:132
-msgid ""
-"Your DVB device does not seem to work properly. Perhaps you should install "
-"another driver. Do you want to install the additional drivers?"
-msgstr ""
-"你的DVB设备看上去似乎并不正常，或许你应该安装另外一个驱动。你想要安装附加的驱"
-"动吗？"
-
-#: packages/setup/scripts/install-drivers:137
-#: packages/setup/scripts/setup.sh:102
-msgid "Install additional DVB driver"
-msgstr "安装附加的DVB驱动"
-
-#: packages/setup/scripts/install-drivers:138
-msgid ""
-"Before proceeding please confirm your DVB device specific information. "
-"Choose the driver you need to install carefully."
-msgstr "在继续之前你请确认你的V4L及DVB设备的信息，仔细选择你想要安装的驱动。"
-
-#: packages/setup/scripts/install-drivers:139
-msgid "I do not want to install now."
-msgstr "我现在不想要安装。"
-
-#: packages/setup/scripts/install-drivers:140
-msgid "Support all the TBS devices"
-msgstr "支持TBS全系列的设备"
-
-#: packages/setup/scripts/install-drivers:141
-msgid "Support all the DVBSky devices"
-msgstr "支持DVBSky全系列的设备"
-
-#: packages/setup/scripts/install-drivers:142
-msgid "DVB drivers for Linux - Original code from LinuxTV org"
-msgstr ""
-
-#: packages/setup/scripts/install-drivers:143
-msgid "Support all the TBS DVB-C devices"
-msgstr "支持TBS DVB-C全系列的设备"
-
-#: packages/setup/scripts/install-drivers:144
-msgid "Support all the TBS ATSC devices"
-msgstr "支持TBS ATSC全系列的设备"
-
-#: packages/setup/scripts/install-drivers:145
-msgid "Support all the DVBSky DVB-C devices"
-msgstr "支持DVBSky DVB-C全系列的设备"
-
-#: packages/setup/scripts/install-drivers:146
-#, fuzzy
-msgid "Support the DVB3221 DVB-C device"
-msgstr "支持DVBSky DVB-C全系列的设备"
-
 #: packages/setup/scripts/installator.sh:15
 msgid "Not found or no block device exists."
 msgstr "没有发现或不存在块设备"
@@ -796,6 +674,132 @@ msgstr "调试模式"
 msgid "installator"
 msgstr "安装程序"
 
+#: packages/setup/scripts/install-drivers:18
+#: packages/setup/scripts/setup.sh:90 packages/setup/scripts/setup.sh:119
+msgid "Reboot"
+msgstr "重新启动"
+
+#: packages/setup/scripts/install-drivers:18
+msgid ""
+"Driver package has been installed successfully. Now you have to reboot to "
+"verify whether the driver works."
+msgstr "驱动包已安装成功，现在你必须重新启动以验证驱动是否能工作。"
+
+#: packages/setup/scripts/install-drivers:24
+msgid "Select NVIDIA graphics driver"
+msgstr "选择NVIDIA显卡驱动"
+
+#: packages/setup/scripts/install-drivers:25
+msgid ""
+"Both nouveau and nvidia enable VDPAU driver support for hardware-accelerated "
+"video decoding. By default we use the nvidia driver, using the nvidia driver "
+"may get a better experience."
+msgstr ""
+"nouveau与nvidia都具备支持硬解码视频的vdpau驱动，缺省情况下我们使用了nvidia驱"
+"动,如果你使用nvidia驱动或许可以获得更佳的体验。"
+
+#: packages/setup/scripts/install-drivers:26
+msgid "NVIDIA's binary Linux graphics driver"
+msgstr "NVIDIA官方二进制Linux显卡驱动"
+
+#: packages/setup/scripts/install-drivers:27
+msgid "Open-source NVIDIA graphics driver"
+msgstr "开源的NVIDIA显卡驱动"
+
+#: packages/setup/scripts/install-drivers:96
+#, sh-format
+msgid "Found $field"
+msgstr "找到$field"
+
+#: packages/setup/scripts/install-drivers:96
+msgid ""
+"Sometimes a board without valid PCI(e) Subsystem ID can't be autodetected. "
+"You can specify the model of the card to pass card=<n> insmod option to "
+"workaround that. Redirect complaints to the vendor of the TV card. Do you "
+"want to do this?"
+msgstr ""
+"有时DVB卡没有有效的PCI(e)硬件ID并且系统不能自动检测到。你可以通过指定insmod加"
+"载驱动时附带的card=<n>参数来使用之加载正常。同时你可以向电视卡商询问其解决方"
+"案。你想继续吗？"
+
+#: packages/setup/scripts/install-drivers:101
+#, sh-format
+msgid "Specify the card number of $field board"
+msgstr "指定$field 卡的序号"
+
+#: packages/setup/scripts/install-drivers:101
+msgid "Here is a list of valid choices for the card=<n> insmod option"
+msgstr "这里是电视卡设备有效的列表，请选择你的卡的正确编号。"
+
+#: packages/setup/scripts/install-drivers:126
+#: packages/setup/scripts/install-drivers:131
+msgid "Additional DVB driver"
+msgstr "附加的DVB驱动"
+
+#: packages/setup/scripts/install-drivers:127
+msgid ""
+"Your DVB devices seem to be normal. Perhaps you do not need to install other "
+"additional drivers. If you want to install additional drivers please select "
+"'Yes'"
+msgstr ""
+"你的DVB设备驱动看上是正常的。也许你并不需要安装其它附加的驱动。如果你想安装附"
+"加驱动，请选择'是'"
+
+#: packages/setup/scripts/install-drivers:132
+msgid ""
+"Your DVB device does not seem to work properly. Perhaps you should install "
+"another driver. Do you want to install the additional drivers?"
+msgstr ""
+"你的DVB设备看上去似乎并不正常，或许你应该安装另外一个驱动。你想要安装附加的驱"
+"动吗？"
+
+#: packages/setup/scripts/install-drivers:137
+#: packages/setup/scripts/setup.sh:102
+msgid "Install additional DVB driver"
+msgstr "安装附加的DVB驱动"
+
+#: packages/setup/scripts/install-drivers:138
+msgid ""
+"Before proceeding please confirm your DVB device specific information. "
+"Choose the driver you need to install carefully."
+msgstr "在继续之前你请确认你的V4L及DVB设备的信息，仔细选择你想要安装的驱动。"
+
+#: packages/setup/scripts/install-drivers:139
+msgid "Need not install any drivers"
+msgstr "不需要安装驱动"
+
+#: packages/setup/scripts/install-drivers:140
+msgid "Support all the TBS devices"
+msgstr "支持TBS全系列的设备"
+
+#: packages/setup/scripts/install-drivers:141
+msgid "Support all the DVBSky devices"
+msgstr "支持DVBSky全系列的设备"
+
+#: packages/setup/scripts/install-drivers:142
+msgid "DVB drivers for Linux - Original code from LinuxTV org"
+msgstr "来自于LinuxTV.org的原始驱动"
+
+#: packages/setup/scripts/install-drivers:143
+msgid "Open Source Drivers for TBS cards"
+msgstr "TBS设备的开源驱动"
+
+#: packages/setup/scripts/install-drivers:144
+msgid "Support all the TBS DVB-C devices"
+msgstr "支持TBS DVB-C全系列的设备"
+
+#: packages/setup/scripts/install-drivers:145
+msgid "Support all the TBS ATSC devices"
+msgstr "支持TBS ATSC全系列的设备"
+
+#: packages/setup/scripts/install-drivers:146
+msgid "Support all the DVBSky DVB-C devices"
+msgstr "支持DVBSky DVB-C全系列的设备"
+
+#: packages/setup/scripts/install-drivers:147
+msgid "Support the DVB3221 DVB-C device"
+msgstr "支持DVB3221 DVB-C设备"
+
 #: packages/setup/scripts/monitor.sh:8
 msgid "Do you need to set the monitor's best resolution?"
 msgstr "你需要为你显示器设定最佳分辨率吗？"
@@ -953,9 +957,8 @@ msgid "Searching for wireless networks, please wait ..."
 msgstr "正在搜索无线网络，请等待 ..."
 
 #: packages/setup/scripts/select-backend:8
-#, fuzzy
 msgid "Select the default PVR backend for KODI"
-msgstr "选择默认的启动项"
+msgstr "选择KODI的默认pvr后台"
 
 #: packages/setup/scripts/select-backend:8
 msgid ""
@@ -978,7 +981,7 @@ msgstr ""
 
 #: packages/setup/scripts/select-backend:22
 msgid "Do not run any PVR backend"
-msgstr ""
+msgstr "不运行任何PVR后台"
 
 #: packages/setup/scripts/select-irdrv:11
 msgid "IR configuration"
@@ -1092,9 +1095,8 @@ msgid "Update EPG data"
 msgstr "更新第三方EPG数据"
 
 #: packages/setup/scripts/setup.sh:108
-#, fuzzy
 msgid "Select the default PVR backend"
-msgstr "选择默认的启动项"
+msgstr "选择默认的PVR后台"
 
 #: packages/setup/scripts/setup.sh:110
 msgid "Select a software emulated CAM"
@@ -1109,18 +1111,16 @@ msgid "Auto scan channels"
 msgstr "自动扫描频道"
 
 #: packages/setup/scripts/setup.sh:114
-#, fuzzy
 msgid "Start KODI pvr with VDR/TVheadend backend"
-msgstr "启动带有VDR后台的KODI"
+msgstr "  启动KODI(同时启动VDR或TVheadend后台)"
 
 #: packages/setup/scripts/setup.sh:115
-#, fuzzy
 msgid "Start VDR frontend"
-msgstr "启动带有rpihddevice的VDR"
+msgstr "启动VDR前端"
 
 #: packages/setup/scripts/setup.sh:116
 msgid "Start Enigam2 frontend"
-msgstr ""
+msgstr "启动Enigma2"
 
 #: packages/setup/scripts/setup.sh:117
 msgid "Install OpenPCTV to your hard disk"
@@ -1135,29 +1135,33 @@ msgid ""
 "No DVB devices has been discovered. Please check whether the device is ready."
 msgstr "没有发现DVB设备。请检查设备是否已准备就绪。"
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid "Scan channels for VDR"
 msgstr "为VDR扫描频道"
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid "Select Satellite"
 msgstr "选择卫星"
 
-#: packages/setup/scripts/update-channels:28
+#: packages/setup/scripts/update-channels:29
 msgid ""
 "Please select the satellite you want to scan, and note that the scanning "
 "process may take some minutes, please be patient."
 msgstr ""
 "请选择你想要扫描的卫星，注意整个扫描的过程可能需要很长时间，请耐心等待。"
 
-#: packages/setup/scripts/update-channels:47
-#: packages/setup/scripts/update-channels:54
+#: packages/setup/scripts/update-channels:52
+#: packages/setup/scripts/update-channels:59
 msgid "We'll use w_scan to scan channels, are you ready?"
 msgstr "我们将使用w_scan扫描频道，你准备好了吗？"
 
-#: packages/setup/scripts/update-channels:89
+#: packages/setup/scripts/update-channels:95
 msgid "Split channels in TV and Radio..."
 msgstr "分离电视和收音的频道列表"
+
+#: packages/setup/scripts/update-channels:101
+msgid "Split channels for:"
+msgstr "分离频道："
 
 #: packages/setup/scripts/update-transponders:8
 msgid "Download transponders for scan-s2"
@@ -1196,6 +1200,9 @@ msgid ""
 msgstr ""
 "你想从fastsatfinder.com更新卫星转发器参数吗？如果不升级的话，你的转发器参数可"
 "能不是最新的。"
+
+#~ msgid "I do not want to install now."
+#~ msgstr "我现在不想要安装。"
 
 #~ msgid "Support most of the devices,such as DVBWorld,Tevii,Prof..."
 #~ msgstr "支持大多数的设备，例如DVBWorld，Tevii，Prof等"

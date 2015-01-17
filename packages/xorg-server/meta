@@ -1,5 +1,5 @@
 PKG_NAME=xorg-server
-PKG_VERSION=1.16.1
+PKG_VERSION=1.16.3
 PKG_URL="$XORG_SRCS/xserver/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 #PKG_URL="http://cgit.freedesktop.org/xorg/xserver/snapshot/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_REV=1

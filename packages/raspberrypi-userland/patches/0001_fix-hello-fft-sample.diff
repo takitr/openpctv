@@ -1,11 +1,12 @@
---- a/host_applications/linux/apps/hello_pi/hello_fft/makefile	2014-05-11 21:47:59.888432190 +0200
-+++ b/host_applications/linux/apps/hello_pi/hello_fft/makefile	2014-05-11 21:47:59.896432190 +0200
-@@ -16,7 +16,7 @@
- F = -lrt -lm -o $(B)
+diff -uNr a/host_applications/linux/apps/hello_pi/hello_fft/makefile b/host_applications/linux/apps/hello_pi/hello_fft/makefile
+--- a/host_applications/linux/apps/hello_pi/hello_fft/makefile	2014-11-29 02:45:48.000000000 +0800
++++ b/host_applications/linux/apps/hello_pi/hello_fft/makefile	2014-12-27 21:32:24.899116516 +0800
+@@ -23,7 +23,7 @@
+ F = -lrt -lm
  
- $(B):	$(H) $(C)
--	gcc $(F) $(C)
-+	gcc $(C) $(F)
+ hello_fft.bin:	$(S) $(C1D) $(H1D)
+-	gcc -o hello_fft.bin $(F) $(C1D)
++	gcc -o hello_fft.bin $(C1D) $(F)
  
- clean:
- 	rm -f $(B)
+ hello_fft_2d.bin:	$(S) hex/shader_trans.hex $(C2D) $(H2D)
+ 	gcc -o hello_fft_2d.bin $(F) $(C2D)

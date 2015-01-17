@@ -11,4 +11,4 @@ make all \
   VDRDIR="../$VDR_DIR" \
   LIBDIR="." \
   LOCALEDIR="./locale" \
-  INCLUDES="$INCLUDES -I$LIB_PREFIX/include/interface/vcos/pthreads -I$LIB_PREFIX/include/interface/vmcs_host/linux"
+  INCLUDES="$INCLUDES -I$LIB_PREFIX/include/freetype2 -I$LIB_PREFIX/include/interface/vcos/pthreads -I$LIB_PREFIX/include/interface/vmcs_host/linux"

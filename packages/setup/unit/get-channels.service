@@ -1,0 +1,11 @@
+[Unit]
+Description=Get VDR streaming channels
+After=vdr.service backend.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/get-vdrchannels
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

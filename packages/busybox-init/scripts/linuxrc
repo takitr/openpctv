@@ -405,8 +405,14 @@ else
       mount -t tmpfs none /rw
     fi
   fi
+  if [ ! -d /rw/upper ]; then
+    mkdir /rw/upper
+  fi
+  if [ ! -d /rw/work ]; then
+    mkdir /rw/work
+  fi
   [ "$EXTERNAL_PERSISTENT" = 1 ] && mount --move /persistent /rw
-  if ! mount -t overlayfs -o lowerdir=/squashfs,upperdir=/rw overlayfs /newroot; then
+  if ! mount -t overlay -o lowerdir=/squashfs,upperdir=/rw/upper,workdir=/rw/work overlay /newroot; then
     echo "Cannot mount overlayfs, dropping to shell"
     exec sh
   fi

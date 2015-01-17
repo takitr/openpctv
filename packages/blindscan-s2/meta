@@ -1,0 +1,12 @@
+PKG_NAME=blindscan-s2
+PKG_URL_PROTO=git
+PKG_URL_REV=4032f50
+PKG_URL="https://github.com/amcsorley/blindscan-s2"
+PKG_VERSION=20130907-r${PKG_URL_REV}
+PKG_REV=1
+PKG_DEPENDS="$TARGET_LIBC"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=utils
+PKG_SHORTDESC="blindscan digital satellite signals"
+PKG_LONGDESC="A C program to blindscan digital satellite signals. Taking advantage of the blindscan algorithm in the Linux driver for the Prof DVB-S2 cards, it will step through a range of transponders, find the symbol rate,and calculate for an LNB if you give it one."

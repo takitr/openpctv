@@ -1,0 +1,8 @@
+PKG_NAME=linux-media-tbs
+PKG_VERSION=20141216
+PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_REV=1
+PKG_PRIORITY=optional
+PKG_SECTION=drivers
+PKG_SHORTDESC="Open Source Drivers for TBS cards"
+PKG_LONGDESC="In consideration to the very small number (3) of people that keep supporting me on this project, I've merged the latest official media tree. Due to changes that the tda18212 driver suffered, some cards need to be re-tested again (I might have screwed something on the driver conversion). Affected cards:TBS6284,TBS6280,TBS6220,TBS5880"

@@ -1,8 +1,10 @@
 PKG_NAME=xf86-video-intel
-PKG_URL_PROTO=git
-PKG_URL_REV=e965203
-PKG_URL="http://anongit.freedesktop.org/git/xorg/driver/xf86-video-intel.git"
-PKG_VERSION=2.99.916+r${PKG_URL_REV}
+#PKG_URL_PROTO=git
+#PKG_URL_REV=e965203
+#PKG_URL="http://anongit.freedesktop.org/git/xorg/driver/xf86-video-intel.git"
+#PKG_VERSION=2.99.916+r${PKG_URL_REV}
+PKG_VERSION=2.99.917
+PKG_URL="$XORG_SRCS/driver/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_REV=1
 PKG_ARCH="i386 x86_64"
 PKG_BUILD_DEPENDS="toolchain intel-gen4asm"

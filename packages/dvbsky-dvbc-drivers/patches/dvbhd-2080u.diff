@@ -1,0 +1,12 @@
+diff -uNr media_build-bst.orig/linux/drivers/media/usb/dvb-usb-v2/dvbsky.c media_build-bst/linux/drivers/media/usb/dvb-usb-v2/dvbsky.c
+--- media_build-bst.orig/linux/drivers/media/usb/dvb-usb-v2/dvbsky.c	2015-01-15 23:13:58.969018887 +0800
++++ media_build-bst/linux/drivers/media/usb/dvb-usb-v2/dvbsky.c	2015-01-15 23:15:22.909435112 +0800
+@@ -718,6 +718,8 @@
+ };
+ 
+ static const struct usb_device_id dvbsky_id_table[] = {
++	{ DVB_USB_DEVICE(0x0572, 0x6830,
++		&dvbsky_s960_props, "DVBHD 2080U", RC_MAP_DVBSKY) },
+ 	{ DVB_USB_DEVICE(0x0572, 0x6831,
+ 		&dvbsky_s960_props, "DVBSky S960/S860", RC_MAP_DVBSKY) },
+ 	{ DVB_USB_DEVICE(0x0572, 0x960c,
