@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. config/options
+
+mkdir -p $INSTALL/bin
+cp -f $BUILD/$1*/objdir-target/$1/$1 $INSTALL/bin

@@ -1,8 +1,36 @@
 #!/bin/sh
 
 . config/options
+get_meta $1
+cd $BUILD/$1*
 
-cd $BUILD/$1*/util/scan
-make CC="$CC" \
-     CFLAGS="$CFLAGS" \
-     LFLAGS="$LDFLAGS"
+export VERSION_FILE=$SYSROOT_PREFIX/usr/include/linux/dvb/version.h
+export LDFLAGS="$LDFLAGS -liconv"
+make
+
+mkdir -p .install/usr/lib
+cp lib/*/*.so .install/usr/lib
+
+mkdir -p .install/usr/bin
+cp util/scan/scan .install/usr/bin/
+cp util/szap/?zap .install/usr/bin
+cp util/femon/femon .install/usr/bin
+cp util/dvbnet/dvbnet .install/usr/bin
+cp util/dvbtraffic/dvbtraffic .install/usr/bin
+cp util/gnutv/gnutv .install/usr/bin
+cp util/lsdvb/lsdvb .install/usr/bin
+cp util/atsc_epg/atsc_epg .install/usr/bin
+cp util/dvbscan/dvbscan .install/usr/bin
+cp util/gotox/gotox .install/usr/bin
+cp util/zap/zap .install/usr/bin
+
+mkdir -p .install/usr/include/libdvben50221
+cp lib/libdvben50221/*.h .install/usr/include/libdvben50221
+
+mkdir -p .install/usr/include/libucsi/dvb
+mkdir -p .install/usr/include/libucsi/mpeg
+mkdir -p .install/usr/include/libucsi/atsc
+cp lib/libucsi/*.h .install/usr/include/libucsi
+cp lib/libucsi/dvb/*.h .install/usr/include/libucsi/dvb
+cp lib/libucsi/mpeg/*.h .install/usr/include/libucsi/mpeg
+cp lib/libucsi/atsc/*.h .install/usr/include/libucsi/atsc

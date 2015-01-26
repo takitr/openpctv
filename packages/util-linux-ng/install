@@ -14,6 +14,11 @@ do_install bin/umount
 do_install bin/mountpoint
 
 do_install usr/bin/setterm
+do_install usr/bin/flock
+do_install usr/bin/whereis
+do_install usr/bin/logger
+do_install usr/bin/hexdump
+do_install usr/bin/
 
 do_install sbin/blkid
 do_install sbin/fsck

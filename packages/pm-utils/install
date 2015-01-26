@@ -1,0 +1,30 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+do_install etc/pm
+do_install usr/bin
+do_install usr/lib/pm-utils
+do_install usr/sbin
+
+cp $ROOT/$PACKAGES/$1/config/power.d/* $INSTALL/usr/lib/pm-utils/power.d/
+cp $ROOT/$PACKAGES/$1/config/sleep.d/* $INSTALL/usr/lib/pm-utils/sleep.d/
+
+# No longer required with current networkmanager (rm -f from debian/rules)
+rm -f $INSTALL/usr/lib/pm-utils/sleep.d/55NetworkManager
+
+# No longer required with current kernels (rm -f from debian/rules)
+rm -f $INSTALL/usr/lib/pm-utils/sleep.d/49bluetooth
+
+# Punt HAL related file wrt #401257 (rm -f from debian/rules)
+rm -f $INSTALL/usr/lib/pm-utils/power.d/hal-cd-polling
+
+# Punt hooks which have shown to not reduce, or even increase power usage
+# (rm -f from debian rules)
+rm -f $INSTALL/usr/lib/pm-utils/power.d/{journal-commit,readahead}
+
+# Remove hooks which are not stable enough yet (rm -f from debian/rules)
+rm -f $INSTALL/usr/lib/pm-utils/power.d/harddrive

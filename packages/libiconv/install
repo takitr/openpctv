@@ -4,5 +4,6 @@
 
 cd $BUILD/$1*
 
+do_install usr/bin
 do_install usr/lib/libiconv.so*
 do_install usr/lib/libcharset.so*

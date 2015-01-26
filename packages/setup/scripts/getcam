@@ -24,9 +24,9 @@ grep -h -E "^C:|^T:" /tmp/CCcam.cfg | while read line; do
   USER=`echo $line | awk '{print $4}'`
   PASS=`echo $line | awk '{print $5}'`
   SCCAM="cccam2:${SERVER}:${PORT}:0/0000/0000:${USER}:${PASS}"
-  if ! grep -q ^$SCCAM $CARDCLIENT > /dev/null 2>&1; then
-    echo "$SCCAM" >> $CARDCLIENT
-  fi
+  #if ! grep -q ^$SCCAM $CARDCLIENT > /dev/null 2>&1; then
+  #  echo "$SCCAM" >> $CARDCLIENT
+  #fi
   if ! grep -q "${SERVER},${PORT}" $OSCAMSERVER; then
     cat >> $OSCAMSERVER << EOF
 [reader]

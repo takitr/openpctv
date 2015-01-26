@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+mkdir -p $INSTALL/bin
+cp $BUILD/${PKG_PARENT}-${PKG_VERSION}/objdir-host/${PKG_PARENT}/${PKG_PARENT} $INSTALL/bin

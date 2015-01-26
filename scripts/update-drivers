@@ -1,0 +1,15 @@
+#!/bin/sh
+
+rm *-dbg_*
+if ls *i586* > /dev/null 2>&1;then 
+ ARCH=i586
+elif ls *x86_64* > /dev/null 2>&1;then
+ ARCH=x86_64
+fi
+
+[ -d /tmp/upload ] && rm -rf /tmp/upload
+mkdir /tmp/upload
+for i in xf86-video-nvidia-maxwell dvb3221-driver linux-media linux-media-tbs tbs-dvbc-drivers dvbsky-drivers tbs-atsc-drivers dvbsky-dvbc-drivers tbs-drivers; do
+  file=`ls -t ${i}_* | sed -n '1p'`
+  cp $file /tmp/upload/${i}-$1_Last_$ARCH.opk
+done

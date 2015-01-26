@@ -9,3 +9,4 @@ cd $PKG_BUILD_DIR
 do_install usr/bin
 do_install usr/sbin
 do_install usr/lib/libpcsc*
+do_install lib

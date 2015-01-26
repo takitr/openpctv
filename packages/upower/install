@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+do_install etc
+do_install lib
+do_install usr/bin
+do_install usr/sbin
+do_install usr/lib/libupower-glib.so*
+do_install var
+
+mkdir -p $INSTALL/lib/systemd/system/graphical.target.wants
+ln -s /lib/systemd/system/upower.service $INSTALL/lib/systemd/system/graphical.target.wants/upower.service

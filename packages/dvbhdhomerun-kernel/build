@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. config/options
+
+$SCRIPTS/build linux
+
+cd $BUILD/$1*
+
+make \
+  KERNEL_DIR=$(kernel_path) \
+
+install_dir="$PWD/.install/lib/modules/$(kernel_version)"
+debug_dir="$PWD/.install-debuginfo/usr/lib/debug"
+
+mkdir -p $install_dir $debug_dir
+
+mkdir -p $install_dir/kernel/drivers/misc
+
+cp *.ko $install_dir/kernel/drivers/misc
+
+strip_kmods "$install_dir" "$debug_dir"

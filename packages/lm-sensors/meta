@@ -1,6 +1,6 @@
 PKG_NAME=lm-sensors
 PKG_URL_PROTO=svn
-PKG_URL_REV=6253
+PKG_URL_REV=6265
 PKG_URL="http://lm-sensors.org/svn/lm-sensors/trunk"
 PKG_VERSION=3.3.6+r${PKG_URL_REV}
 #PKG_VERSION=3.3.5

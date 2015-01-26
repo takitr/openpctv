@@ -4,9 +4,10 @@
 
 cd $BUILD/$1*
 
-#do_autoconf
+export LIBS="$LIBS -liconv"
+
+do_autoconf
 do_configure
 
 make
 make_install
-

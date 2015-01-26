@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPCTV 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-17 09:59+0800\n"
+"POT-Creation-Date: 2015-01-24 15:07+0800\n"
 "PO-Revision-Date: 2015-01-17 10:12+0800\n"
 "Last-Translator: Henry Liu <relaxbsd@gmail.com>\n"
 "Language-Team: OpenPCTV\n"
@@ -399,7 +399,7 @@ msgstr "没有发现DVB设备。请检查设备是否已准备就绪。"
 msgid "This tuner is empty/unused"
 msgstr "这个调谐器是空的/未使用"
 
-#: packages/setup/scripts/getcam:74
+#: packages/setup/scripts/getcam:74 packages/setup/scripts/getcam~:74
 msgid ""
 "Would you like to configure OScam/VDR-SC? You can also put CCcam.cfg file "
 "into an USB flash drive, the system will automatically read and write into "
@@ -408,7 +408,7 @@ msgstr ""
 "你想要配置OScam/VDR-SC吗？当然你也可以将CCcam.cfg文件放在U盘中，系统将会自动"
 "读取并写入OScam/VDR-SC的配置文件中。"
 
-#: packages/setup/scripts/getcam:89
+#: packages/setup/scripts/getcam:89 packages/setup/scripts/getcam~:89
 msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr "你想在这台机器上运行SoftCAM(OScam)吗？"
 

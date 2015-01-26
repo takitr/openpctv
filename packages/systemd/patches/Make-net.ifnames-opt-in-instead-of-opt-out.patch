@@ -1,0 +1,34 @@
+From: Michael Stapelberg <michael@stapelberg.de>
+Date: Thu, 18 Jul 2013 21:09:42 +0200
+Subject: Make net.ifnames opt-in instead of opt-out
+
+With this commit, you need to actively specify net.ifnames=1 to get
+predictable network interface names:
+http://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/
+---
+ src/udev/net/link-config.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/udev/net/link-config.c b/src/udev/net/link-config.c
+index bf24f6a..c09b3d6 100644
+--- a/src/udev/net/link-config.c
++++ b/src/udev/net/link-config.c
+@@ -178,14 +178,14 @@ static bool enable_name_policy(void) {
+         r = proc_cmdline(&line);
+         if (r < 0) {
+                 log_warning_errno(r, "Failed to read /proc/cmdline, ignoring: %m");
+-                return true;
++                return false;
+         }
+ 
+         FOREACH_WORD_QUOTED(word, l, line, state)
+-                if (strneq(word, "net.ifnames=0", l))
+-                        return false;
++                if (strneq(word, "net.ifnames=1", l))
++                        return true;
+ 
+-        return true;
++        return false;
+ }
+ 
+ int link_config_load(link_config_ctx *ctx) {

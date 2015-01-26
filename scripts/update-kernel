@@ -1,0 +1,9 @@
+#!/bin/sh
+for i in linux cryptodev crystalhd dvbsoftwareca dvbhdhomerun-kernel xf86-video-nvidia xf86-video-virtualbox; do
+  ./scripts/clean $i
+  ./scripts/install $i
+done
+for i in xf86-video-nvidia-maxwell tbs-drivers tbs-dvbc-drivers tbs-atsc-drivers dvbsky-drivers dvbsky-dvbc-drivers dvb3221-driver linux-media linux-media-tbs; do
+  ./scripts/clean $i
+  ./scripts/package $i
+done

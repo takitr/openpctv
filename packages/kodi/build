@@ -116,19 +116,8 @@ fi
 
 # prevent internal error in gcc
 if [ ! -f configure ] ; then
-  #BOOTSTRAP_STANDALONE=1 make -C . -f bootstrap.mk
-  BOOTSTRAP_STANDALONE=1 make -f bootstrap.mk
-#  BOOTSTRAP_STANDALONE=1 make -f codegenerator.mk
-#  do_autoconf || true
-#  cd lib/libid3tag/libid3tag && do_autoconf && cd -
-#  cd kodi/screensavers/rsxs-0.9 && do_autoconf && cd -
-#  cd kodi/visualizations/Goom/goom2k4-0 && do_autoconf && cd -
-#  cd lib/libapetag && do_autoconf && cd -
-#  cd lib/cpluff && do_autoconf  && cd -
-  # order matters with libdvd and friends
-  #cd lib/libdvd/libdvdcss && do_autoconf  && cd -
-  #cd lib/libdvd/libdvdread && do_autoconf  && cd -
-  #cd lib/libdvd/libdvdnav && do_autoconf  && cd -
+  BOOTSTRAP_STANDALONE=1 make -C $PKG_BUILD_DIR -f bootstrap.mk
+  BOOTSTRAP_STANDALONE=1 make -C $PKG_BUILD_DIR -f codegenerator.mk
 fi
 
 if [ "$TARGET_MACHINE" != "pandaboard" ] ; then
@@ -179,7 +168,7 @@ fi
 
 for i in .install/usr/lib/kodi/system/players/dvdplayer/*; do
   lib=$(basename $i)
-  ln -s /usr/lib/kodi/system/players/dvdplayer/$lib .install/usr/lib/$lib;
+  ln -sf /usr/lib/kodi/system/players/dvdplayer/$lib .install/usr/lib/$lib;
 done
 
 cp -P $ROOT/$PACKAGES/$1/scripts/kodi-default-settings.sh \

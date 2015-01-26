@@ -1,0 +1,5 @@
+#!/bin/sh
+for i in syslinux network-backend base-files setup; do
+  ./scripts/clean $i
+  ./scripts/install $i
+done

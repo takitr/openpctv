@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-17 15:25+0800\n"
+"POT-Creation-Date: 2015-01-25 15:30+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -384,14 +384,14 @@ msgstr ""
 msgid "This tuner is empty/unused"
 msgstr ""
 
-#: packages/setup/scripts/getcam:74
+#: packages/setup/scripts/getcam:74 packages/setup/scripts/getcam~:74
 msgid ""
 "Would you like to configure OScam/VDR-SC? You can also put CCcam.cfg file "
 "into an USB flash drive, the system will automatically read and write into "
 "the OScam/VDR-SC configuration file."
 msgstr ""
 
-#: packages/setup/scripts/getcam:89
+#: packages/setup/scripts/getcam:89 packages/setup/scripts/getcam~:89
 msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr ""
 

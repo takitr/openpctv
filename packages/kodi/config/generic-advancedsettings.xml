@@ -1,9 +1,12 @@
 <advancedsettings>
   <useddsfanart>true</useddsfanart>
   <showexitbutton>true</showexitbutton>
-  <cputempcommand>sed -e 's/\([0-9]*\)[0-9]\{3\}.*/\1 C/' /sys/class/thermal/thermal_zone0/temp</cputempcommand>
+  <cputempcommand>sensors|sed -ne "s/temp1: \+[-+]\([0-9]\+\).*/\1 C/p" | sed -n '1p'</cputempcommand>
+  <gputempcommand>echo "$(nvidia-settings -tq gpuCoreTemp) C"</gputempcommand>
   <samba>
-    <clienttimeout>10</clienttimeout>
+    <clienttimeout>30</clienttimeout>
   </samba>
   <fullscreen>true</fullscreen>
+  <useddsfanart>true</useddsfanart>
+  <showexitbutton>false</showexitbutton>
 </advancedsettings>

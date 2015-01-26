@@ -1,0 +1,12 @@
+PKG_NAME=vdr-skindesigner
+PKG_URL_PROTO=git
+PKG_URL_REV=252c15c
+PKG_URL="git://projects.vdr-developer.org/vdr-plugin-skindesigner.git"
+PKG_VERSION=0.1.4+r${PKG_URL_REV}
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain vdr cairo librsvg libxml2"
+PKG_RUN_DEPENDS="$TARGET_LIBC vdr"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="VDR -- skindesigner plugin"
+PKG_LONGDESC="vdr-skindesigner is a VDR skin engine that displays XML based Skins."

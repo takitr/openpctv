@@ -1,0 +1,20 @@
+#!/bin/sh
+
+. config/options
+
+mkdir -p $INSTALL/usr/lib
+cp $BUILD/$1*/lib/*/*.so $INSTALL/usr/lib
+
+mkdir -p $INSTALL/usr/bin
+cp $BUILD/$1*/util/scan/scan $INSTALL/usr/bin/
+cp $BUILD/$1*/util/szap/?zap $INSTALL/usr/bin
+cp $BUILD/$1*/util/femon/femon $INSTALL/usr/bin
+cp $BUILD/$1*/util/dvbnet/dvbnet $INSTALL/usr/bin
+cp $BUILD/$1*/util/dvbtraffic/dvbtraffic $INSTALL/usr/bin
+cp $BUILD/$1*/util/gnutv/gnutv $INSTALL/usr/bin
+cp $BUILD/$1*/util/lsdvb/lsdvb $INSTALL/usr/bin
+cp $BUILD/$1*/util/atsc_epg/atsc_epg $INSTALL/usr/bin
+cp $BUILD/$1*/util/dvbdate/dvbdate $INSTALL/usr/bin
+cp $BUILD/$1*/util/dvbscan/dvbscan $INSTALL/usr/bin
+cp $BUILD/$1*/util/gotox/gotox $INSTALL/usr/bin
+cp $BUILD/$1*/util/zap/zap $INSTALL/usr/bin

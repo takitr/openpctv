@@ -1,10 +1,7 @@
 #!/bin/sh
 
 . config/options
+cd $BUILD/$1*
 
-mkdir -p $INSTALL/usr/bin
-cp $BUILD/$1*/util/scan/scan $INSTALL/usr/bin/dvbscan
-
-# Build DVB transponders frequencies archive
-mkdir -p $INSTALL/usr/share/
-tar cf - -C $BUILD/$1*/util/scan/ dvb | lzma -9 > $INSTALL/usr/share/dvb.tar.lzma
+do_install usr/lib
+do_install usr/bin

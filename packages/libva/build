@@ -16,6 +16,8 @@ do_configure \
   --disable-egl \
   --with-gnu-ld \
   --enable-silent-rules \
+  --enable-x11 \
+  --enable-drm \
 
 make
 make_install

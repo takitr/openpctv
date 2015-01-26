@@ -41,7 +41,7 @@ do_configure \
             --disable-ansi \
             --disable-verbose-mode \
             --disable-asserts \
-            --disable-checks \
+            --enable-checks \
             --disable-xml-docs \
             --disable-doxygen-docs \
             --disable-compiler-coverage \
@@ -49,9 +49,13 @@ do_configure \
             --disable-selinux \
             --disable-libaudit \
             --disable-dnotify \
+	    --enable-systemd \
             --enable-inotify \
             --with-xml=expat \
-            $WITH_XORG \
+            --without-x \
+	    --without-valgrind \
+	    --without-dbus-glib \
+	    --disable-x11-autolaunch \
             --with-session-socket-dir=/var/run/dbus \
             --with-test-socket-dir=/var/run/dbus \
             --with-system-pid-file=/var/run/dbus/pid \

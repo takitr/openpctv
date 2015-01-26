@@ -1,10 +1,14 @@
 PKG_NAME=systemd
-PKG_VERSION=v208-20141106
+PKG_VERSION=218
 #PKG_URL="http://www.freedesktop.org/software/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-PKG_REV=3
+#PKG_URL_REV=df99a9e
+#PKG_VERSION=219+${PKG_URL_REV}
+#PKG_URL_PROTO=git
+#PKG_URL="git://anongit.freedesktop.org/systemd/systemd"
+PKG_REV=1
 PKG_RUN_DEPENDS="$TARGET_LIBC pciids"
-PKG_DEPENDS="dbus libcap kmod util-linux-ng GLib libffi gettext"
+PKG_DEPENDS="libcap kmod util-linux-ng GLib libffi gettext"
 PKG_BUILD_DEPENDS="toolchain linux-headers intltool gperf GLib-host libgcrypt"
 PKG_USE="devtools pciutils"
 PKG_USE_DESC_pciutils="PCI utils"

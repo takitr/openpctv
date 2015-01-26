@@ -1,9 +1,13 @@
 PKG_NAME=dvb-apps
-PKG_VERSION=20090201
-PKG_URL="$DISTRO_SRCS/dvb-apps-${PKG_VERSION}.tar.bz2"
+#PKG_VERSION=20090201
+#PKG_URL="$DISTRO_SRCS/dvb-apps-${PKG_VERSION}.tar.bz2"
+PKG_URL_PROTO=hg
+PKG_URL="http://linuxtv.org/hg/dvb-apps"
+PKG_URL_REV=3d43b28
+PKG_VERSION=20140321-r${PKG_URL_REV}
 PKG_REV=1
 PKG_RUN_DEPENDS="$TARGET_LIBC"
-PKG_BUILD_DEPENDS="toolchain"
+PKG_BUILD_DEPENDS="toolchain libiconv"
 PKG_PRIORITY=optional
 PKG_SECTION=utils
 PKG_SHORTDESC="Digitial Video Broadcasting (DVB) applications"

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+. config/options
+
+cd $BUILD/$1*
+
+do_install usr/lib/libgirepository-1.0.so*
+do_install usr/lib/girepository-1.0
+do_install usr/lib/gobject-introspection
+

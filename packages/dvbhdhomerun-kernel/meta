@@ -1,0 +1,8 @@
+PKG_NAME=dvbhdhomerun-kernel
+PKG_VERSION=20150120
+PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_REV=1
+PKG_PRIORITY=optional
+PKG_SECTION=drivers
+PKG_SHORTDESC="A linux DVB driver for the HDHomeRun"
+PKG_LONGDESC="Make the HDHomeRun work as any other DVB device under linux. Use the HDHomeRun with Tvheadend, Kaffeine, the various dvb command line tools, Mythtv (as a DVB device) etc."

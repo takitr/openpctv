@@ -9,7 +9,7 @@
     <timezonecountry></timezonecountry>
   </locale>
   <services>
-    <airplay>false</airplay>
+    <airplay>true</airplay>
     <airplaypassword></airplaypassword>
     <devicename>KODI</devicename>
     <esallinterfaces>true</esallinterfaces>
@@ -37,7 +37,7 @@
     <skincolors>SKINDEFAULT</skincolors>
     <skintheme>SKINDEFAULT</skintheme>
     <skinzoom>0</skinzoom>
-    <soundskin>OFF</soundskin>
+    <soundskin>SKINDEFAULT</soundskin>
     <startupwindow>10000</startupwindow>
   </lookandfeel>
   <pvrmanager>

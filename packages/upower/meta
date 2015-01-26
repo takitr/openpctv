@@ -1,0 +1,11 @@
+PKG_NAME=upower
+PKG_VERSION=0.99.2
+PKG_URL="http://upower.freedesktop.org/releases/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_REV=1
+PKG_DEPENDS="GLib dbus gettext dbus-glib libiconv libusb"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_BUILD_DEPENDS="toolchain GLib-host"
+PKG_PRIORITY=optional
+PKG_SECTION=libs
+PKG_SHORTDESC="An abstraction for enumerating power devices"
+PKG_LONGDESC="UPower is an abstraction for enumerating power devices, listening to device events and querying history and statistics. Any application or service on the system can access the org.freedesktop.UPower service via the system message bus."

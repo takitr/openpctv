@@ -1,6 +1,6 @@
 PKG_NAME=pcsc-lite
 PKG_URL_PROTO=svn
-PKG_URL_REV=6933
+PKG_URL_REV=7078
 PKG_URL="svn://anonscm.debian.org/pcsclite/trunk/PCSC"
 PKG_VERSION=1.8.10+r${PKG_URL_REV}
 #PKG_VERSION=1.8.11
