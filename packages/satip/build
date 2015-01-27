@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR/satip
+
+make
+
+mkdir -p .install/usr/bin
+cp satip .install/usr/bin

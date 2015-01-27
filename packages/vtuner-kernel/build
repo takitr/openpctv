@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. config/options
+
+$SCRIPTS/build linux
+$SCRIPTS/unpack satip
+
+cd $BUILD/satip-*/vtuner_tweak
+
+
+make KVER=$(kernel_version) KDIR=$(kernel_path)
+
+mkdir -p .install/lib/modules/$(kernel_version)/misc
+cp vtunerc.ko .install/lib/modules/$(kernel_version)/misc

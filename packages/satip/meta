@@ -1,0 +1,10 @@
+PKG_NAME=satip
+PKG_URL="http://wiki.satip.googlecode.com/git/satip-0.0.2.tar.gz"
+PKG_VERSION="0.0.2"
+PKG_REV=1
+PKG_RUN_DEPENDS="$TARGET_LIBC vtuner-kernel"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=misc
+PKG_SHORTDESC="SAT>IP"
+PKG_LONGDESC="SAT>IP client for Linux attaching to vtuner driver of https://code.google.com/p/vtuner/ To be used e.g. with tvheadend, vdr, ..."

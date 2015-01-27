@@ -1,5 +1,5 @@
 #!/bin/sh
-for i in linux cryptodev crystalhd dvbsoftwareca dvbhdhomerun-kernel xf86-video-nvidia xf86-video-virtualbox; do
+for i in linux cryptodev crystalhd dvbsoftwareca dvbhdhomerun-kernel vtuner-kernel xf86-video-nvidia xf86-video-virtualbox; do
   ./scripts/clean $i
   ./scripts/install $i
 done
