@@ -8,15 +8,15 @@ FLAVOUR_KCONFIG="
 choice OPENPCTV_FRONTEND
   prompt \"Mediacenter frontend\"
   depends on FLAVOUR_openpctv
-  default FRONTEND_enna
+  default FRONTEND_kodi
 
 config FRONTEND_enna
   bool \"Enna MediaCenter\"
   select PKG_enna
 
-config FRONTEND_xbmc
-  bool \"XBMC\"
-  select PKG_xbmc
+config FRONTEND_kodi
+  bool \"KODI\"
+  select PKG_kodi
 
 config FRONTEND_boxee
   bool \"Boxee\"
@@ -58,7 +58,7 @@ endchoice
 config OPT_MEDIA_CENTER_FRONTEND
   string
   default \"enna\" if FRONTEND_enna
-  default \"xbmc\" if FRONTEND_xbmc
+  default \"kodi\" if FRONTEND_kodi
   default \"boxee\" if FRONTEND_boxee
   default \"qtmediahub\" if FRONTEND_qtmediahub
   default \"freevo\" if FRONTEND_freevo

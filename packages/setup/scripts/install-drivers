@@ -29,26 +29,14 @@ dialog --clear --title "$(gettext "Select NVIDIA graphics driver")" --menu \
 if [ $(cat /tmp/driver_nvidia.tmp) = "nvidia" -a ${CURRENT_DRV} = "nouveau" ]; then
 #   echo "Download and install xf86-video-nvidia-\${kernelver}_Last_\${machine}.opk, please wait..."
 #   opkg install http://sourceforge.net/projects/openpctv/files/packages/xf86-video-nvidia-${kernelver}_Last_${machine}.opk/download || (echo "Can't download xf86-video-nvidia-${kernelver}_Last_${machine}.opk, check your network settings."; exit)
-   if [ ! -f /etc/modprobe.d/nvidia.conf -o ! -f /usr/lib/modules-load.d/uvesafb.conf ]; then
-      cat > /etc/modprobe.d/nvidia.conf << _EOF
-# NVIDIA binary driver and nouveau do not play well together
-
-# Disable nouveau
-blacklist nouveau
-
-# Disable NVIDIA binary driver
-#blacklist nvidia
-
-options uvesafb mode_option=1024x768-16 scroll=ywrap
-_EOF
-      echo "uvesafb" > /usr/lib/modules-load.d/uvesafb.conf
-   fi
+   [ -f /etc/modprobe.d/nouveau.conf ] && rm /etc/modprobe.d/nouveau.conf
+   [ -f /etc/modprobe.d/nvidia.conf ] ||  cp /usr/share/configfiles/nvidia.conf /etc/modprobe.d
+   [ -f /etc/modules-load.d/uvesafb.conf ] || echo "uvesafb" > /etc/modules-load.d/uvesafb.conf
    HAS_INSTALLED=yes
 elif [ $(cat /tmp/driver_nvidia.tmp) = "nouveau" -a ${CURRENT_DRV} = "nvidia" ]; then
-#   opkg remove xf86-video-nvidia
-   if [ -f /etc/modprobe.d/nvidia.conf -a -f /usr/lib/modules-load.d/uvesafb.conf ]; then
-      rm /etc/modprobe.d/nvidia.conf /usr/lib/modules-load.d/uvesafb.conf
-   fi
+   [ -f /etc/modprobe.d/nouveau.conf ] || cp /usr/share/configfiles/nouveau.conf /etc/modprobe.d
+   [ -f /etc/modprobe.d/nvidia.conf ] && rm /etc/modprobe.d/nvidia.conf
+   [ -f /etc/modules-load.d/uvesafb.conf ] && rm /etc/modules-load.d/uvesafb.conf
    HAS_INSTALLED=yes
 fi
 rm /tmp/driver*.tmp

@@ -1,0 +1,10 @@
+PKG_NAME=amremote
+PKG_VERSION=aa0a9e8
+PKG_REV=1
+PKG_ARCH=arm
+PKG_URL="https://github.com/codesnake/amremote/archive/1.0.tar.gz"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=drivers
+PKG_SHORTDESC="amremote - IR remote configuration utility for Amlogic-based devices"
+PKG_LONGDESC="amremote - IR remote configuration utility for Amlogic-based devices"

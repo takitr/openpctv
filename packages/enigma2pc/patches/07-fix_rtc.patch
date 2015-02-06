@@ -1,0 +1,13 @@
+diff --git a/lib/dvb/dvbtime.cpp b/lib/dvb/dvbtime.cpp
+index f64f7d6..688fe13 100644
+--- a/lib/dvb/dvbtime.cpp
++++ b/lib/dvb/dvbtime.cpp
+@@ -58,7 +58,7 @@ time_t getRTC()
+ 			eDebug(err.c_str());
+     }  
+ 		else
+-			rtc_time=tmp;
++			rtc_time=time(0);
+ 		fclose(f);
+ 	}
+ 	else

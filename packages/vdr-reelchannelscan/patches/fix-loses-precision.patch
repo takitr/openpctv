@@ -1,0 +1,21 @@
+diff -uNr vdr-reelchannelscan-0.6.2-1.orig/rotortools.c vdr-reelchannelscan-0.6.2-1/rotortools.c
+--- vdr-reelchannelscan-0.6.2-1.orig/rotortools.c	2015-01-28 16:46:09.692796362 +0800
++++ vdr-reelchannelscan-0.6.2-1/rotortools.c	2015-01-28 16:47:02.417057805 +0800
+@@ -50,7 +50,7 @@
+             data[0] = (void *)(cardIndex + 1);
+             data[1] = (void *)(source);
+             p->Service("netcvrotor.getDiseqc", &data);
+-            cmds = (int)data[2];
++            cmds = (long)data[2];
+             if (cmds != -1)
+             {
+                 cmd3 = cmds & 255;
+@@ -162,7 +162,7 @@
+         void *data[2];
+         data[0] = (void *)(nrTuner);
+         p->Service("netcvrotor.tunerIsRotor", &data);
+-        return (int)data[1];
++        return (long)data[1];
+     }
+     return false;
+ }

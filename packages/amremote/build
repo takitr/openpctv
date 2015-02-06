@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+make
+
+mkdir -p .install/usr/bin
+cp remotecfg .install/usr/bin
+
+mkdir -p .install/etc
+cp remote.conf .install/etc

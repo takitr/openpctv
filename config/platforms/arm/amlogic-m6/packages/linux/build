@@ -1,0 +1,56 @@
+#!/bin/sh
+
+. config/options
+
+./scripts/unpack wireless-regdb
+
+unset LDFLAGS
+
+MAKEFLAGS=-j3
+
+cd $(kernel_path)
+
+cp $ROOT/$BUILD/wireless-regdb*/db.txt net/wireless/db.txt
+
+[ "$TARGET_MACHINE" = wetek ] && make wetek_play.dtd; make wetek_play.dtb
+
+mkdir -p out
+$PLATFORM_PACKAGES/$1/scripts/dtbTool -o out/dt.img -p scripts/dtc/ arch/arm/boot/dts/amlogic/
+
+make uImage-dtb SVN_REV=0
+
+(cd $PLATFORM_PACKAGES/$1/config/initramfs; find . | cpio -H newc -ov -R 0:0 > $(kernel_path)/rootfs.cpio)
+
+[ -f rootfs.cpio.gz ] && rm rootfs.cpio.gz
+gzip -9 rootfs.cpio
+#$ROOT/$TOOLCHAIN/bin/mkbootimg --kernel ./arch/arm/boot/uImage-dtb --ramdisk ./rootfs.cpio.gz --second ./arch/arm/boot/dts/amlogic/wetek_play.dtb --output ./boot.img
+$ROOT/$TOOLCHAIN/bin/mkbootimg --kernel ./arch/arm/boot/uImage-dtb --ramdisk ./rootfs.cpio.gz --output ./boot.img
+
+make modules
+
+install_dir="`pwd`/.install"
+debug_dir="`pwd`/.install-debuginfo/usr/lib/debug"
+rm -rf $install_dir $debug_dir
+mkdir -p $install_dir/lib/firmware $debug_dir
+
+make modules_install \
+  INSTALL_MOD_PATH=.install \
+  DEPMOD=$ROOT/$TOOLCHAIN/bin/depmod
+
+kmod_dir="$install_dir/lib/modules/$(kernel_version)"
+
+if [ -d .install/lib/firmware ]; then
+  mv .install/lib/firmware .install/firmware
+else
+  mkdir -p .install/firmware
+fi
+rm -f $kmod_dir/build $kmod_dir/source $kmod_dir/modules.*
+strip_kmods "$kmod_dir" "$debug_dir"
+
+mkdir -p .install/boot
+
+cp boot.img .install/boot
+
+#cp -rf $ROOT/$PACKAGES/$1/config/ap6210 .install/firmware/
+  
+exit 0

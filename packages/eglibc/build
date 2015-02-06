@@ -2,6 +2,8 @@
 
 . config/options
 
+unset LD_LIBRARY_PATH
+
 export BUILD_CC=$HOST_CC
 export OBJDUMP_FOR_HOST=objdump
 
@@ -107,7 +109,7 @@ do_gcc_strip_gold
              --disable-sanity-checks \
              --enable-add-ons \
              --with-tls \
-             --enable-kernel=2.6.0 \
+             --enable-kernel=3.0.0 \
              --with-__thread \
              --with-binutils=$ROOT/$TOOLCHAIN/bin \
              --with-headers=$SYSROOT_PREFIX/usr/include \
@@ -133,5 +135,5 @@ do_strip shlib .install/lib/*.so
 
 rm -rf ../.install ../.install-debuginfo
 mv .install .install-debuginfo ..
-ln -s objdir-eglibc/.install-unstripped ../.install-unstripped
+ln -sf objdir-eglibc/.install-unstripped ../.install-unstripped
 

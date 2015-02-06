@@ -22,7 +22,7 @@ if grep -q -i arm /proc/cpuinfo; then
   if [ $result = 142 -o $result = 130 ]; then
     if [ $DEFTARGET = "kodi" ]; then
       systemctl start getty\@ttymxc0
-      systemctl start vdr-backend
+      systemctl start backend
       systemctl start kodi
       exit 0
     elif [ $DEFTARGET = "vdr" ]; then
@@ -75,7 +75,7 @@ updatelocale
 #[ -f $RUN_IR ] && $RUN_IR
 #systemctl restart lircd
 systemctl stop vdr
-systemctl stop vdr-backend
+systemctl stop backend
 [ -f $RUN_MONITOR ] && $RUN_MONITOR
 [ -f $RUN_AUDIO ] && $RUN_AUDIO init
 [ -f $RUN_CAM ] && $RUN_CAM
@@ -153,12 +153,12 @@ case "$(cat $DIALOGOUT)" in
 		MainMenu
 		;;
     DiSEqC)	systemctl stop vdr
-		systemctl stop vdr-backend
+		systemctl stop backend
 		$RUN_DISEQC
     		MainMenu
   		;;
     Scan)	systemctl stop vdr
-		systemctl stop vdr-backend
+		systemctl stop backend
 		$RUN_CHANNELS
 		MainMenu
 		;;

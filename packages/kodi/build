@@ -77,6 +77,10 @@ if [ "$TARGET_PLATFORM" = imx6 ]; then
   EXTRA_CONFIG="$EXTRA_CONFIG --enable-codec=imxvpu"
 fi
 
+if [ "$TARGET_PLATFORM" = amlogic-m6 ]; then
+  EXTRA_CONFIG="$EXTRA_CONFIG --enable-codec=amcodec"
+fi
+
 if [ "$FPU_OPTIMIZATIONS" = "neon" -o  "$FPU_OPTIMIZATIONS" = "neon-vfp4" ]; then
   EXTRA_CONFIG="$EXTRA_CONFIG --enable-neon"
 fi
@@ -116,8 +120,8 @@ fi
 
 # prevent internal error in gcc
 if [ ! -f configure ] ; then
-  BOOTSTRAP_STANDALONE=1 make -C $PKG_BUILD_DIR -f bootstrap.mk
-  BOOTSTRAP_STANDALONE=1 make -C $PKG_BUILD_DIR -f codegenerator.mk
+  BOOTSTRAP_STANDALONE=1 make -C $ROOT/$PKG_BUILD_DIR -f bootstrap.mk
+  BOOTSTRAP_STANDALONE=1 make -C $ROOT/$PKG_BUILD_DIR -f codegenerator.mk
 fi
 
 if [ "$TARGET_MACHINE" != "pandaboard" ] ; then
@@ -161,9 +165,10 @@ make_install
 
 if [ "$TARGET_ARCH" = arm ]; then
   # workaround to make the addons run
-  ln -sf /usr/lib/kodi/addons/library.kodi.addon/libKODI_addon-arm.so .install/usr/lib/kodi/addons/library.kodi.addon/libKODI_addon-arm-linux.so || true
-  ln -sf /usr/lib/kodi/addons/library.kodi.gui/libKODI_gui-arm.so .install/usr/lib/kodi/addons/library.kodi.gui/libKODI_gui-arm-linux.so || true
-  ln -sf /usr/lib/kodi/addons/library.kodi.pvr/libKODI_pvr-arm.so .install/usr/lib/kodi/addons/library.kodi.pvr/libKODI_pvr-arm-linux.so || true
+  ln -sf /usr/lib/kodi/addons/library.kodi.addon/libXBMC_addon-arm.so .install/usr/lib/kodi/addons/library.xbmc.addon/libXBMC_addon-arm-linux.so || true
+  ln -sf /usr/lib/kodi/addons/library.kodi.gui/libXBMC_gui-arm.so .install/usr/lib/kodi/addons/library.xbmc.gui/libXBMC_gui-arm-linux.so || true
+  ln -sf /usr/lib/kodi/addons/library.kodi.pvr/libXBMC_pvr-arm.so .install/usr/lib/kodi/addons/library.xbmc.pvr/libXBMC_pvr-arm-linux.so || true
+  ln -sf /usr/lib/kodi/addons/library.kodi.codec/libXBMC_codec-arm.so .install/usr/lib/kodi/addons/library.xbmc.codec/libXBMC_codec-arm-linux.so || true
 fi
 
 for i in .install/usr/lib/kodi/system/players/dvdplayer/*; do
@@ -199,6 +204,7 @@ elif [ "$TARGET_PLATFORM" = bcm2708 ];	then SYS_PREFIX="rpi"
 elif [ "$TARGET_PLATFORM" = a10 -o "$TARGET_PLATFORM" = a20 ];	then SYS_PREFIX="a10"
 elif [ "$TARGET_MACHINE" = utilite ];	then SYS_PREFIX="utilite"
 elif [ "$TARGET_PLATFORM" = imx6 ];	then SYS_PREFIX="cuboxi"
+elif [ "$TARGET_PLATFORM" = amlogic-m6 ];	then SYS_PREFIX="amlogic-m6"
 else					SYS_PREFIX="generic"     
 fi
 

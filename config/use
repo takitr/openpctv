@@ -53,6 +53,11 @@ config EGL_PROVIDER_VC
   depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
   select PKG_raspberrypi-userland
 
+config EGL_PROVIDER_AML
+  bool \"Amlogic Meson6\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
+  select PKG_opengl-meson6
+
 endchoice
 
 choice GLES_PROVIDER
@@ -101,6 +106,11 @@ config GLES_PROVIDER_VC
   depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
   select PKG_raspberrypi-userland
 
+config GLES_PROVIDER_AML
+  bool \"Amlogic Meson6\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
+  select PKG_opengl-meson6
+
 endchoice
 
 choice OVG_PROVIDER
@@ -143,6 +153,11 @@ config OVG_PROVIDER_VC
   bool \"Broadcom VideCoreIV\"
   depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
   select PKG_raspberrypi-userland
+
+config OVG_PROVIDER_AML
+  bool \"Amlogic Meson6\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
+  select PKG_opengl-meson6
 
 endchoice
 
@@ -316,6 +331,18 @@ PKG_USE_DEPENDS_libnfs="libnfs"
 PKG_USE_NAME_lirc="LIRC"
 PKG_USE_SECTION_lirc="input"
 PKG_USE_DEPENDS_lirc="lirc"
+
+# eventlircd
+PKG_USE_NAME_eventlircd="Event LIRCD"
+PKG_USE_SECTION_eventlircd="input"
+PKG_USE_DEPENDS_eventlircd="eventlircd"
+
+# amremote
+PKG_USE_NAME_amremote="IR remote for Amlogic-based devices"
+PKG_USE_SECTION_amremote="input"
+PKG_USE_DEPENDS_amremote="amremote"
+PKG_USE_ARCH_amremote="arm"
+PKG_USE_PLATFORM_amremote="amlogic-m6"
 
 # live
 PKG_USE_NAME_live="LIVE555"

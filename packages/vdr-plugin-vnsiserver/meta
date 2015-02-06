@@ -1,8 +1,8 @@
 PKG_NAME=vdr-plugin-vnsiserver
 PKG_URL_PROTO=git
-PKG_URL_REV=a7cb405
+PKG_URL_REV=b887bc8
 PKG_URL="https://github.com/FernetMenta/vdr-plugin-vnsiserver.git"
-PKG_VERSION=1.2.0+r${PKG_URL_REV}
+PKG_VERSION=1.2.1+r${PKG_URL_REV}
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain zlib"
 PKG_DEPENDS="vdr"

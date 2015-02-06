@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+do_install usr/lib
+
+mkdir -p $INSTALL/etc/modules-load.d
+echo "mali" > $INSTALL/etc/modules-load.d/mali.conf

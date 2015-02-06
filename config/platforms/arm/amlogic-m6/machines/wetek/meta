@@ -1,0 +1,4 @@
+MACHINE_NAME=wetek
+MACHINE_DESC="WeTek Play"
+MACHINE_HELP="Please refer to https://wetek.com"
+#MACHINE_UBOOT_CONFIG=m6_mbx_v1_config

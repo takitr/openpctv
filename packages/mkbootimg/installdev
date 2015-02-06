@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. config/options
+
+mkdir -p $INSTALL/bin
+cp -P $BUILD/$1*/mkbootimg $INSTALL/bin
+cp -P $BUILD/$1*/unpackbootimg $INSTALL/bin

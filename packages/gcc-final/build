@@ -3,7 +3,7 @@
 . config/options
 
 if [ "$TARGET_ARCH" = x86_64 ] ; then
-  ln -s lib $SYSROOT_PREFIX/usr/lib64
+  ln -sf lib $SYSROOT_PREFIX/usr/lib64
 fi
 
 $SCRIPTS/unpack gcc-$TOOLCHAIN_TYPE

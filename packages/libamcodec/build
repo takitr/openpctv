@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+mkdir -p .install/usr/lib
+
+make -C amavutils CC="$CC" PREFIX="$ROOT/$PKG_BUILD_DIR/.install/usr"
+cp -PR amavutils/*.so .install/usr/lib
+
+make -C amadec CC="$CC" PREFIX="$ROOT/$PKG_BUILD_DIR/.install/usr" CROSS_PREFIX="$TARGET_PREFIX" install
+make -C amcodec CC="$CC" HEADERS_DIR="$ROOT/$PKG_BUILD_DIR/.install/usr/include/amcodec" PREFIX="$ROOT/$PKG_BUILD_DIR/.install/usr" CROSS_PREFIX="$TARGET_PREFIX" install

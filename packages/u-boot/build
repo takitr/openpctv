@@ -18,8 +18,15 @@ cd $PKG_BUILD_DIR
 # Move the toolchain/bin in the back of the PATH so we can still find mkimage
 export PATH=$(echo $PATH | sed "s|$ROOT/$TOOLCHAIN/bin:||g" ):$ROOT/$TOOLCHAIN/bin
 
+echo "make CROSS_COMPILE=$TARGET_PREFIX $MACHINE_UBOOT_CONFIG" >> /tmp/u-boot_debug
+echo "make CROSS_COMPILE=$TARGET_PREFIX HOSTCC=$HOST_CC HOSTSTRIP=true" >> /tmp/u-boot_debug
+
 make CROSS_COMPILE="$TARGET_PREFIX" $MACHINE_UBOOT_CONFIG
+
+echo "$?" >> /tmp/u-boot_debug
 make CROSS_COMPILE="$TARGET_PREFIX" HOSTCC="$HOST_CC" HOSTSTRIP="true"
+echo "$?" >> /tmp/u-boot_debug
+echo "3" >> /tmp/u-boot_debug
 
 if [ -n "$MACHINE_UBOOT_CONFIG_EXTRA" ]; then
   echo "found extra config to build : $MACHINE_UBOOT_CONFIG_EXTRA"

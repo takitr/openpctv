@@ -1,11 +1,11 @@
 PKG_NAME=oscam
 PKG_URL_PROTO=svn
-PKG_URL_REV=10312
+PKG_URL_REV=10231
 PKG_URL="http://www.streamboard.tv/svn/oscam/trunk"
 PKG_VERSION=1.2+r${PKG_URL_REV}
 PKG_REV=1
 PKG_RUN_DEPENDS="$TARGET_LIBC libusb"
-PKG_BUILD_DEPENDS="toolchain cmake libusb"
+PKG_BUILD_DEPENDS="toolchain cmake libusb openssl"
 PKG_USE="pcsc"
 PKG_DEPENDS_pcsc="pcsc-lite"
 PKG_PRIORITY="optional"

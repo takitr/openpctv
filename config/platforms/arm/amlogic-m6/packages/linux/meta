@@ -1,0 +1,6 @@
+#PKG_URL_REV=fa4c242
+#PKG_VERSION=amlogic-3.10-${PKG_URL_REV}
+#PKG_URL_PROTO=git
+#PKG_URL="https://github.com/codesnake/linux-amlogic"
+PKG_VERSION="amlogic-3.10-84deff2"
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"

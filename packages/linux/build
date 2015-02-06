@@ -14,12 +14,21 @@ case $TARGET_ARCH in
   powerpc64)    IMAGE=zImage   ;;
   arm)
     . $CONFIG_MACHINE/meta
-    [ -n "$MACHINE_UBOOT_CONFIG" ] && IMAGE=uImage || IMAGE=zImage
+    if [ -n "$MACHINE_UBOOT_CONFIG" ]; then
+      if [ "$TARGET_PLATFORM" = amlogic-m6 ]; then
+        IMAGE=uImage-dtb
+      else
+        IMAGE=uImage
+      fi
+    else
+      IMAGE=zImage
+    fi
     ;;
 esac
 
 cp -R $ROOT/$PACKAGES/$1/firmware/* firmware/
 
+[ "$TARGET_MACHINE" = wetek ] && make wetek_play.dtd
 make $IMAGE
 make modules
 

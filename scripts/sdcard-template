@@ -30,6 +30,7 @@ case $TARGET in
   igepv2)        fs_types="fat32 ext2" ;  boot_part_size="16M" ;; 
   pandaboard)    fs_types="fat32 ext4" ;;
   snowball-v5)   fs_types="fat32 ext4" ;;
+  wetek)         fs_types="fat32 ext3" ;;
   efikamx)       fs_types="undefined"  ;;
   ac100)         fs_types="undefined"  ;;
   harmony)       fs_types="undefined"  ;;

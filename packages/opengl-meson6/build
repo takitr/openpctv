@@ -1,0 +1,13 @@
+#!/bin/sh
+
+. config/options
+
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+mkdir -p .install/usr/include
+cp -PR usr/include/* .install/usr/include
+
+mkdir -p .install/usr/lib
+cp -PR usr/lib/*.so* .install/usr/lib

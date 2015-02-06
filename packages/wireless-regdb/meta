@@ -1,0 +1,9 @@
+PKG_NAME="wireless-regdb"
+PKG_VERSION="2015.01.30"
+PKG_REV="1"
+PKG_URL="https://www.kernel.org/pub/software/network/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_PRIORITY="optional"
+PKG_SECTION=drivers
+PKG_SHORTDESC="wireless-regdb: regulatory database"
+PKG_LONGDESC="wireless-regdb is a regulatory database"

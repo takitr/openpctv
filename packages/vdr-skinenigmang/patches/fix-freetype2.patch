@@ -1,0 +1,19 @@
+diff -uNr vdr-skinenigmang-0.1.3+r73b3116.orig/Makefile vdr-skinenigmang-0.1.3+r73b3116/Makefile
+--- vdr-skinenigmang-0.1.3+r73b3116.orig/Makefile	2015-02-04 23:40:54.749206679 +0800
++++ vdr-skinenigmang-0.1.3+r73b3116/Makefile	2015-02-04 23:41:08.825276478 +0800
+@@ -138,13 +138,8 @@
+ endif
+ endif
+ 
+-ifneq ($(shell which freetype-config),)
+-	INCLUDES += $(shell freetype-config --cflags)
+-	LIBS += $(shell freetype-config --libs)
+-else
+-	INCLUDES += -I/usr/include/freetype -I/usr/local/include/freetype
+-	LIBS += -lfreetype
+-endif
++INCLUDES += $(shell pkg-config freetype2 --cflags)
++LIBS += $(shell pkg-config freetype2 --libs)
+ 
+ ### The main target:
+ 

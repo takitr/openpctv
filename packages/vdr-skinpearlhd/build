@@ -5,6 +5,10 @@
 cd $BUILD/$1*
 #do_configure
 
+CFLAGS="$CFLAGS -fPIC"
+CXXFLAGS="$CXXFLAGS -fPIC"
+LDFLAGS="$LDFLAGS -fPIC"
+
 make \
   VDRDIR="../$VDR_DIR" \
   LIBDIR="." \

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+. config/options
+
+mkdir -p $INSTALL/lib/modules/$(kernel_version)/misc
+cp $ROOT/$PACKAGES/$1/config/wetekdvb.ko $INSTALL/lib/modules/$(kernel_version)/misc
+
+mkdir -p $INSTALL/etc/modules-load.d
+echo "wetekdvb" > $INSTALL/etc/modules-load.d/wetekdvb.conf

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+setup_toolchain host
+
+make -C libmincrypt CC=$HOST_CC STRIP=$HOST_STRIP
+make CC=$HOST_CC

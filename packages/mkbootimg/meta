@@ -1,0 +1,10 @@
+PKG_NAME=mkbootimg
+PKG_URL_PROTO=git
+PKG_URL_REV=b9f210c
+PKG_URL="https://github.com/work4blue/unpack-mkbootimg"
+PKG_VERSION=20120318+$PKG_URL_REV
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY="optional"
+PKG_SECTION="system"
+PKG_SHORTDESC="mkbootimg + unpackbootimg, forked and updated"

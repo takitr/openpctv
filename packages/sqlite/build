@@ -7,6 +7,8 @@ cd $PKG_BUILD_DIR
 
 local_cflags="-fno-fast-math"
 
+export CFLAGS="$CFLAGS -DSQLITE_ENABLE_STAT3 -DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_DEFAULT_MMAP_SIZE=268435456"
+
 do_configure \
             --disable-readline \
             --enable-threadsafe \

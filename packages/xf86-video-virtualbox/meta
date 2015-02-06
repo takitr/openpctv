@@ -1,5 +1,5 @@
 PKG_NAME=xf86-video-virtualbox
-PKG_VERSION=4.3.16-95972
+PKG_VERSION=4.3.20-96996
 PKG_URL="http://download.virtualbox.org/virtualbox/${PKG_VERSION%-*}/VirtualBox-${PKG_VERSION}-Linux_x86.run"
 PKG_REV=1
 PKG_ARCH="i386 x86_64"

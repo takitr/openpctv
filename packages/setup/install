@@ -15,7 +15,7 @@ if [ "$TARGET_ARCH" = arm ]; then
   if [ "$TARGET_PLATFORM" = a20 ]; then
     INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg get-vdrchannels"
   else
-    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-target select-backend update-epg get-vdrchannels"
+    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-backend update-epg get-vdrchannels"
   fi
 else
   INSTALL_SCRIPTS="diseqcsetup monitor.sh update-channels update-dvbdevice update-transponders install-drivers netconfig select-irdrv select-language select-plugins audio-config videocache getcam select-target select-backend update-epg screenshot get-vdrchannels"
@@ -49,14 +49,26 @@ cp $ROOT/$PACKAGES/$1/config/cron_root $INSTALL/var/spool/cron/crontabs/root
 mkdir -p $INSTALL/usr/share/vdr
 cp -rf $PACKAGES/$1/config/channels $INSTALL/usr/share/vdr
 
-mkdir -p $INSTALL/usr/share/installator
-cp $PACKAGES/$1/config/grub.cfg  $INSTALL/usr/share/installator
-cp $PACKAGES/$1/config/syslinux.cfg  $INSTALL/usr/share/installator
-
 mkdir -p $INSTALL/usr/share/zoneinfo
 cp $PACKAGES/$1/config/zonelist $INSTALL/usr/share/zoneinfo
 
-mkdir -p $INSTALL/etc/installator
+if [ "$TARGET_ARCH" != arm ]; then
+  mkdir -p $INSTALL/usr/share/installator
+  cp $PACKAGES/$1/config/grub.cfg  $INSTALL/usr/share/installator
+  cp $PACKAGES/$1/config/syslinux.cfg  $INSTALL/usr/share/installator
+
+  mkdir -p $INSTALL/etc/installator
+
+  mkdir -p $INSTALL/usr/share/configfiles
+  cp $PACKAGES/$1/config/nvidia.conf $INSTALL/usr/share/configfiles/
+  cp $PACKAGES/$1/config/nouveau.conf $INSTALL/usr/share/configfiles/
+
+  mkdir -p $INSTALL/etc/modprobe.d
+  cp $PACKAGES/$1/config/nvidia.conf $INSTALL/etc/modprobe.d
+
+  mkdir -p $INSTALL/etc/modules-load.d
+  echo "uvesafb" > $INSTALL/etc/modules-load.d/uvesafb.conf
+fi
 
 mkdir -p $INSTALL/lib/systemd/system/installator.target.wants/
 ln -s /lib/systemd/system/getty@.service $INSTALL/lib/systemd/system/installator.target.wants/getty@tty2.service

@@ -1,0 +1,50 @@
+<settings>
+  <locale>
+    <audiolanguage>original</audiolanguage>
+    <charset>DEFAULT</charset>
+    <country>USA (12h)</country>
+    <language>English (US)</language>
+    <subtitlelanguage>original</subtitlelanguage>
+    <timezone></timezone>
+    <timezonecountry></timezonecountry>
+  </locale>
+  <services>
+    <airplay>true</airplay>
+    <airplaypassword></airplaypassword>
+    <devicename>KODI</devicename>
+    <esallinterfaces>true</esallinterfaces>
+    <escontinuousdelay>25</escontinuousdelay>
+    <esenabled>true</esenabled>
+    <esinitialdelay>750</esinitialdelay>
+    <esmaxclients>20</esmaxclients>
+    <esport>9777</esport>
+    <esportrange>10</esportrange>
+    <upnprenderer>true</upnprenderer>
+    <upnpserver>false</upnpserver>
+    <useairplaypassword>false</useairplaypassword>
+    <webserver>true</webserver>
+    <webserverpassword></webserverpassword>
+    <webserverport>8080</webserverport>
+    <webserverusername>kodi</webserverusername>
+    <webskin>webinterface.default</webskin>
+    <zeroconf>true</zeroconf>
+  </services>
+  <lookandfeel>
+    <enablerssfeeds>false</enablerssfeeds>
+    <font>Arial</font>
+    <rssedit></rssedit>
+    <skin>skin.confluence</skin>
+    <skincolors>SKINDEFAULT</skincolors>
+    <skintheme>SKINDEFAULT</skintheme>
+    <skinzoom>0</skinzoom>
+    <soundskin>SKINDEFAULT</soundskin>
+    <startupwindow>10000</startupwindow>
+  </lookandfeel>
+  <pvrmanager>
+    <backendchannelorder>true</backendchannelorder>
+    <enabled>true</enabled>
+    <hideconnectionlostwarning>false</hideconnectionlostwarning>
+    <syncchannelgroups>true</syncchannelgroups>
+    <usebackendchannelnumbers>false</usebackendchannelnumbers>
+  </pvrmanager>
+</settings>
