@@ -1,0 +1,95 @@
+===================================================================
+RCS file: ./RCS/MANUAL
+retrieving revision 3.10
+diff -u -r3.10 ./MANUAL
+--- ./MANUAL	2015/01/29 15:55:21	3.10
++++ ./MANUAL	2015/02/02 12:40:07
+@@ -1006,6 +1006,18 @@
+                          the binary mode and makes '1' and '3' always skip the number
+                          of seconds configured as the initial value.
+ 
++  Binary skip strict = yes
++                         When skipping in binary mode with the '1' and '3' keys, the
++                         distance of the skip is halved with every key press after the
++                         first change of direction. While this allows for locating a
++                         particular position in a recording very fast, once you make
++                         one step too many in the current direction you have no chance
++                         of ever reaching the desired point any more. You will have to
++                         wait for the timeout to occur and start binary skipping anew.
++                         If this option is set to 'no', the skip distance will only be
++                         halved if the direction actually changes. That way, even if
++                         you missed the target point, you can still back up to it.
++
+   Resume ID = 0          Defines an additional ID that can be used in a multi user
+                          environment, so that every user has his/her own resume
+                          files for each recording. The valid range is 0...99, with
+===================================================================
+RCS file: ./RCS/config.c
+retrieving revision 3.6
+diff -u -r3.6 ./config.c
+--- ./config.c	2015/01/29 09:01:30	3.6
++++ ./config.c	2015/02/02 12:22:30
+@@ -475,6 +475,7 @@
+   PauseAtLastMark = 0;
+   BinarySkipInitial = 120;
+   BinarySkipTimeout = 3;
++  BinarySkipStrict = 1;
+   ResumeID = 0;
+   CurrentChannel = -1;
+   CurrentVolume = MAXVOLUME;
+@@ -693,6 +694,7 @@
+   else if (!strcasecmp(Name, "PauseAtLastMark"))     PauseAtLastMark    = atoi(Value);
+   else if (!strcasecmp(Name, "BinarySkipInitial"))   BinarySkipInitial  = atoi(Value);
+   else if (!strcasecmp(Name, "BinarySkipTimeout"))   BinarySkipTimeout  = atoi(Value);
++  else if (!strcasecmp(Name, "BinarySkipStrict"))    BinarySkipStrict   = atoi(Value);
+   else if (!strcasecmp(Name, "ResumeID"))            ResumeID           = atoi(Value);
+   else if (!strcasecmp(Name, "CurrentChannel"))      CurrentChannel     = atoi(Value);
+   else if (!strcasecmp(Name, "CurrentVolume"))       CurrentVolume      = atoi(Value);
+@@ -815,6 +817,7 @@
+   Store("PauseAtLastMark",    PauseAtLastMark);
+   Store("BinarySkipInitial",  BinarySkipInitial);
+   Store("BinarySkipTimeout",  BinarySkipTimeout);
++  Store("BinarySkipStrict",   BinarySkipStrict);
+   Store("ResumeID",           ResumeID);
+   Store("CurrentChannel",     CurrentChannel);
+   Store("CurrentVolume",      CurrentVolume);
+===================================================================
+RCS file: ./RCS/config.h
+retrieving revision 3.14
+diff -u -r3.14 ./config.h
+--- ./config.h	2015/02/01 14:59:52	3.14
++++ ./config.h	2015/02/02 12:21:13
+@@ -338,6 +338,7 @@
+   int PauseAtLastMark;
+   int BinarySkipInitial;
+   int BinarySkipTimeout;
++  int BinarySkipStrict;
+   int ResumeID;
+   int CurrentChannel;
+   int CurrentVolume;
+===================================================================
+RCS file: ./RCS/menu.c
+retrieving revision 3.35
+diff -u -r3.35 ./menu.c
+--- ./menu.c	2015/02/01 10:42:11	3.35
++++ ./menu.c	2015/02/02 12:23:18
+@@ -3641,6 +3641,7 @@
+   Add(new cMenuEditBoolItem(tr("Setup.Replay$Pause replay at last mark"), &data.PauseAtLastMark));
+   Add(new cMenuEditIntItem( tr("Setup.Replay$Binary skip initial value (s)"), &data.BinarySkipInitial, 10, 600));
+   Add(new cMenuEditIntItem( tr("Setup.Replay$Binary skip timeout (s)"), &data.BinarySkipTimeout, 0, 10));
++  Add(new cMenuEditBoolItem(tr("Setup.Replay$Binary skip strict"), &data.BinarySkipStrict));
+   Add(new cMenuEditIntItem(tr("Setup.Replay$Resume ID"), &data.ResumeID, 0, 99));
+ }
+ 
+@@ -5007,7 +5008,10 @@
+      }
+   else if (Key != lastKey) {
+      currentValue /= 2;
+-     lastKey = kNone; // once the direction has changed, every further call halves the value
++     if (Setup.BinarySkipStrict)
++        lastKey = kNone; // once the direction has changed, every further call halves the value
++     else
++        lastKey = Key; // only halve the value when the direction is changed
+      }
+   timeout.Set(Setup.BinarySkipTimeout * 1000);
+   return max(currentValue, 1);

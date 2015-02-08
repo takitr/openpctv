@@ -47,7 +47,9 @@ fi
            --disable-libcec \
            --cc="$CC" \
            --cxx="$CXX" \
-           --add-cflags="$CFLAGS" \
+           --add-cflags="$CFLAGS"
+
+sed -i 's/-ljpeg/-ljpeg -lpng/' config.mak
 
 export VDRDIR="$ROOT/$BUILD/$VDR_DIR"
 

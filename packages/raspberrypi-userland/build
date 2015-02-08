@@ -23,12 +23,12 @@ cp -PR $install_dir/opt/vc $install_dir/usr
 if pkg_uses $1 devtools; then
   export SDKSTAGE="$install_dir"
   export CFLAGS="$CFLAGS -I${SDKSTAGE}/opt/vc/include/interface/vmcs_host/linux -I$LIB_PREFIX/include/freetype2"
-  export LDFLAGS="$LDFLAGS -L${LIB_PREFIX}/lib -lfreetype -lz -lbz2"
+  export LDFLAGS="$LDFLAGS -L${LIB_PREFIX}/lib -lfreetype -lpng -lz -lbz2"
   cd $SDKSTAGE/opt/vc/src/hello_pi
-  sh -e rebuild.sh
-  mkdir -p $install_dir/usr/bin $debug_dir/usr/bin
-  cp -PR hello_*/hello_*.bin $install_dir/usr/bin
-  strip_bins $SDKSTAGE/usr/bin $debug_dir/usr/bin
+#  sh -e rebuild.sh
+#  mkdir -p $install_dir/usr/bin $debug_dir/usr/bin
+#  cp -PR hello_*/hello_*.bin $install_dir/usr/bin
+#  strip_bins $SDKSTAGE/usr/bin $debug_dir/usr/bin
 fi
 
 cp $install_dir/usr/src/hello_pi/libs/ilclient/ilclient.h $install_dir/usr/include/interface/vmcs_host/linux

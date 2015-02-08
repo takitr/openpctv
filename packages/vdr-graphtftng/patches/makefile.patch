@@ -1,12 +1,14 @@
-diff -uNr vdr-graphtftng-0.4.10+r6459127.orig/graphtft-fe/Makefile vdr-graphtftng-0.4.10+r6459127/graphtft-fe/Makefile
---- vdr-graphtftng-0.4.10+r6459127.orig/graphtft-fe/Makefile	2014-08-13 13:29:03.308125552 +0800
-+++ vdr-graphtftng-0.4.10+r6459127/graphtft-fe/Makefile	2014-08-13 13:31:55.792980862 +0800
-@@ -4,7 +4,7 @@
+diff -uNr vdr-graphtftng-0.4.14+r2e589a0.orig/graphtft-fe/Makefile vdr-graphtftng-0.4.14+r2e589a0/graphtft-fe/Makefile
+--- vdr-graphtftng-0.4.14+r2e589a0.orig/graphtft-fe/Makefile	2015-02-08 19:35:56.632823838 +0800
++++ vdr-graphtftng-0.4.14+r2e589a0/graphtft-fe/Makefile	2015-02-08 19:36:19.416936818 +0800
+@@ -3,8 +3,8 @@
+ CXXFLAGS  ?= -pipe -ggdb -O2 -Wall -W -D_REENTRANT -fPIC
  CXXFLAGS  += -Wno-deprecated-declarations
  LFLAGS    = -Wl,--no-undefined
- LIBS      = -lpthread -ljpeg -lX11
+-LIBS      = -lpthread -ljpeg -lX11
 -LIBS      += $(shell imlib2-config --libs)
++LIBS      = -lpthread -ljpeg -lX11 -lpng
 +LIBS      += $(shell pkg-config imlib2 --libs)
  AR        = ar
  
- TARGET = graphtft-fe
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))

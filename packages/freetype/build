@@ -16,6 +16,8 @@ make_install toolchain
 sed -i "s:\(['= ]\)/usr:\\1$ROOT/$TOOLCHAIN:g" .install/usr/bin/freetype-config
 cd ..
 
+export LIBPNG_CFLAGS="-I$SYSROOT_PREFIX/usr/include"
+export LIBPNG_LIBS="-L$SYSROOT_PREFIX/usr/lib"
 mkdir -p objdir-target
 cd objdir-target
 do_configure target \
@@ -25,3 +27,4 @@ do_configure target \
 make
 make_install
 sed -i "s:\(['= ]\)/usr:\\1$LIB_PREFIX:g" .install/usr/bin/freetype-config
+sed -i "s/} -lfreetype/} -lfreetype -lpng/" .install/usr/lib/pkgconfig/freetype2.pc
