@@ -1,0 +1,9 @@
+PKG_NAME=hid-mstech
+PKG_VERSION=0.0.1
+PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_REV=1
+PKG_BUILD_DEPENDS="toolchain"
+PKG_RUN_DEPENDS="$TARGET_LIBC linux"
+PKG_PRIORITY=optional
+PKG_SECTION=drivers
+PKG_SHORTDESC="HID-MSTECH module 1d57:ac01"
