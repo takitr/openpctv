@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. config/options
+
+mkdir -p $INSTALL/usr/bin
+
+if [ "$TARGET_ARCH" = arm ]; then
+   cp $PACKAGES/$1*/config/epgtrans.arm $INSTALL/usr/bin/epgtrans
+elif [ "$TARGET_ARCH" = i386 -o "$TARGET_ARCH" = x86_64 ]; then
+   cp $PACKAGES/$1*/config/epgtrans.i386 $INSTALL/usr/bin/epgtrans
+fi

@@ -1,5 +1,5 @@
 PKG_NAME=vdr-live
-PKG_URL_REV=69f84f
+PKG_URL_REV=6ea279a
 PKG_VERSION=0.3.0+${PKG_URL_REV}
 PKG_URL_PROTO=git
 PKG_URL="git://projects.vdr-developer.org/vdr-plugin-live.git"
