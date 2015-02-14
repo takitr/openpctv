@@ -1,0 +1,35 @@
+diff -uNr dvbsoftwareca-20140525.orig/ca_netlink.c dvbsoftwareca-20140525/ca_netlink.c
+--- dvbsoftwareca-20140525.orig/ca_netlink.c	2015-02-14 16:06:26.296539320 +0800
++++ dvbsoftwareca-20140525/ca_netlink.c	2015-02-14 16:08:20.369104977 +0800
+@@ -89,7 +89,7 @@
+ 	return 0;
+ }
+ 
+-int netlink_send_cw(unsigned char ca_num, ca_descr_t *ca_descr) {
++int netlink_send_cw(unsigned short ca_num, ca_descr_t *ca_descr) {
+         struct sk_buff *skb;
+ 	void *msg_head;
+ 	int ret;
+@@ -123,7 +123,7 @@
+ 	return 0;
+ }
+ 
+-int netlink_send_pid(unsigned char ca_num, ca_pid_t *ca_pid) {
++int netlink_send_pid(unsigned short ca_num, ca_pid_t *ca_pid) {
+         struct sk_buff *skb;
+ 	void *msg_head;
+ 	int ret;
+diff -uNr dvbsoftwareca-20140525.orig/ca_netlink.h dvbsoftwareca-20140525/ca_netlink.h
+--- dvbsoftwareca-20140525.orig/ca_netlink.h	2015-02-14 16:06:26.296539320 +0800
++++ dvbsoftwareca-20140525/ca_netlink.h	2015-02-14 16:13:18.054581116 +0800
+@@ -8,8 +8,8 @@
+ #include <linux/version.h>
+ 
+ int reply_ca(struct sk_buff *skb_2, struct genl_info *info);
+-int netlink_send_cw(unsigned char ca_num, ca_descr_t *ca_descr);
+-int netlink_send_pid(unsigned char ca_num, ca_pid_t *ca_pid);
++int netlink_send_cw(unsigned short ca_num, ca_descr_t *ca_descr);
++int netlink_send_pid(unsigned short ca_num, ca_pid_t *ca_pid);
+ int register_netlink(void);
+ void unregister_netlink(void);
+ 
