@@ -13,11 +13,12 @@ aclocal --force --verbose -I m4
 autoconf -v -f -I m4 -o ../configure
 cd ..
 
-cd projects/sample/autoconf
+#cd projects/sample/autoconf
+cd autoconf
 aclocal --force --verbose -I m4
 autoconf --force --verbose -I m4 -o ../configure
 
-cd ../../..
+cd ..
 
 mkdir -p objdir-target
 cd objdir-target
@@ -49,7 +50,8 @@ cd ..
 
 make -C BuildTools BUILD_DIRS_ONLY=1 CFLAGS= CXXFLAGS=
 
-#make_install toolchain
+cd BuildTools
+make_install toolchain
 
 mkdir -p $ROOT/$PKG_BUILD_DIR
 mkdir -p .install

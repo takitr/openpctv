@@ -1,6 +1,6 @@
 PKG_NAME=vdr-rpihddevice
 PKG_URL_PROTO=git
-PKG_URL_REV=beb7667
+PKG_URL_REV=2bccac5
 PKG_URL="git://projects.vdr-developer.org/vdr-plugin-rpihddevice.git"
 PKG_VERSION=0.0.12+r${PKG_URL_REV}
 PKG_REV=1

@@ -1,6 +1,6 @@
 PKG_NAME=enigma2pc-skin-infinityhd
-PKG_URL_REV=d98d98f
-PKG_VERSION=20140918+${PKG_URL_REV}
+PKG_URL_REV=76bbb55
+PKG_VERSION=20150202+${PKG_URL_REV}
 PKG_URL_PROTO=git
 PKG_URL="https://github.com/herpoi/e2-openpli-skin-infinityHD-nbox"
 PKG_REV=1

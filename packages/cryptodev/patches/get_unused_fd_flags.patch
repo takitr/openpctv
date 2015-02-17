@@ -1,0 +1,12 @@
+diff -uNr cryptodev-linux-1.7.orig/ioctl.c cryptodev-linux-1.7/ioctl.c
+--- cryptodev-linux-1.7.orig/ioctl.c	2015-02-16 10:48:20.684128293 +0800
++++ cryptodev-linux-1.7/ioctl.c	2015-02-16 10:48:36.268127642 +0800
+@@ -546,7 +546,7 @@
+ clonefd(struct file *filp)
+ {
+ 	int ret;
+-	ret = get_unused_fd();
++	ret = get_unused_fd_flags(0);
+ 	if (ret >= 0) {
+ 			get_file(filp);
+ 			fd_install(ret, filp);

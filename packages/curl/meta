@@ -1,6 +1,6 @@
 PKG_NAME=curl
-PKG_VERSION=7.34.0
-PKG_URL="http://curl.haxx.se/download/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_VERSION=7.40.0
+PKG_URL="http://www.execve.net/curl/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain zlib gnutls openssl"
 PKG_RUN_DEPENDS="$TARGET_LIBC zlib gnutls openssl"

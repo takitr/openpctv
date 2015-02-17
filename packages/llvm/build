@@ -24,9 +24,7 @@ elif [ "$TARGET_ARCH" = arm ] ; then
 fi
 
 GCC_NO_LTO=1 GCC_NO_ATOM=1 \
-do_configure --host=$TARGET_NAME \
-             --build=$TARGET_NAME \
-             --enable-polly \
+do_configure --enable-polly \
              --enable-optimized \
              --disable-profiling \
              --disable-assertions \
@@ -48,5 +46,7 @@ do_configure --host=$TARGET_NAME \
              --disable-ltdl-install \
 
 
-make
+make -j3
 make_install
+
+rm .install/usr/bin/llvm-config

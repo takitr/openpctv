@@ -1,6 +1,7 @@
 PKG_NAME=opkg
 PKG_VERSION=0.1.8
-PKG_URL="http://opkg.googlecode.com/files/opkg-${PKG_VERSION}.tar.gz"
+#PKG_URL="http://opkg.googlecode.com/files/opkg-${PKG_VERSION}.tar.gz"
+PKG_URL="http://www.paulbarker.me.uk/dist/opkg/opkg-${PKG_VERSION}.tar.gz"
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain curl"
 PKG_RUN_DEPENDS="$TARGET_LIBC curl"

@@ -5,7 +5,9 @@ get_meta $1
 
 cd $PKG_BUILD_DIR
 
+sed -i 's/\ man\ //' doc/Makefile.in
 sed -i -e '/DISABLE_DEPRECATED/d' configure
 do_configure --libexecdir=/usr/sbin --with-backend=linux
+
 make
 make_install

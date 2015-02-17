@@ -1,0 +1,38 @@
+---Compile and install driver
+1)Enter the source code directory
+
+2)Check and choose one of the target systems, run ‘uname -a’ to get os informaton.
+./v4l/build_x86.sh if build for 32 bit system os.
+./v4l/build_dvbc_x86.sh if build for 32 bit system os to support DVB-C.
+./v4l/build_x64.sh if build for 64 bit system os.
+./v4l/build_dvbc_x64.sh if build for 64 bit system os to support DVB-C.
+
+3)Compile the source code:
+make
+
+4)Install driver, which need super user privilege:
+sudo make install
+
+5)Install firmware
+unzip dvbsky-firmware.tar.gz file, then run bst-firmware.sh
+or copy *.fw to /Lib/Firmware.
+
+6)Reboot computer.
+
+7)Verify the installation is successful or not:
+ls /dev/dvb
+If the adaptor0 is list here so the driver is installed properly.
+
+---FAQ
+Situation:
+Kernel message when loading the drivers.
+"Unknown symbol..."
+"Invalid parameter..."
+"disagrees about version of symbol..."
+Fix:
+Step 1)
+sudo rm -rf /lib/modules/`uname -r`/kernel/drivers/media/
+Step 2)
+sudo make install
+Step 3)
+reboot computer

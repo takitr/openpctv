@@ -1,8 +1,8 @@
 PKG_NAME=kodi-pvr-addons
 PKG_URL_PROTO=git
-PKG_URL_REV=a0a437e
+PKG_URL_REV=01d3d84
 PKG_URL="https://github.com/opdenkamp/xbmc-pvr-addons"
-PKG_VERSION=1.9.20+r${PKG_URL_REV}
+PKG_VERSION=1.9.23+r${PKG_URL_REV}
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC"

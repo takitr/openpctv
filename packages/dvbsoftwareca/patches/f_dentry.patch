@@ -1,0 +1,12 @@
+diff -uNr dvbsoftwareca-20140525.orig/dvb_softwareca.c dvbsoftwareca-20140525/dvb_softwareca.c
+--- dvbsoftwareca-20140525.orig/dvb_softwareca.c	2015-02-16 11:33:29.604014999 +0800
++++ dvbsoftwareca-20140525/dvb_softwareca.c	2015-02-16 11:34:02.512013622 +0800
+@@ -101,7 +101,7 @@
+ 	unsigned int cmd, unsigned long arg)
+ {
+ #ifdef HAVE_UNLOCKED_IOCTL
+-	struct inode *inode = f->f_dentry->d_inode;
++	struct inode *inode = f->f_path.dentry;
+ #endif
+ 	struct ca_device *cadev = find_device(iminor(inode));
+ 

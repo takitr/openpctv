@@ -99,7 +99,7 @@ fi
             --extra-cflags="$EXTRA_INCDIR" \
             $ARCH_CONFIG \
             $EXTRA_CONFIG \
-            --disable-mencoder \
+            --enable-mencoder \
             --disable-gui \
             --disable-termcap \
             --disable-langinfo \

@@ -1,6 +1,6 @@
 PKG_NAME=efibootmgr
-PKG_VERSION=0.5.4
-PKG_URL="http://linux.dell.com/efibootmgr/efibootmgr-$PKG_VERSION.tar.gz"
+PKG_VERSION=0.6.0
+PKG_URL="http://linux.dell.com/efibootmgr/permalink/efibootmgr-$PKG_VERSION.tar.gz"
 PKG_REV=1
 PKG_ARCH="i386 x86_64"
 PKG_RUN_DEPENDS="$TARGET_LIBC pciutils"

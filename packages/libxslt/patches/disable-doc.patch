@@ -1,0 +1,16 @@
+diff -uNr libxslt-1.1.28.orig/Makefile.am libxslt-1.1.28/Makefile.am
+--- libxslt-1.1.28.orig/Makefile.am	2015-02-16 12:37:37.815854055 +0800
++++ libxslt-1.1.28/Makefile.am	2015-02-16 12:37:58.323853198 +0800
+@@ -2,11 +2,10 @@
+ 	libxslt \
+ 	libexslt \
+ 	xsltproc \
+-	doc \
+ 	$(PYTHON_SUBDIR) \
+ 	tests
+ 
+-DIST_SUBDIRS = libxslt libexslt xsltproc python doc tests
++DIST_SUBDIRS = libxslt libexslt xsltproc python tests
+ 
+ confexecdir=$(libdir)
+ confexec_DATA = xsltConf.sh
