@@ -50,7 +50,7 @@ config EGL_PROVIDER_VIVANTE
 
 config EGL_PROVIDER_VC
   bool \"Broadcom VideCoreIV\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
+  depends on ( TAINT && (TARGET_PLATFORM_arm_bcm2708 || TARGET_PLATFORM_arm_bcm2709) )
   select PKG_raspberrypi-userland
 
 config EGL_PROVIDER_AML
@@ -103,7 +103,7 @@ config GLES_PROVIDER_VIVANTE
 
 config GLES_PROVIDER_VC
   bool \"Broadcom VideCoreIV\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
+  depends on ( TAINT && (TARGET_PLATFORM_arm_bcm2708 || TARGET_PLATFORM_arm_bcm2709) )
   select PKG_raspberrypi-userland
 
 config GLES_PROVIDER_AML
@@ -151,7 +151,7 @@ config OVG_PROVIDER_VIVANTE
 
 config OVG_PROVIDER_VC
   bool \"Broadcom VideCoreIV\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
+  depends on ( TAINT && (TARGET_PLATFORM_arm_bcm2708 || TARGET_PLATFORM_arm_bcm2709) )
   select PKG_raspberrypi-userland
 
 config OVG_PROVIDER_AML
@@ -183,7 +183,7 @@ config OMAX_PROVIDER_TEGRA
 
 config OMAX_PROVIDER_VC
   bool \"Broadcom VideCoreIV\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_bcm2708 )
+  depends on ( TAINT && (TARGET_PLATFORM_arm_bcm2708 || TARGET_PLATFORM_arm_bcm2709) )
   select PKG_raspberrypi-userland
 
 endchoice
