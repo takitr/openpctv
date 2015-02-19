@@ -12,7 +12,7 @@ sed $PACKAGES/$1/scripts/installator.sh \
 chmod 755 $INSTALL/sbin/*
 
 if [ "$TARGET_ARCH" = arm ]; then
-  if [ "$TARGET_PLATFORM" = a20 ]; then
+  if [ "$TARGET_PLATFORM" = a20 -o "$TARGET_PLATFORM" = amlogic-m6 ]; then
     INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg get-vdrchannels"
   else
     INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-backend update-epg get-vdrchannels"
@@ -30,13 +30,15 @@ for i in $INSTALL_SCRIPTS; do
 done
 
 $ROOT/$TOOLCHAIN/bin/xgettext $PACKAGES/$1/scripts/*  -L Shell  -o $PACKAGES/$1/config/openpctv.pot
-for i in $PACKAGES/$1/config/openpctv-*.po; do
-  $ROOT/$TOOLCHAIN/bin/msgmerge $i $PACKAGES/$1/config/openpctv.pot -U
-  ls ${i}~ > /dev/null 2>&1 && rm ${i}~
-  loc=$(basename $i | cut -d\- -f2 | sed 's/.po//g')
-  mkdir -p $INSTALL/usr/share/locale/$loc/LC_MESSAGES
-  $ROOT/$TOOLCHAIN/bin/msgfmt $i -o $INSTALL/usr/share/locale/$loc/LC_MESSAGES/openpctv.mo
-done
+if [ "$TARGET_PLATFORM" != a20 -a "$TARGET_PLATFORM" != amlogic-m6 ]; then
+  for i in $PACKAGES/$1/config/openpctv-*.po; do
+    $ROOT/$TOOLCHAIN/bin/msgmerge $i $PACKAGES/$1/config/openpctv.pot -U
+    ls ${i}~ > /dev/null 2>&1 && rm ${i}~
+    loc=$(basename $i | cut -d\- -f2 | sed 's/.po//g')
+    mkdir -p $INSTALL/usr/share/locale/$loc/LC_MESSAGES
+    $ROOT/$TOOLCHAIN/bin/msgfmt $i -o $INSTALL/usr/share/locale/$loc/LC_MESSAGES/openpctv.mo
+  done
+fi
 
 mkdir -p $INSTALL/etc
 cp $ROOT/$PACKAGES/$1/config/lang.list $INSTALL/etc

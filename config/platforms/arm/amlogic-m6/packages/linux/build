@@ -52,5 +52,6 @@ mkdir -p .install/boot
 cp boot.img .install/boot
 
 #cp -rf $ROOT/$PACKAGES/$1/config/ap6210 .install/firmware/
+cp -rf $PLATFORM_PACKAGES/$1/config/filesystem/* .install/
   
 exit 0

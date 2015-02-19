@@ -28,6 +28,9 @@ if grep -q -i arm /proc/cpuinfo; then
     elif [ $DEFTARGET = "vdr" ]; then
       systemctl start vdr
       exit 0
+    elif [ $DEFTARGET = "backend" ]; then
+      systemctl start backend
+      exit 0
     fi
   elif [ $result = 0 ]; then
     clear
@@ -79,10 +82,13 @@ systemctl stop backend
 [ -f $RUN_MONITOR ] && $RUN_MONITOR
 [ -f $RUN_AUDIO ] && $RUN_AUDIO init
 [ -f $RUN_CAM ] && $RUN_CAM
-[ -f $RUN_EPG ] && $RUN_EPG
-[ -f $RUN_TRANS ] && $RUN_TRANS
+#[ -f $RUN_EPG ] && $RUN_EPG
+#[ -f $RUN_TRANS ] && $RUN_TRANS
+update-transponders
 [ -f $RUN_DVB ] && $RUN_DVB
-if dialog --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the KODI uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
+#if dialog --clear --yes-label "$(gettext "Configure VDR")" --no-label "$(gettext "Configure VDR later")" --yesno "$(gettext "The following configuration is for the VDR (note the KODI uses VDR as a PVR backend), if you only use Engima2, then you do not need to configure or re-configure VDR later.")" 7 70; then
+. /etc/system.options
+if [ $DEFTARGET = "vdr" -o $BACKEND = "vdr" ]; then
   [ -f $RUN_PLUGINS ] && $RUN_PLUGINS
   [ -f $RUN_DISEQC ] && $RUN_DISEQC
   [ -f $RUN_CHANNELS ] && $RUN_CHANNELS

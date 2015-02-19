@@ -5,7 +5,7 @@ get_meta $1
 
 cd $PKG_BUILD_DIR
 
-[ -x configure ] || do_autoconf
+[ -x configure ] || ./bootstrap
 
 do_configure target \
 	--prefix=/usr \

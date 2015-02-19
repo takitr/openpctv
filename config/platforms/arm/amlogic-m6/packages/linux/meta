@@ -3,5 +3,5 @@
 #PKG_URL_PROTO=git
 #PKG_URL="https://github.com/codesnake/linux-amlogic"
 PKG_BUILD_DEPENDS="toolchain kmod-host mkbootimg"
-PKG_VERSION="amlogic-3.10-84deff2"
+PKG_VERSION="amlogic-3.10-24553c6"
 PKG_URL="$DISTRO_SRCS/$PKG_NAME-$PKG_VERSION.tar.xz"

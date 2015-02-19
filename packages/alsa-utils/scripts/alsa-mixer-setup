@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /etc/audio
+[ -f /etc/audio ] && . /etc/audio
 
 NOW=$(date +%Y%M%d%H%M)
 echo "Sound setup : begin $NOW" >> /tmp/debug-sound
@@ -160,6 +160,20 @@ pcm.dmixer {
 pcm.sunxihdmi {
   type plug
   slave.pcm dmixer
+}
+EOF
+elif grep -q 'Amlogic Meson6' /proc/cpuinfo; then
+  cat > /etc/asound.conf <<EOF
+pcm.!default {
+        type hw
+        card 0
+        device 0
+        format S16_LE
+}
+
+ctl.!default {
+        type hw
+        card 0
 }
 EOF
 else

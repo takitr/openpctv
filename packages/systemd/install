@@ -112,6 +112,8 @@ cp $ROOT/$PACKAGES/$1/scripts/systemd-machine-id-setup $INSTALL/usr/bin
 rm -rf $INSTALL/lib/systemd/system/console-*.service
 rm -rf $INSTALL/lib/systemd/system/debug-shell.service
 
+[ "$TARGET_ARCH" = arm ] && rm $INSTALL/lib/systemd/system/autovt@.service
+
 # provide 'halt', 'shutdown', 'reboot' & co.
 mkdir -p $INSTALL/sbin
 ln -sf /bin/systemctl $INSTALL/sbin/halt

@@ -117,8 +117,6 @@ else
   EXTRA_CONFIG="$EXTRA_CONFIG --disable-texturepacker"
 fi
 
-
-# prevent internal error in gcc
 if [ ! -f configure ] ; then
   BOOTSTRAP_STANDALONE=1 make -C $ROOT/$PKG_BUILD_DIR -f bootstrap.mk
   BOOTSTRAP_STANDALONE=1 make -C $ROOT/$PKG_BUILD_DIR -f codegenerator.mk
