@@ -20,7 +20,7 @@ diff -ruN vdr-2.1.4_30/menu.c vdr-2.1.4_31/menu.c
  // --- cMenuEditCaItem -------------------------------------------------------
  
  class cMenuEditCaItem : public cMenuEditIntItem {
-@@ -2602,7 +2614,23 @@
+@@ -2693,7 +2705,23 @@
    level = Level;
    name = NULL;
    totalEntries = newEntries = 0;
@@ -45,7 +45,7 @@ diff -ruN vdr-2.1.4_30/menu.c vdr-2.1.4_31/menu.c
    if (*Text() == '\t')
       name = strdup(Text() + 2); // 'Text() + 2' to skip the two '\t'
  }
-@@ -2778,6 +2806,13 @@
+@@ -2873,6 +2901,13 @@
       if (ri->IsDirectory())
          Open();
       else {
@@ -59,7 +59,7 @@ diff -ruN vdr-2.1.4_30/menu.c vdr-2.1.4_31/menu.c
          cReplayControl::SetRecording(ri->Recording()->FileName());
          return osReplay;
          }
-@@ -2804,6 +2839,17 @@
+@@ -2899,6 +2934,17 @@
    if (HasSubMenu() || Count() == 0)
       return osContinue;
    cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
@@ -77,7 +77,7 @@ diff -ruN vdr-2.1.4_30/menu.c vdr-2.1.4_31/menu.c
    if (ri && !ri->IsDirectory()) {
       if (Interface->Confirm(tr("Delete recording?"))) {
          cRecordControl *rc = cRecordControls::GetRecordControl(ri->Recording()->FileName());
-@@ -5586,7 +5632,16 @@
+@@ -5800,7 +5846,16 @@
    if (*fileName) {
       Hide();
       if (!RecordingsHandler.GetUsage(fileName)) {

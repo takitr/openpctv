@@ -1,6 +1,6 @@
 PKG_NAME=os-prober
-PKG_VERSION=1.63
-PKG_URL="http://ftp.de.debian.org/debian/pool/main/o/os-prober/os-prober_1.63.tar.gz"
+PKG_VERSION=1.65
+PKG_URL="http://ftp.de.debian.org/debian/pool/main/o/os-prober/${PKG_NAME}_${PKG_VERSION}.tar.xz"
 PKG_REV=1
 PKG_DEPENDS="$TARGET_LIBC"
 PKG_BUILD_DEPENDS="toolchain"

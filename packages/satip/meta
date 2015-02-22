@@ -1,6 +1,6 @@
 PKG_NAME=satip
-PKG_URL="http://wiki.satip.googlecode.com/git/satip-0.0.2.tar.gz"
-PKG_VERSION="0.0.2"
+PKG_URL="$DISTRO_SRCS/satip-a72d5083b2a5.tar.gz"
+PKG_VERSION="0.0.3"
 PKG_REV=1
 PKG_RUN_DEPENDS="$TARGET_LIBC vtuner-kernel"
 PKG_BUILD_DEPENDS="toolchain"

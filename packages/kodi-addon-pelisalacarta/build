@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. config/options
+
+cd $BUILD/$1*
+
+mkdir -p .install/usr/share/kodi/addons/plugin.video.pelisalacarta
+cp -PR * .install/usr/share/kodi/addons/plugin.video.pelisalacarta

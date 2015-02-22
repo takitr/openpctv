@@ -7,3 +7,6 @@ get_meta $1
 cd $PKG_BUILD_DIR/satip
 
 do_install usr
+
+mkdir -p $INSTALL/var
+cp -r $ROOT/$PACKAGES/$PKG_NAME/config/www $INSTALL/var

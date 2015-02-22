@@ -1,9 +1,0 @@
-PKG_NAME=libtirpc
-PKG_VERSION=0.2.5
-PKG_URL="$SFNET_SRCS/${PKG_NAME}/${PKG_NAME}/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
-PKG_REV=1
-PKG_RUN_DEPENDS="$TARGET_LIBC"
-PKG_BUILD_DEPENDS="toolchain"
-PKG_PRIORITY=required
-PKG_SECTION=libs
-PKG_SHORTDESC="SunLib's implementation of transport-independent RPC (TI-RPC) documentation."

@@ -9,7 +9,7 @@ diff -ruN vdr-2.1.4_17/config.c vdr-2.1.4_18/config.c
    PrimaryDVB = 1;
    ShowInfoOnChSwitch = 1;
    TimeoutRequChInfo = 1;
-@@ -591,6 +592,7 @@
+@@ -599,6 +600,7 @@
    if      (!strcasecmp(Name, "OSDLanguage"))       { strn0cpy(OSDLanguage, Value, sizeof(OSDLanguage)); I18nSetLocale(OSDLanguage); }
    else if (!strcasecmp(Name, "OSDSkin"))             Utf8Strn0Cpy(OSDSkin, Value, MaxSkinName);
    else if (!strcasecmp(Name, "OSDTheme"))            Utf8Strn0Cpy(OSDTheme, Value, MaxThemeName);
@@ -17,7 +17,7 @@ diff -ruN vdr-2.1.4_17/config.c vdr-2.1.4_18/config.c
    else if (!strcasecmp(Name, "PrimaryDVB"))          PrimaryDVB         = atoi(Value);
    else if (!strcasecmp(Name, "ShowInfoOnChSwitch"))  ShowInfoOnChSwitch = atoi(Value);
    else if (!strcasecmp(Name, "TimeoutRequChInfo"))   TimeoutRequChInfo  = atoi(Value);
-@@ -710,6 +712,7 @@
+@@ -726,6 +728,7 @@
    Store("OSDLanguage",        OSDLanguage);
    Store("OSDSkin",            OSDSkin);
    Store("OSDTheme",           OSDTheme);
@@ -28,7 +28,7 @@ diff -ruN vdr-2.1.4_17/config.c vdr-2.1.4_18/config.c
 diff -ruN vdr-2.1.4_17/config.h vdr-2.1.4_18/config.h
 --- vdr-2.1.4_17/config.h	2014-01-26 14:28:46.568215838 +0100
 +++ vdr-2.1.4_18/config.h	2014-01-26 14:31:26.424094473 +0100
-@@ -259,6 +259,7 @@
+@@ -258,6 +258,7 @@
    char OSDLanguage[I18N_MAX_LOCALE_LEN];
    char OSDSkin[MaxSkinName];
    char OSDTheme[MaxThemeName];
@@ -147,7 +147,7 @@ diff -ruN vdr-2.1.4_17/iconpatch.h vdr-2.1.4_18/iconpatch.h
 diff -ruN vdr-2.1.4_17/Makefile vdr-2.1.4_18/Makefile
 --- vdr-2.1.4_17/Makefile	2014-01-26 14:28:46.508218885 +0100
 +++ vdr-2.1.4_18/Makefile	2014-01-26 14:31:26.424094473 +0100
-@@ -74,6 +74,7 @@
+@@ -75,6 +75,7 @@
         timers.o tools.o transfer.o vdr.o videodir.o
  
  OBJS += vdrttxtsubshooks.o
@@ -181,7 +181,7 @@ diff -ruN vdr-2.1.4_17/menu.c vdr-2.1.4_18/menu.c
       else
          buffer = cString::sprintf("%d\t%s", channel->Number(), channel->Name());
       }
-@@ -1064,8 +1073,8 @@
+@@ -1107,8 +1116,8 @@
       File++;
    else
       File = timer->File();
@@ -192,7 +192,7 @@ diff -ruN vdr-2.1.4_17/menu.c vdr-2.1.4_18/menu.c
                      timer->Channel()->Number(),
                      *name,
                      *name && **name ? " " : "",
-@@ -1341,7 +1350,12 @@
+@@ -1384,7 +1393,12 @@
    return r;
  }
  
@@ -206,7 +206,7 @@ diff -ruN vdr-2.1.4_17/menu.c vdr-2.1.4_18/menu.c
  
  bool cMenuScheduleItem::Update(bool Force)
  {
-@@ -1350,17 +1364,17 @@
+@@ -1393,17 +1407,17 @@
    Timers.GetMatch(event, &timerMatch);
    if (Force || timerMatch != OldTimerMatch) {
       cString buffer;
@@ -230,7 +230,7 @@ diff -ruN vdr-2.1.4_17/menu.c vdr-2.1.4_18/menu.c
       SetText(buffer);
       result = true;
       }
-@@ -3000,6 +3014,7 @@
+@@ -3104,6 +3118,7 @@
    Add(new cMenuEditStraItem(tr("Setup.OSD$Skin"),                   &skinIndex, numSkins, skinDescriptions));
    if (themes.NumThemes())
    Add(new cMenuEditStraItem(tr("Setup.OSD$Theme"),                  &themeIndex, themes.NumThemes(), themes.Descriptions()));
@@ -249,7 +249,7 @@ diff -ruN vdr-2.1.4_17/recording.c vdr-2.1.4_18/recording.c
  #include <ctype.h>
  #include <dirent.h>
  #include <errno.h>
-@@ -1053,7 +1054,7 @@
+@@ -1059,7 +1060,7 @@
  
  const char *cRecording::Title(char Delimiter, bool NewIndicator, int Level) const
  {
@@ -258,7 +258,7 @@ diff -ruN vdr-2.1.4_17/recording.c vdr-2.1.4_18/recording.c
    free(titleBuffer);
    titleBuffer = NULL;
    if (Level < 0 || Level == HierarchyLevels()) {
-@@ -1073,7 +1074,7 @@
+@@ -1079,7 +1080,7 @@
                     Minutes % 60
                     );
          }

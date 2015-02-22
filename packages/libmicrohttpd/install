@@ -1,8 +1,12 @@
 #!/bin/sh
 
 . config/options
-get_meta $1
 
+get_meta $1
 cd $PKG_BUILD_DIR
 
+
+
+do_install usr/lib/libmicrospdy.so*
 do_install usr/lib/libmicrohttpd.so*
+do_install usr/bin/microspdy2http

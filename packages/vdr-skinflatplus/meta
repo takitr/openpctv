@@ -1,8 +1,8 @@
 PKG_NAME=vdr-skinflatplus
 PKG_URL_PROTO=git
-PKG_URL_REV=e1b0990
+PKG_URL_REV=6cfbe89
 PKG_URL="git://projects.vdr-developer.org/skin-flatplus.git"
-PKG_VERSION=0.5.0+r${PKG_URL_REV}
+PKG_VERSION=0.5.2+r${PKG_URL_REV}
 PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain ImageMagick jasper"
 PKG_RUN_DEPENDS="$TARGET_LIBC vdr ImageMagick"

@@ -6,4 +6,4 @@ get_meta $1
 cd $PKG_BUILD_DIR
 
 cd objdir-target
-do_install usr/lib/libcxxtools.so*
+do_install usr/lib/libcxxtools*.so*

@@ -1,0 +1,122 @@
+From 3fb63f0ecf749e5408f8ba59d0f74734c7b6c4b8 Mon Sep 17 00:00:00 2001
+From: Martijn Kaijser <mcm.kaijser@gmail.com>
+Date: Sun, 15 Feb 2015 17:27:41 +0100
+Subject: [PATCH 1/2] bump to 14.2 beta2
+
+---
+ configure.in | 2 +-
+ version.txt  | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index 23bf0aa..799ec17 100644
+--- a/configure.in
++++ b/configure.in
+@@ -2,7 +2,7 @@
+ # Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ(2.59)
+-AC_INIT([kodi], [14.1.801], [http://issues.kodi.tv])
++AC_INIT([kodi], [14.1.802], [http://trac.kodi.tv])
+ AC_CONFIG_HEADERS([xbmc/config.h])
+ AH_TOP([#pragma once])
+ m4_include([m4/ax_prog_cc_for_build.m4])
+diff --git a/version.txt b/version.txt
+index 24af55e..6858fd0 100644
+--- a/version.txt
++++ b/version.txt
+@@ -3,9 +3,9 @@ COMPANY_NAME XBMC-Foundation
+ WEBSITE http://kodi.tv
+ VERSION_MAJOR 14
+ VERSION_MINOR 2
+-VERSION_TAG BETA1
+-VERSION_CODE 141801
+-ADDON_API 14.1.801
++VERSION_TAG BETA2
++VERSION_CODE 141802
++ADDON_API 14.1.802
+ 
+ # Notes:
+ # Change AC_INIT in configure.in
+
+From eee7ca74a769ea9b62eff5a7d4b54e7f8d2912c8 Mon Sep 17 00:00:00 2001
+From: Matthias Kortstiege <mkortstiege@kodi.tv>
+Date: Mon, 16 Feb 2015 08:13:07 +0100
+Subject: [PATCH 2/2] [videoinfoscanner] added ability to explicitly skip fast
+ hashing
+
+---
+ xbmc/settings/AdvancedSettings.cpp |  2 ++
+ xbmc/settings/AdvancedSettings.h   |  1 +
+ xbmc/video/VideoInfoScanner.cpp    | 12 ++++++++++--
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/settings/AdvancedSettings.cpp b/xbmc/settings/AdvancedSettings.cpp
+index 478d725..a1b68b5 100644
+--- a/xbmc/settings/AdvancedSettings.cpp
++++ b/xbmc/settings/AdvancedSettings.cpp
+@@ -281,6 +281,7 @@ void CAdvancedSettings::Initialize()
+   m_iVideoLibraryRecentlyAddedItems = 25;
+   m_bVideoLibraryHideEmptySeries = false;
+   m_bVideoLibraryCleanOnUpdate = false;
++  m_bVideoLibraryUseFastHash = true;
+   m_bVideoLibraryExportAutoThumbs = false;
+   m_bVideoLibraryImportWatchedState = false;
+   m_bVideoLibraryImportResumePoint = false;
+@@ -764,6 +765,7 @@ void CAdvancedSettings::ParseSettingsFile(const CStdString &file)
+     XMLUtils::GetInt(pElement, "recentlyaddeditems", m_iVideoLibraryRecentlyAddedItems, 1, INT_MAX);
+     XMLUtils::GetBoolean(pElement, "hideemptyseries", m_bVideoLibraryHideEmptySeries);
+     XMLUtils::GetBoolean(pElement, "cleanonupdate", m_bVideoLibraryCleanOnUpdate);
++    XMLUtils::GetBoolean(pElement, "usefasthash", m_bVideoLibraryUseFastHash);
+     XMLUtils::GetString(pElement, "itemseparator", m_videoItemSeparator);
+     XMLUtils::GetBoolean(pElement, "exportautothumbs", m_bVideoLibraryExportAutoThumbs);
+     XMLUtils::GetBoolean(pElement, "importwatchedstate", m_bVideoLibraryImportWatchedState);
+diff --git a/xbmc/settings/AdvancedSettings.h b/xbmc/settings/AdvancedSettings.h
+index ca995e3..ed91aba 100644
+--- a/xbmc/settings/AdvancedSettings.h
++++ b/xbmc/settings/AdvancedSettings.h
+@@ -279,6 +279,7 @@ class CAdvancedSettings : public ISettingCallback, public ISettingsHandler
+     int m_iVideoLibraryRecentlyAddedItems;
+     bool m_bVideoLibraryHideEmptySeries;
+     bool m_bVideoLibraryCleanOnUpdate;
++    bool m_bVideoLibraryUseFastHash;
+     bool m_bVideoLibraryExportAutoThumbs;
+     bool m_bVideoLibraryImportWatchedState;
+     bool m_bVideoLibraryImportResumePoint;
+diff --git a/xbmc/video/VideoInfoScanner.cpp b/xbmc/video/VideoInfoScanner.cpp
+index 6d77da0..5605b89 100644
+--- a/xbmc/video/VideoInfoScanner.cpp
++++ b/xbmc/video/VideoInfoScanner.cpp
+@@ -317,7 +317,10 @@ namespace VIDEO
+         m_handle->SetTitle(StringUtils::Format(g_localizeStrings.Get(str).c_str(), info->Name().c_str()));
+       }
+ 
+-      CStdString fastHash = GetFastHash(strDirectory, regexps);
++      CStdString fastHash;
++      if (g_advancedSettings.m_bVideoLibraryUseFastHash)
++        fastHash = GetFastHash(strDirectory, regexps);
++
+       if (m_database.GetPathHash(strDirectory, dbHash) && !fastHash.empty() && fastHash == dbHash)
+       { // fast hashes match - no need to process anything
+         hash = fastHash;
+@@ -729,7 +732,9 @@ namespace VIDEO
+         m_pathsToScan.erase(it);
+ 
+       CStdString hash, dbHash;
+-      hash = GetRecursiveFastHash(item->GetPath(), regexps);
++      if (g_advancedSettings.m_bVideoLibraryUseFastHash)
++        hash = GetRecursiveFastHash(item->GetPath(), regexps);
++
+       if (m_database.GetPathHash(item->GetPath(), dbHash) && !hash.empty() && dbHash == hash)
+       {
+         // fast hashes match - no need to process anything
+@@ -1776,6 +1781,9 @@ namespace VIDEO
+ 
+   bool CVideoInfoScanner::CanFastHash(const CFileItemList &items, const vector<string> &excludes) const
+   {
++    if (!g_advancedSettings.m_bVideoLibraryUseFastHash)
++      return false;
++
+     for (int i = 0; i < items.Size(); ++i)
+     {
+       if (items[i]->m_bIsFolder && !CUtil::ExcludeFileOrFolder(items[i]->GetPath(), excludes))

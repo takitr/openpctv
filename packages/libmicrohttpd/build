@@ -1,13 +1,14 @@
 #!/bin/sh
 
 . config/options
-get_meta $1
 
+get_meta $1
 cd $PKG_BUILD_DIR
 
+do_autoconf
 do_configure \
   --enable-curl \
-  --enable-https \
+  --enable-https
 
 make
 make_install

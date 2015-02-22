@@ -17,7 +17,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuChannels::cMenuChannels(void)
-@@ -1097,6 +1099,7 @@
+@@ -1140,6 +1142,7 @@
    cMenuTimers(void);
    virtual ~cMenuTimers();
    virtual eOSState ProcessKey(eKeys Key);
@@ -25,7 +25,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuTimers::cMenuTimers(void)
-@@ -1259,6 +1262,7 @@
+@@ -1302,6 +1305,7 @@
  {
    cOsdMenu::Display();
    DisplayMenu()->SetEvent(event);
@@ -33,7 +33,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    if (event->Description())
       cStatus::MsgOsdTextItem(event->Description());
  }
-@@ -1388,6 +1392,8 @@
+@@ -1432,6 +1436,8 @@
    static void SetCurrentChannel(int ChannelNr) { currentChannel = ChannelNr; }
    static const cEvent *ScheduleEvent(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -42,7 +42,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  int cMenuWhatsOn::currentChannel = 0;
-@@ -1416,6 +1422,18 @@
+@@ -1461,6 +1467,18 @@
    SetHelpKeys();
  }
  
@@ -61,7 +61,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
  bool cMenuWhatsOn::Update(void)
  {
    bool result = false;
-@@ -1556,6 +1574,8 @@
+@@ -1614,6 +1632,8 @@
    cMenuSchedule(void);
    virtual ~cMenuSchedule();
    virtual eOSState ProcessKey(eKeys Key);
@@ -70,7 +70,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSchedule::cMenuSchedule(void)
-@@ -1582,6 +1602,18 @@
+@@ -1640,6 +1660,18 @@
    cMenuWhatsOn::ScheduleEvent(); // makes sure any posted data is cleared
  }
  
@@ -89,7 +89,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
  void cMenuSchedule::PrepareScheduleAllThis(const cEvent *Event, const cChannel *Channel)
  {
    Clear();
-@@ -1946,6 +1978,7 @@
+@@ -2010,6 +2042,7 @@
    cMenuCam(cCamSlot *CamSlot);
    virtual ~cMenuCam();
    virtual eOSState ProcessKey(eKeys Key);
@@ -97,7 +97,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuCam::cMenuCam(cCamSlot *CamSlot)
-@@ -2436,6 +2469,7 @@
+@@ -2526,6 +2559,7 @@
    cMenuRecording(cRecording *Recording, bool WithButtons = false);
    virtual void Display(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -105,7 +105,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
  };
  
  cMenuRecording::cMenuRecording(cRecording *Recording, bool WithButtons)
-@@ -2471,6 +2505,7 @@
+@@ -2561,6 +2595,7 @@
       }
    cOsdMenu::Display();
    DisplayMenu()->SetRecording(recording);
@@ -113,7 +113,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    if (recording->Info()->Description())
       cStatus::MsgOsdTextItem(recording->Info()->Description());
  }
-@@ -2918,6 +2953,7 @@
+@@ -3022,6 +2057,7 @@
    cMenuSetupOSD(void);
    virtual ~cMenuSetupOSD();
    virtual eOSState ProcessKey(eKeys Key);
@@ -121,7 +121,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupOSD::cMenuSetupOSD(void)
-@@ -3071,6 +3107,7 @@
+@@ -3175,6 +3211,7 @@
  public:
    cMenuSetupEPG(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -129,7 +129,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupEPG::cMenuSetupEPG(void)
-@@ -3168,6 +3205,7 @@
+@@ -3272,6 +3309,7 @@
  public:
    cMenuSetupDVB(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -137,7 +137,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupDVB::cMenuSetupDVB(void)
-@@ -3314,6 +3352,7 @@
+@@ -3419,6 +3457,7 @@
  public:
    cMenuSetupLNB(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -145,7 +145,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupLNB::cMenuSetupLNB(void)
-@@ -3428,6 +3467,7 @@
+@@ -3539,6 +3578,7 @@
  public:
    cMenuSetupCAM(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -153,7 +153,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupCAM::cMenuSetupCAM(void)
-@@ -3615,6 +3655,7 @@
+@@ -3793,6 +3833,7 @@
  public:
    cMenuSetupPlugins(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -161,7 +161,7 @@ diff -ruN vdr-2.1.4_16/menu.c vdr-2.1.4_17/menu.c
    };
  
  cMenuSetupPlugins::cMenuSetupPlugins(void)
-@@ -3670,6 +3711,7 @@
+@@ -3848,6 +3889,7 @@
  public:
    cMenuSetup(void);
    virtual eOSState ProcessKey(eKeys Key);
@@ -212,7 +212,7 @@ diff -ruN vdr-2.1.4_16/menu.h vdr-2.1.4_17/menu.h
    };
  
  class cDisplayChannel : public cOsdObject {
-@@ -224,6 +229,7 @@
+@@ -225,6 +230,7 @@
    cMenuRecordings(const char *Base = NULL, int Level = 0, bool OpenSubMenus = false, const cRecordingFilter *Filter = NULL);
    ~cMenuRecordings();
    virtual eOSState ProcessKey(eKeys Key);
@@ -234,7 +234,7 @@ diff -ruN vdr-2.1.4_16/menuitems.h vdr-2.1.4_17/menuitems.h
 diff -ruN vdr-2.1.4_16/osdbase.c vdr-2.1.4_17/osdbase.c
 --- vdr-2.1.4_16/osdbase.c	2014-01-26 14:27:28.684172721 +0100
 +++ vdr-2.1.4_17/osdbase.c	2014-01-26 14:28:46.604214009 +0100
-@@ -106,6 +106,7 @@
+@@ -107,6 +107,7 @@
    free(status);
    displayMenu->Clear();
    cStatus::MsgOsdClear();
@@ -242,9 +242,9 @@ diff -ruN vdr-2.1.4_16/osdbase.c vdr-2.1.4_17/osdbase.c
    if (!--displayMenuCount)
       DELETENULL(displayMenu);
  }
-@@ -226,6 +227,7 @@
-   if (menuCategory != displayMenu->MenuCategory())
+@@ -233,6 +234,7 @@
       displayMenu->SetMenuCategory(menuCategory);
+   displayMenu->SetMenuSortMode(menuSortMode);
    displayMenuItems = displayMenu->MaxItems();
 +  cStatus::MsgOsdMenuDisplay(MenuKind());
    displayMenu->SetTabs(cols[0], cols[1], cols[2], cols[3], cols[4]);//XXX
@@ -253,7 +253,7 @@ diff -ruN vdr-2.1.4_16/osdbase.c vdr-2.1.4_17/osdbase.c
 diff -ruN vdr-2.1.4_16/osdbase.h vdr-2.1.4_17/osdbase.h
 --- vdr-2.1.4_16/osdbase.h	2014-01-26 14:27:28.672173331 +0100
 +++ vdr-2.1.4_17/osdbase.h	2014-01-26 14:28:46.604214009 +0100
-@@ -138,6 +138,7 @@
+@@ -140,6 +140,7 @@
    void Ins(cOsdItem *Item, bool Current = false, cOsdItem *Before = NULL);
    virtual void Display(void);
    virtual eOSState ProcessKey(eKeys Key);

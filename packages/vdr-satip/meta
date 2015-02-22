@@ -1,5 +1,5 @@
 PKG_NAME=vdr-satip
-PKG_VERSION=1.0.2
+PKG_VERSION=2.2.0
 PKG_URL="http://www.saunalahti.fi/~rahrenbe/vdr/satip/files/${PKG_NAME}-${PKG_VERSION}.tgz"
 PKG_REV=1
 PKG_DEPENDS="vdr curl tinyxml"

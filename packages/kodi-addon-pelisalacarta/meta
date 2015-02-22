@@ -1,0 +1,10 @@
+PKG_NAME=kodi-addon-pelisalacarta
+PKG_VERSION=3.2.66
+PKG_URL="http://blog.tvalacarta.info/descargas/pelisalacarta-xbmc-addon-frodo-${PKG_VERSION}.zip"
+PKG_REV=1
+PKG_RUN_DEPENDS="$TARGET_LIBC kodi"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="Movies and TV shows on demand addon for KODI"
+PKG_LONGDESC="Spanish addon for watching Movies and TV Shows on demand."

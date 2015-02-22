@@ -1,0 +1,12 @@
+PKG_NAME=vdr-restfulapi
+PKG_URL_PROTO=git
+PKG_URL_REV=5329e45
+PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi"
+PKG_VERSION=0.2.1.2+r${PKG_URL_REV}
+PKG_REV=1
+PKG_DEPENDS="vdr cxxtools"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_RUN_DEPENDS="$TARGET_LIBC"
+PKG_PRIORITY=optional
+PKG_SECTION=multimedia
+PKG_SHORTDESC="Offers a RESTful-API to retrieve data from VDR"

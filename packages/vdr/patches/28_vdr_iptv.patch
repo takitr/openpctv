@@ -13,7 +13,7 @@ diff -ruN vdr-1/eitscan.c vdr/eitscan.c
 diff -ruN vdr-1/pat.c vdr/pat.c
 --- vdr-1/pat.c	2014-01-08 21:51:00.000000000 +0100
 +++ vdr/pat.c	2014-01-08 21:52:33.000000000 +0100
-@@ -633,6 +633,7 @@
+@@ -652,6 +652,7 @@
                   TeletextSubtitlePages[NumTPages++] = tTeletextSubtitlePage(manualPageNumber);
                }
             Channel->SetTeletextSubtitlePages(TeletextSubtitlePages, NumTPages);

@@ -1,6 +1,6 @@
 PKG_NAME=vdr-dvbapi
-PKG_URL_REV=7e1de39
-PKG_VERSION=2.1.2+${PKG_URL_REV}
+PKG_URL_REV=c0c7fa2
+PKG_VERSION=2.2.0+${PKG_URL_REV}
 PKG_URL_PROTO=git
 PKG_URL="https://github.com/manio/vdr-plugin-dvbapi.git"
 #PKG_VERSION=1.0.6

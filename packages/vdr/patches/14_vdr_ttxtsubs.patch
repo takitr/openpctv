@@ -1,7 +1,7 @@
 diff -ruN vdr-2.1.4_13/channels.c vdr-2.1.4_14/channels.c
 --- vdr-2.1.4_13/channels.c	2014-01-04 16:01:52.000000000 +0100
 +++ vdr-2.1.4_14/channels.c	2014-01-26 14:22:08.420443991 +0100
-@@ -417,6 +417,26 @@
+@@ -426,6 +426,26 @@
    seen = time(NULL);
  }
  
@@ -28,7 +28,7 @@ diff -ruN vdr-2.1.4_13/channels.c vdr-2.1.4_14/channels.c
  void cChannel::SetCaIds(const int *CaIds)
  {
    if (caids[0] && caids[0] <= CA_USER_MAX)
-@@ -547,10 +567,17 @@
+@@ -556,10 +576,17 @@
          q += IntArrayToString(q, Channel->dpids, 10, Channel->dlangs, Channel->dtypes);
          }
       *q = 0;
@@ -47,7 +47,7 @@ diff -ruN vdr-2.1.4_13/channels.c vdr-2.1.4_14/channels.c
       if (Channel->spids[0]) {
          *q++ = ';';
          q += IntArrayToString(q, Channel->spids, 10, Channel->slangs);
-@@ -721,6 +748,32 @@
+@@ -730,6 +757,32 @@
                      }
                spids[NumSpids] = 0;
                }
@@ -118,7 +118,7 @@ diff -ruN vdr-2.1.4_13/channels.h vdr-2.1.4_14/channels.h
    int caids[MAXCAIDS + 1]; // list is zero-terminated
    int nid;
    int tid;
-@@ -168,6 +182,8 @@
+@@ -169,6 +183,8 @@
    uint16_t CompositionPageId(int i) const { return (0 <= i && i < MAXSPIDS) ? compositionPageIds[i] : uint16_t(0); }
    uint16_t AncillaryPageId(int i) const { return (0 <= i && i < MAXSPIDS) ? ancillaryPageIds[i] : uint16_t(0); }
    int Tpid(void) const { return tpid; }
@@ -127,7 +127,7 @@ diff -ruN vdr-2.1.4_13/channels.h vdr-2.1.4_14/channels.h
    const int *Caids(void) const { return caids; }
    int Ca(int Index = 0) const { return Index < MAXCAIDS ? caids[Index] : 0; }
    int Nid(void) const { return nid; }
-@@ -195,6 +211,7 @@
+@@ -198,6 +214,7 @@
    void SetName(const char *Name, const char *ShortName, const char *Provider);
    void SetPortalName(const char *PortalName);
    void SetPids(int Vpid, int Ppid, int Vtype, int *Apids, int *Atypes, char ALangs[][MAXLANGCODE2], int *Dpids, int *Dtypes, char DLangs[][MAXLANGCODE2], int *Spids, char SLangs[][MAXLANGCODE2], int Tpid);
@@ -138,7 +138,7 @@ diff -ruN vdr-2.1.4_13/channels.h vdr-2.1.4_14/channels.h
 diff -ruN vdr-2.1.4_13/ci.c vdr-2.1.4_14/ci.c
 --- vdr-2.1.4_13/ci.c	2014-01-22 10:46:38.000000000 +0100
 +++ vdr-2.1.4_14/ci.c	2014-01-26 14:22:08.420443991 +0100
-@@ -1941,6 +1941,8 @@
+@@ -2155,6 +2155,8 @@
           AddPid(Channel->Sid(), *Dpid, STREAM_TYPE_PRIVATE);
       for (const int *Spid = Channel->Spids(); *Spid; Spid++)
           AddPid(Channel->Sid(), *Spid, STREAM_TYPE_PRIVATE);
@@ -147,7 +147,7 @@ diff -ruN vdr-2.1.4_13/ci.c vdr-2.1.4_14/ci.c
       }
  }
  
-@@ -1964,6 +1966,8 @@
+@@ -2178,6 +2180,8 @@
           CaPmt.AddPid(*Dpid, STREAM_TYPE_PRIVATE);
       for (const int *Spid = Channel->Spids(); *Spid; Spid++)
           CaPmt.AddPid(*Spid, STREAM_TYPE_PRIVATE);
@@ -167,7 +167,7 @@ diff -ruN vdr-2.1.4_13/config.c vdr-2.1.4_14/config.c
    SubtitleLanguages[0] = -1;
    SubtitleOffset = 0;
    SubtitleFgTransparency = 0;
-@@ -617,6 +618,7 @@
+@@ -625,6 +626,7 @@
    else if (!strcasecmp(Name, "MarginStop"))          MarginStop         = atoi(Value);
    else if (!strcasecmp(Name, "AudioLanguages"))      return ParseLanguages(Value, AudioLanguages);
    else if (!strcasecmp(Name, "DisplaySubtitles"))    DisplaySubtitles   = atoi(Value);
@@ -175,7 +175,7 @@ diff -ruN vdr-2.1.4_13/config.c vdr-2.1.4_14/config.c
    else if (!strcasecmp(Name, "SubtitleLanguages"))   return ParseLanguages(Value, SubtitleLanguages);
    else if (!strcasecmp(Name, "SubtitleOffset"))      SubtitleOffset     = atoi(Value);
    else if (!strcasecmp(Name, "SubtitleFgTransparency")) SubtitleFgTransparency = atoi(Value);
-@@ -735,6 +737,7 @@
+@@ -751,6 +753,7 @@
    Store("MarginStop",         MarginStop);
    StoreLanguages("AudioLanguages", AudioLanguages);
    Store("DisplaySubtitles",   DisplaySubtitles);
@@ -186,7 +186,7 @@ diff -ruN vdr-2.1.4_13/config.c vdr-2.1.4_14/config.c
 diff -ruN vdr-2.1.4_13/config.h vdr-2.1.4_14/config.h
 --- vdr-2.1.4_13/config.h	2014-01-26 14:19:15.337237899 +0100
 +++ vdr-2.1.4_14/config.h	2014-01-26 14:22:08.424443788 +0100
-@@ -281,6 +281,7 @@
+@@ -280,6 +280,7 @@
    int MarginStart, MarginStop;
    int AudioLanguages[I18N_MAX_LANGUAGES + 1];
    int DisplaySubtitles;
@@ -197,7 +197,7 @@ diff -ruN vdr-2.1.4_13/config.h vdr-2.1.4_14/config.h
 diff -ruN vdr-2.1.4_13/device.c vdr-2.1.4_14/device.c
 --- vdr-2.1.4_13/device.c	2014-01-21 12:12:01.000000000 +0100
 +++ vdr-2.1.4_14/device.c	2014-01-26 14:22:08.424443788 +0100
-@@ -18,6 +18,7 @@
+@@ -19,6 +19,7 @@
  #include "receiver.h"
  #include "status.h"
  #include "transfer.h"
@@ -205,7 +205,7 @@ diff -ruN vdr-2.1.4_13/device.c vdr-2.1.4_14/device.c
  
  // --- cLiveSubtitle ---------------------------------------------------------
  
-@@ -1323,6 +1324,13 @@
+@@ -1321,6 +1322,13 @@
                    }
                 break;
            case 0xBD: { // private stream 1
@@ -219,7 +219,7 @@ diff -ruN vdr-2.1.4_13/device.c vdr-2.1.4_14/device.c
                 int PayloadOffset = Data[8] + 9;
  
                 // Compatibility mode for old subtitles plugin:
-@@ -1482,6 +1490,7 @@
+@@ -1480,6 +1488,7 @@
       tsToPesVideo.Reset();
       tsToPesAudio.Reset();
       tsToPesSubtitle.Reset();
@@ -227,7 +227,7 @@ diff -ruN vdr-2.1.4_13/device.c vdr-2.1.4_14/device.c
       }
    else if (Length < TS_SIZE) {
       esyslog("ERROR: skipped %d bytes of TS fragment", Length);
-@@ -1526,6 +1535,17 @@
+@@ -1524,6 +1533,17 @@
                      if (!VideoOnly || HasIBPTrickSpeed())
                         PlayTsSubtitle(Data, TS_SIZE);
                      }
@@ -248,7 +248,7 @@ diff -ruN vdr-2.1.4_13/device.c vdr-2.1.4_14/device.c
 diff -ruN vdr-2.1.4_13/device.h vdr-2.1.4_14/device.h
 --- vdr-2.1.4_13/device.h	2014-01-02 11:47:08.000000000 +0100
 +++ vdr-2.1.4_14/device.h	2014-01-26 14:22:08.428443585 +0100
-@@ -591,6 +591,7 @@
+@@ -603,6 +603,7 @@
    cTsToPes tsToPesVideo;
    cTsToPes tsToPesAudio;
    cTsToPes tsToPesSubtitle;
@@ -259,7 +259,7 @@ diff -ruN vdr-2.1.4_13/device.h vdr-2.1.4_14/device.h
 diff -ruN vdr-2.1.4_13/Makefile vdr-2.1.4_14/Makefile
 --- vdr-2.1.4_13/Makefile	2013-04-14 14:18:08.000000000 +0200
 +++ vdr-2.1.4_14/Makefile	2014-01-26 14:22:08.428443585 +0100
-@@ -73,6 +73,8 @@
+@@ -74,6 +74,8 @@
         skinclassic.o skinlcars.o skins.o skinsttng.o sourceparams.o sources.o spu.o status.o svdrp.o themes.o thread.o\
         timers.o tools.o transfer.o vdr.o videodir.o
  
@@ -271,7 +271,7 @@ diff -ruN vdr-2.1.4_13/Makefile vdr-2.1.4_14/Makefile
 diff -ruN vdr-2.1.4_13/MANUAL vdr-2.1.4_14/MANUAL
 --- vdr-2.1.4_13/MANUAL	2014-01-26 14:19:15.341237696 +0100
 +++ vdr-2.1.4_14/MANUAL	2014-01-26 14:22:08.428443585 +0100
-@@ -786,6 +786,9 @@
+@@ -810,6 +810,9 @@
                           background transparency. By default the values as broadcast
                           are used.
  
@@ -284,7 +284,7 @@ diff -ruN vdr-2.1.4_13/MANUAL vdr-2.1.4_14/MANUAL
 diff -ruN vdr-2.1.4_13/menu.c vdr-2.1.4_14/menu.c
 --- vdr-2.1.4_13/menu.c	2014-01-26 14:19:15.349237289 +0100
 +++ vdr-2.1.4_14/menu.c	2014-01-26 14:22:08.436443178 +0100
-@@ -3221,6 +3221,7 @@
+@@ -3326,6 +3326,7 @@
       Add(new cMenuEditIntItem( tr("Setup.DVB$Subtitle foreground transparency"), &data.SubtitleFgTransparency, 0, 9));
       Add(new cMenuEditIntItem( tr("Setup.DVB$Subtitle background transparency"), &data.SubtitleBgTransparency, 0, 10));
       }
@@ -303,7 +303,7 @@ diff -ruN vdr-2.1.4_13/pat.c vdr-2.1.4_14/pat.c
 
  #define PMT_SCAN_TIMEOUT  1000 // ms
 
-@@ -407,6 +408,8 @@
+@@ -426,6 +427,8 @@
          char DLangs[MAXDPIDS][MAXLANGCODE2] = { "" };
          char SLangs[MAXSPIDS][MAXLANGCODE2] = { "" };
          int Tpid = 0;
@@ -312,7 +312,7 @@ diff -ruN vdr-2.1.4_13/pat.c vdr-2.1.4_14/pat.c
          int NumApids = 0;
          int NumDpids = 0;
          int NumSpids = 0;
-@@ -498,8 +501,21 @@
+@@ -517,8 +520,21 @@
                                      NumSpids++;
                                      }
                                   break;
@@ -335,7 +335,7 @@ diff -ruN vdr-2.1.4_13/pat.c vdr-2.1.4_14/pat.c
                                   break;
                              case SI::ISO639LanguageDescriptorTag: {
                                   SI::ISO639LanguageDescriptor *ld = (SI::ISO639LanguageDescriptor *)d;
-@@ -611,6 +627,12 @@
+@@ -630,6 +646,12 @@
              }
          if (Setup.UpdateChannels >= 2) {
             Channel->SetPids(Vpid, Ppid, Vtype, Apids, Atypes, ALangs, Dpids, Dtypes, DLangs, Spids, SLangs, Tpid);
@@ -351,7 +351,7 @@ diff -ruN vdr-2.1.4_13/pat.c vdr-2.1.4_14/pat.c
 diff -ruN vdr-2.1.4_13/po/ca_ES.po vdr-2.1.4_14/po/ca_ES.po
 --- vdr-2.1.4_13/po/ca_ES.po	2013-11-03 16:05:33.000000000 +0100
 +++ vdr-2.1.4_14/po/ca_ES.po	2014-01-26 14:22:08.440442975 +0100
-@@ -1038,6 +1038,9 @@
+@@ -1059,6 +1059,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparència fons subtítols"
  
@@ -364,7 +364,7 @@ diff -ruN vdr-2.1.4_13/po/ca_ES.po vdr-2.1.4_14/po/ca_ES.po
 diff -ruN vdr-2.1.4_13/po/cs_CZ.po vdr-2.1.4_14/po/cs_CZ.po
 --- vdr-2.1.4_13/po/cs_CZ.po	2013-11-03 16:05:34.000000000 +0100
 +++ vdr-2.1.4_14/po/cs_CZ.po	2014-01-26 14:22:08.440442975 +0100
-@@ -1038,6 +1038,9 @@
+@@ -1059,6 +1059,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "PrÅ¯hlednost pozadÃ­ titulkÅ¯"
  
@@ -377,7 +377,7 @@ diff -ruN vdr-2.1.4_13/po/cs_CZ.po vdr-2.1.4_14/po/cs_CZ.po
 diff -ruN vdr-2.1.4_13/po/da_DK.po vdr-2.1.4_14/po/da_DK.po
 --- vdr-2.1.4_13/po/da_DK.po	2013-11-03 16:06:26.000000000 +0100
 +++ vdr-2.1.4_14/po/da_DK.po	2014-01-26 14:22:08.440442975 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1056,6 +1056,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Undertekst baggrundsgennemsigtighed"
  
@@ -390,7 +390,7 @@ diff -ruN vdr-2.1.4_13/po/da_DK.po vdr-2.1.4_14/po/da_DK.po
 diff -ruN vdr-2.1.4_13/po/de_DE.po vdr-2.1.4_14/po/de_DE.po
 --- vdr-2.1.4_13/po/de_DE.po	2014-01-26 14:19:15.349237289 +0100
 +++ vdr-2.1.4_14/po/de_DE.po	2014-01-26 14:22:08.440442975 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Untertitel-Transparenz Hintergrund"
  
@@ -403,7 +403,7 @@ diff -ruN vdr-2.1.4_13/po/de_DE.po vdr-2.1.4_14/po/de_DE.po
 diff -ruN vdr-2.1.4_13/po/el_GR.po vdr-2.1.4_14/po/el_GR.po
 --- vdr-2.1.4_13/po/el_GR.po	2013-11-03 16:07:05.000000000 +0100
 +++ vdr-2.1.4_14/po/el_GR.po	2014-01-26 14:22:08.444442772 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1056,6 +1056,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr ""
  
@@ -416,7 +416,7 @@ diff -ruN vdr-2.1.4_13/po/el_GR.po vdr-2.1.4_14/po/el_GR.po
 diff -ruN vdr-2.1.4_13/po/es_ES.po vdr-2.1.4_14/po/es_ES.po
 --- vdr-2.1.4_13/po/es_ES.po	2013-11-03 16:05:36.000000000 +0100
 +++ vdr-2.1.4_14/po/es_ES.po	2014-01-26 14:22:08.444442772 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparencia fondo subtítulos"
  
@@ -429,7 +429,7 @@ diff -ruN vdr-2.1.4_13/po/es_ES.po vdr-2.1.4_14/po/es_ES.po
 diff -ruN vdr-2.1.4_13/po/et_EE.po vdr-2.1.4_14/po/et_EE.po
 --- vdr-2.1.4_13/po/et_EE.po	2013-11-03 16:05:37.000000000 +0100
 +++ vdr-2.1.4_14/po/et_EE.po	2014-01-26 14:22:08.444442772 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1056,6 +1056,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Subtiitri tausta lÃ¤bipaistvus"
  
@@ -442,7 +442,7 @@ diff -ruN vdr-2.1.4_13/po/et_EE.po vdr-2.1.4_14/po/et_EE.po
 diff -ruN vdr-2.1.4_13/po/fi_FI.po vdr-2.1.4_14/po/fi_FI.po
 --- vdr-2.1.4_13/po/fi_FI.po	2013-11-03 16:05:37.000000000 +0100
 +++ vdr-2.1.4_14/po/fi_FI.po	2014-01-26 14:22:08.444442772 +0100
-@@ -1039,6 +1039,9 @@
+@@ -1060,6 +1060,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Tekstityksen taustan lÃ¤pinÃ¤kyvyys"
  
@@ -455,7 +455,7 @@ diff -ruN vdr-2.1.4_13/po/fi_FI.po vdr-2.1.4_14/po/fi_FI.po
 diff -ruN vdr-2.1.4_13/po/fr_FR.po vdr-2.1.4_14/po/fr_FR.po
 --- vdr-2.1.4_13/po/fr_FR.po	2014-01-26 14:19:15.349237289 +0100
 +++ vdr-2.1.4_14/po/fr_FR.po	2014-01-26 14:22:08.444442772 +0100
-@@ -1045,6 +1045,9 @@
+@@ -1067,6 +1067,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparence du fond des sous-titres"
  
@@ -468,7 +468,7 @@ diff -ruN vdr-2.1.4_13/po/fr_FR.po vdr-2.1.4_14/po/fr_FR.po
 diff -ruN vdr-2.1.4_13/po/hr_HR.po vdr-2.1.4_14/po/hr_HR.po
 --- vdr-2.1.4_13/po/hr_HR.po	2013-11-03 16:07:35.000000000 +0100
 +++ vdr-2.1.4_14/po/hr_HR.po	2014-01-26 14:22:08.448442569 +0100
-@@ -1037,6 +1037,9 @@
+@@ -1058,6 +1058,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparentnost pozadine titla"
  
@@ -481,7 +481,7 @@ diff -ruN vdr-2.1.4_13/po/hr_HR.po vdr-2.1.4_14/po/hr_HR.po
 diff -ruN vdr-2.1.4_13/po/hu_HU.po vdr-2.1.4_14/po/hu_HU.po
 --- vdr-2.1.4_13/po/hu_HU.po	2013-11-03 16:05:38.000000000 +0100
 +++ vdr-2.1.4_14/po/hu_HU.po	2014-01-26 14:22:08.448442569 +0100
-@@ -1039,6 +1039,9 @@
+@@ -1061,6 +1061,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Felirat hÃ¡tterÃ©nek transzparenciÃ¡ja"
  
@@ -494,7 +494,7 @@ diff -ruN vdr-2.1.4_13/po/hu_HU.po vdr-2.1.4_14/po/hu_HU.po
 diff -ruN vdr-2.1.4_13/po/it_IT.po vdr-2.1.4_14/po/it_IT.po
 --- vdr-2.1.4_13/po/it_IT.po	2013-11-11 11:33:51.000000000 +0100
 +++ vdr-2.1.4_14/po/it_IT.po	2014-01-26 14:22:08.448442569 +0100
-@@ -1042,6 +1042,9 @@
+@@ -1062,6 +1062,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Trasparenza sfondo sottotitoli"
  
@@ -507,7 +507,7 @@ diff -ruN vdr-2.1.4_13/po/it_IT.po vdr-2.1.4_14/po/it_IT.po
 diff -ruN vdr-2.1.4_13/po/lt_LT.po vdr-2.1.4_14/po/lt_LT.po
 --- vdr-2.1.4_13/po/lt_LT.po	2013-11-03 16:05:39.000000000 +0100
 +++ vdr-2.1.4_14/po/lt_LT.po	2014-01-26 14:22:08.448442569 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1056,6 +1056,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "SubtitrÅ³ fono permatomumas"
  
@@ -520,7 +520,7 @@ diff -ruN vdr-2.1.4_13/po/lt_LT.po vdr-2.1.4_14/po/lt_LT.po
 diff -ruN vdr-2.1.4_13/po/nl_NL.po vdr-2.1.4_14/po/nl_NL.po
 --- vdr-2.1.4_13/po/nl_NL.po	2013-11-03 16:05:39.000000000 +0100
 +++ vdr-2.1.4_14/po/nl_NL.po	2014-01-26 14:22:08.448442569 +0100
-@@ -1040,6 +1040,9 @@
+@@ -1062,6 +1062,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparantie achtergrond ondertiteling"
  
@@ -533,7 +533,7 @@ diff -ruN vdr-2.1.4_13/po/nl_NL.po vdr-2.1.4_14/po/nl_NL.po
 diff -ruN vdr-2.1.4_13/po/nn_NO.po vdr-2.1.4_14/po/nn_NO.po
 --- vdr-2.1.4_13/po/nn_NO.po	2013-11-03 16:08:04.000000000 +0100
 +++ vdr-2.1.4_14/po/nn_NO.po	2014-01-26 14:22:08.452442365 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr ""
  
@@ -546,7 +546,7 @@ diff -ruN vdr-2.1.4_13/po/nn_NO.po vdr-2.1.4_14/po/nn_NO.po
 diff -ruN vdr-2.1.4_13/po/pl_PL.po vdr-2.1.4_14/po/pl_PL.po
 --- vdr-2.1.4_13/po/pl_PL.po	2013-11-03 16:05:40.000000000 +0100
 +++ vdr-2.1.4_14/po/pl_PL.po	2014-01-26 14:22:08.452442365 +0100
-@@ -1037,6 +1037,9 @@
+@@ -1059,6 +1059,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Prze¼rocze podtytu³ów: T³o"
  
@@ -559,7 +559,7 @@ diff -ruN vdr-2.1.4_13/po/pl_PL.po vdr-2.1.4_14/po/pl_PL.po
 diff -ruN vdr-2.1.4_13/po/pt_PT.po vdr-2.1.4_14/po/pt_PT.po
 --- vdr-2.1.4_13/po/pt_PT.po	2013-11-03 16:05:40.000000000 +0100
 +++ vdr-2.1.4_14/po/pt_PT.po	2014-01-26 14:22:08.452442365 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparência de fundo das legendas"
  
@@ -572,7 +572,7 @@ diff -ruN vdr-2.1.4_13/po/pt_PT.po vdr-2.1.4_14/po/pt_PT.po
 diff -ruN vdr-2.1.4_13/po/ro_RO.po vdr-2.1.4_14/po/ro_RO.po
 --- vdr-2.1.4_13/po/ro_RO.po	2013-11-03 16:05:41.000000000 +0100
 +++ vdr-2.1.4_14/po/ro_RO.po	2014-01-26 14:22:08.452442365 +0100
-@@ -1037,6 +1037,9 @@
+@@ -1058,6 +1058,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "TransparenÅ£a fundalului subtitrÄƒrii"
  
@@ -585,7 +585,7 @@ diff -ruN vdr-2.1.4_13/po/ro_RO.po vdr-2.1.4_14/po/ro_RO.po
 diff -ruN vdr-2.1.4_13/po/ru_RU.po vdr-2.1.4_14/po/ru_RU.po
 --- vdr-2.1.4_13/po/ru_RU.po	2013-11-03 16:05:41.000000000 +0100
 +++ vdr-2.1.4_14/po/ru_RU.po	2014-01-26 14:22:08.452442365 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "¿àÞ×àÐçÝÞáâì äÞÝÐ áãÑâØâàÞÒ"
  
@@ -598,7 +598,7 @@ diff -ruN vdr-2.1.4_13/po/ru_RU.po vdr-2.1.4_14/po/ru_RU.po
 diff -ruN vdr-2.1.4_13/po/sk_SK.po vdr-2.1.4_14/po/sk_SK.po
 --- vdr-2.1.4_13/po/sk_SK.po	2013-11-03 16:05:41.000000000 +0100
 +++ vdr-2.1.4_14/po/sk_SK.po	2014-01-26 14:22:08.456442162 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Priehµadnos» pozadia titulkov"
  
@@ -611,7 +611,7 @@ diff -ruN vdr-2.1.4_13/po/sk_SK.po vdr-2.1.4_14/po/sk_SK.po
 diff -ruN vdr-2.1.4_13/po/sl_SI.po vdr-2.1.4_14/po/sl_SI.po
 --- vdr-2.1.4_13/po/sl_SI.po	2013-11-03 16:05:42.000000000 +0100
 +++ vdr-2.1.4_14/po/sl_SI.po	2014-01-26 14:22:08.456442162 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparentnost ozadja podnapisov"
  
@@ -624,7 +624,7 @@ diff -ruN vdr-2.1.4_13/po/sl_SI.po vdr-2.1.4_14/po/sl_SI.po
 diff -ruN vdr-2.1.4_13/po/sv_SE.po vdr-2.1.4_14/po/sv_SE.po
 --- vdr-2.1.4_13/po/sv_SE.po	2013-11-03 16:05:43.000000000 +0100
 +++ vdr-2.1.4_14/po/sv_SE.po	2014-01-26 14:22:08.456442162 +0100
-@@ -1039,6 +1039,9 @@
+@@ -1061,6 +1061,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Transparent bakgrund textremsa"
  
@@ -637,7 +637,7 @@ diff -ruN vdr-2.1.4_13/po/sv_SE.po vdr-2.1.4_14/po/sv_SE.po
 diff -ruN vdr-2.1.4_13/po/tr_TR.po vdr-2.1.4_14/po/tr_TR.po
 --- vdr-2.1.4_13/po/tr_TR.po	2013-11-03 16:08:28.000000000 +0100
 +++ vdr-2.1.4_14/po/tr_TR.po	2014-01-26 14:22:08.456442162 +0100
-@@ -1035,6 +1035,9 @@
+@@ -1056,6 +1056,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "Altyazý arka þeffaflýk"
  
@@ -650,7 +650,7 @@ diff -ruN vdr-2.1.4_13/po/tr_TR.po vdr-2.1.4_14/po/tr_TR.po
 diff -ruN vdr-2.1.4_13/po/uk_UA.po vdr-2.1.4_14/po/uk_UA.po
 --- vdr-2.1.4_13/po/uk_UA.po	2013-11-04 12:23:27.000000000 +0100
 +++ vdr-2.1.4_14/po/uk_UA.po	2014-01-26 14:22:08.456442162 +0100
-@@ -1036,6 +1036,9 @@
+@@ -1057,6 +1057,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "ÐŸÑ€Ð¾Ð·Ð¾Ñ€Ñ–ÑÑ‚ÑŒ Ð·Ð°Ð´Ð½ÑŒÐ¾Ð³Ð¾ Ð¿Ð»Ð°Ð½Ñƒ ÑÑƒÐ±Ñ‚Ð¸Ñ‚Ñ€Ñ–Ð²"
  
@@ -663,7 +663,7 @@ diff -ruN vdr-2.1.4_13/po/uk_UA.po vdr-2.1.4_14/po/uk_UA.po
 diff -ruN vdr-2.1.4_13/po/zh_CN.po vdr-2.1.4_14/po/zh_CN.po
 --- vdr-2.1.4_13/po/zh_CN.po	2013-11-03 16:05:50.000000000 +0100
 +++ vdr-2.1.4_14/po/zh_CN.po	2014-01-26 14:22:08.460441959 +0100
-@@ -1037,6 +1037,9 @@
+@@ -1058,6 +1058,9 @@
  msgid "Setup.DVB$Subtitle background transparency"
  msgstr "å­—å¹•èƒŒæ™¯é€æ˜Žåº¦"
  
@@ -676,7 +676,7 @@ diff -ruN vdr-2.1.4_13/po/zh_CN.po vdr-2.1.4_14/po/zh_CN.po
 diff -ruN vdr-2.1.4_13/receiver.c vdr-2.1.4_14/receiver.c
 --- vdr-2.1.4_13/receiver.c	2014-01-01 13:03:00.000000000 +0100
 +++ vdr-2.1.4_14/receiver.c	2014-01-26 14:22:08.460441959 +0100
-@@ -67,7 +67,8 @@
+@@ -72,7 +72,8 @@
              (Channel->Ppid() == Channel->Vpid() || AddPid(Channel->Ppid())) &&
              AddPids(Channel->Apids()) &&
              AddPids(Channel->Dpids()) &&
@@ -689,7 +689,7 @@ diff -ruN vdr-2.1.4_13/receiver.c vdr-2.1.4_14/receiver.c
 diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
 --- vdr-2.1.4_13/remux.c	2014-01-18 12:27:30.000000000 +0100
 +++ vdr-2.1.4_14/remux.c	2014-01-26 14:22:08.460441959 +0100
-@@ -414,6 +414,29 @@
+@@ -416,6 +416,29 @@
    return i;
  }
  
@@ -719,7 +719,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
  int cPatPmtGenerator::MakeLanguageDescriptor(uchar *Target, const char *Language)
  {
    int i = 0;
-@@ -501,6 +524,7 @@
+@@ -503,6 +526,7 @@
    if (Channel) {
       int Vpid = Channel->Vpid();
       int Ppid = Channel->Ppid();
@@ -727,7 +727,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
       uchar *p = buf;
       int i = 0;
       p[i++] = 0x02; // table id
-@@ -533,6 +557,10 @@
+@@ -535,6 +559,10 @@
           i += MakeStream(buf + i, 0x06, Channel->Spid(n));
           i += MakeSubtitlingDescriptor(buf + i, Channel->Slang(n), Channel->SubtitlingType(n), Channel->CompositionPageId(n), Channel->AncillaryPageId(n));
           }
@@ -738,7 +738,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
  
       int sl = i - SectionLength - 2 + 4; // -2 = SectionLength storage, +4 = length of CRC
       buf[SectionLength] |= (sl >> 8) & 0x0F;
-@@ -606,6 +634,7 @@
+@@ -608,6 +636,7 @@
    pmtPids[0] = 0;
    vpid = vtype = 0;
    ppid = 0;
@@ -746,7 +746,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
  }
  
  void cPatPmtParser::ParsePat(const uchar *Data, int Length)
-@@ -694,11 +723,13 @@
+@@ -696,11 +725,13 @@
       int NumSpids = 0;
       vpid = vtype = 0;
       ppid = 0;
@@ -760,7 +760,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
       SI::PMT::Stream stream;
       for (SI::Loop::Iterator it; Pmt.streamLoop.getNext(stream, it); ) {
           dbgpatpmt("     stream type = %02X, pid = %d", stream.getStreamType(), stream.getPid());
-@@ -797,6 +828,28 @@
+@@ -799,6 +830,28 @@
                                      spids[NumSpids] = 0;
                                      }
                                   break;
@@ -792,7 +792,7 @@ diff -ruN vdr-2.1.4_13/remux.c vdr-2.1.4_14/remux.c
 diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
 --- vdr-2.1.4_13/remux.h	2014-01-16 11:15:50.000000000 +0100
 +++ vdr-2.1.4_14/remux.h	2014-01-26 14:22:08.460441959 +0100
-@@ -301,6 +301,7 @@
+@@ -302,6 +302,7 @@
    int MakeStream(uchar *Target, uchar Type, int Pid);
    int MakeAC3Descriptor(uchar *Target, uchar Type);
    int MakeSubtitlingDescriptor(uchar *Target, const char *Language, uchar SubtitlingType, uint16_t CompositionPageId, uint16_t AncillaryPageId);
@@ -800,7 +800,7 @@ diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
    int MakeLanguageDescriptor(uchar *Target, const char *Language);
    int MakeCRC(uchar *Target, const uchar *Data, int Length);
    void GeneratePmtPid(const cChannel *Channel);
-@@ -348,6 +349,7 @@
+@@ -349,6 +350,7 @@
    int vpid;
    int ppid;
    int vtype;
@@ -808,7 +808,7 @@ diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
    int apids[MAXAPIDS + 1]; // list is zero-terminated
    int atypes[MAXAPIDS + 1]; // list is zero-terminated
    char alangs[MAXAPIDS][MAXLANGCODE2];
-@@ -360,6 +362,8 @@
+@@ -361,6 +363,8 @@
    uint16_t compositionPageIds[MAXSPIDS];
    uint16_t ancillaryPageIds[MAXSPIDS];
    bool updatePrimaryDevice;
@@ -817,7 +817,7 @@ diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
  protected:
    int SectionLength(const uchar *Data, int Length) { return (Length >= 3) ? ((int(Data[1]) & 0x0F) << 8)| Data[2] : 0; }
  public:
-@@ -396,6 +400,9 @@
+@@ -397,6 +401,9 @@
    int Vtype(void) const { return vtype; }
         ///< Returns the video stream type as defined by the current PMT, or 0 if no video
         ///< stream type has been detected, yet.
@@ -827,7 +827,7 @@ diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
    const int *Apids(void) const { return apids; }
    const int *Dpids(void) const { return dpids; }
    const int *Spids(void) const { return spids; }
-@@ -410,6 +417,8 @@
+@@ -411,6 +418,8 @@
    uchar SubtitlingType(int i) const { return (0 <= i && i < MAXSPIDS) ? subtitlingTypes[i] : uchar(0); }
    uint16_t CompositionPageId(int i) const { return (0 <= i && i < MAXSPIDS) ? compositionPageIds[i] : uint16_t(0); }
    uint16_t AncillaryPageId(int i) const { return (0 <= i && i < MAXSPIDS) ? ancillaryPageIds[i] : uint16_t(0); }
@@ -839,7 +839,7 @@ diff -ruN vdr-2.1.4_13/remux.h vdr-2.1.4_14/remux.h
 diff -ruN vdr-2.1.4_13/vdr.5 vdr-2.1.4_14/vdr.5
 --- vdr-2.1.4_13/vdr.5	2013-08-11 15:50:42.000000000 +0200
 +++ vdr-2.1.4_14/vdr.5	2014-01-26 14:22:08.460441959 +0100
-@@ -240,6 +240,12 @@
+@@ -249,6 +249,12 @@
  
  .B ...:201;2001=deu,2002=eng:...
  

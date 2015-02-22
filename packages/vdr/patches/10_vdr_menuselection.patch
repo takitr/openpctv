@@ -9,7 +9,7 @@ diff -Nru vdr-2.1.2-vanilla/osdbase.c vdr-2.1.2-menuselection/osdbase.c
    hasHotkeys = false;
    displayMenuItems = 0;
    title = NULL;
-@@ -131,7 +132,7 @@
+@@ -137,7 +138,7 @@
          digit = -1; // prevents automatic hotkeys - input already has them
       if (digit >= 0) {
          digit++;
@@ -18,7 +18,7 @@ diff -Nru vdr-2.1.2-vanilla/osdbase.c vdr-2.1.2-menuselection/osdbase.c
          s = buffer;
          }
       }
-@@ -477,20 +478,60 @@
+@@ -484,20 +485,60 @@
       }
  }
  
@@ -82,7 +82,7 @@ diff -Nru vdr-2.1.2-vanilla/osdbase.c vdr-2.1.2-menuselection/osdbase.c
    return osContinue;
  }
  
-@@ -531,8 +572,8 @@
+@@ -538,8 +579,8 @@
          }
       }
    switch (int(Key)) {
@@ -96,7 +96,7 @@ diff -Nru vdr-2.1.2-vanilla/osdbase.c vdr-2.1.2-menuselection/osdbase.c
 diff -Nru vdr-2.1.2-vanilla/osdbase.h vdr-2.1.2-menuselection/osdbase.h
 --- vdr-2.1.2-vanilla/osdbase.h	2013-10-19 18:27:36.004000000 +0300
 +++ vdr-2.1.2-menuselection/osdbase.h	2013-10-19 18:35:12.236000000 +0300
-@@ -98,6 +98,8 @@
+@@ -99,6 +99,8 @@
    char *status;
    int digit;
    bool hasHotkeys;

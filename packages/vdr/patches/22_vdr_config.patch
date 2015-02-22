@@ -45,8 +45,8 @@ diff -ruN 1.7.41_24/Make.config 1.7.41_25/Make.config
 +DVBDIR    = $(MLDDIR)/dvb/include/uapi
 +
 +VIDEODIR  = /data/tv
-+#CONFDIR   = /var/lib/vdr
-+#CACHEDIR  = /var/cache/vdr
++CONFDIR   = /etc/vdr
++CACHEDIR  = /var/cache/vdr
 +
 +# Overrides for preset/legacy configurations:
 +

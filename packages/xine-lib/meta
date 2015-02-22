@@ -1,7 +1,11 @@
 PKG_NAME=xine-lib
-PKG_VERSION=1.2.6_hg20140709
-PKG_URL=$SFNET_SRCS/openpctv/sources/xine-lib-${PKG_VERSION}.tar.xz
-PKG_REV=2
+#PKG_VERSION=1.2.6_hg20140709
+#PKG_URL=$SFNET_SRCS/openpctv/sources/xine-lib-${PKG_VERSION}.tar.xz
+PKG_URL_PROTO=git
+PKG_URL="git://projects.vdr-developer.org/xine-lib.git"
+PKG_URL_REV=4602e39
+PKG_VERSION=20141229-r${PKG_URL_REV}
+PKG_REV=1
 PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC"
 PKG_DEPENDS="zlib ffmpeg freetype alsa-lib"

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addons>
+<addon id="plugin.video.amazon"
+       name="Amazon"
+       version="0.6.9"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+    <import addon="script.module.mechanize" version="0.2.5"/>
+    <import addon="script.module.amazon.database" version="0.0.1"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+             library="default.py">
+	<provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Amazon Prime Video Streaming</summary>
+    <description>Movies and Television Shows for Prime Members</description>
+    <disclaimer>Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+  </extension>
+</addon>
+
+<addon id="plugin.video.baeble"
+       name="Baeble Music"
+       version="0.0.2"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+  <provides>video audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Music Videos from Baeble</summary>
+    <description>Music Videos from Baeble</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.epix"
+       name="Epix HD"
+       version="0.1.1"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+    <import addon="script.module.mechanize" version="0.2.5"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+             library="default.py">
+	<provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary></summary>
+    <description></description>
+    <disclaimer>Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+  </extension>
+</addon>
+
+<addon id="plugin.video.espn3"
+       name="ESPN"
+       version="0.9.9"
+       provider-name="Ksosez,BlueCop">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+		<import addon="script.module.beautifulsoup" version="3.0.8"/>
+    	<import addon="script.module.mechanize" version="0.2.5"/>
+    	<import addon="script.module.elementtree" version="1.2.7"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource"
+               library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <license>GPL 2.0</license>
+        <summary lang="en">ESPN</summary>
+        <description lang="en">Watch full live streaming sporting events online on ESPN, including football, baseball, cricket, soccer, and basketball events.</description>
+    </extension>
+</addon>
+
+<addon id="plugin.video.free.cable"
+       name="Free Cable"
+       version="0.5.9"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+    <import addon="script.module.free.cable.database" version="0.0.3"/>
+    <import addon="script.module.coveapi" version="0.2"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>US station aggregator</summary>
+    <description>"Free Cable is the ultimate aphrodisiac" - The Cable Guy</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.hulu"
+       name="Hulu"
+       version="3.4.5"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.elementtree" version="1.2.7"/>
+    <import addon="script.module.cryptopy" version="1.2.6"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+             library="default.py">
+	<provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Hulu video plugin</summary>
+    <description>Videos from Hulu.com</description>
+    <disclaimer>Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+  </extension>
+</addon>
+
+<addon id="plugin.video.mtv"
+       name="MTV Music Videos"
+       version="0.0.6"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+  <provides>video audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Music Videos from MTV</summary>
+    <description>Music Videos from MTV</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.nba"
+       name="NBA League Pass"
+       version="0.1.5"
+       provider-name="robla">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.httplib2" version="0.7.1"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="leaguepass.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>NBA League Pass is an online service offering streaming video of NBA games.</summary>
+    <description>NBA League Pass is an online service offering streaming video of NBA games.</description>
+  </extension>
+</addon>
+
+<addon id="plugin.video.reddit.bc"
+       name="Reddit Videos"
+       version="0.0.3"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+  <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Videos from reddit.com</summary>
+    <description>Videos from reddit.com</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.vevo"
+       name="VEVO"
+       version="0.7.3"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+    <import addon="script.module.mechanize" version="0.2.5"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+  <provides>video audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Music Videos from VEVO</summary>
+    <description>Music Videos from VEVO</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.videolectures.net"
+       name="Video Lectures"
+       version="0.0.3"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+    <import addon="script.module.demjson" version="1.4"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+  <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary></summary>
+    <description></description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.video.yahoo.music.videos"
+       name="Yahoo Music Videos"
+       version="0.0.3"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.0.8"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Music Videos</summary>
+    <description>Music Videos</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="repository.bluecop.xbmc-plugins" name="bluecop Add-on Repository" version="1.0.1" provider-name="bluecop">
+	<extension point="xbmc.addon.repository" name="bluecop Add-on Repository">
+		<info compressed="false">http://bluecop-xbmc-repo.googlecode.com/svn/trunk/addons.xml</info>
+		<checksum>http://bluecop-xbmc-repo.googlecode.com/svn/trunk/addons.xml.md5</checksum>
+		<datadir zip="false">http://bluecop-xbmc-repo.googlecode.com/svn/trunk/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install Add-ons from bluecop Add-on Repository</summary>
+		<description>Video plug-ins for XBMC</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="script.hululibraryautoupdate"
+    name="Hulu Library Auto Update" version="1.1.2" provider-name="robweber/pkscuot">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.script" library="default.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Update your XBMC Hulu Video Libraries on a timer.</summary>
+    <description lang="en">Requires the BlueCop Hulu plugin. </description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.amazon.database"
+       name="Amazon Database"
+       version="0.0.1"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.coveapi"
+       name="Cove API"
+       version="0.2"
+       provider-name="github.com/pbs/python-coveapi">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.cryptopy"
+       name="CryptoPy"
+       version="1.2.6"
+       provider-name="cryptopy.sourceforge.net">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.demjson"
+       name="demjson"
+       version="1.4"
+       provider-name="deron.meranda.us">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.free.cable.database"
+       name="Free Cable Database"
+       version="0.0.3"
+       provider-name="BlueCop">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.mechanize"
+       name="mechanize"
+       version="0.2.5"
+       provider-name="wwwsearch.sourceforge.net/mechanize/">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="script.module.pycrypto"
+       name="pycrypto"
+       version="2.5"
+       provider-name="www.dlitz.net/software/pycrypto/">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+  </extension>
+</addon>
+</addons>

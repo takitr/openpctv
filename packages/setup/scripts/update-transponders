@@ -31,7 +31,9 @@ echo "$(gettext "Download transponders for enigma2")"
 wget -t 3 $url2 -O /tmp/dreambox.zip || (echo "$(gettext "Can't download, please check your network settings")"; exit)
 echo "$(gettext "Update /etc/enigma2/satellites.xml...")"
 unzip -o /tmp/dreambox.zip -d /etc/tuxbox
-[ -f /etc/tuxbox/satellites_extra.xml ] && sed -i '/<satellites>/ r /etc/tuxbox/satellites_extra.xml' /etc/tuxbox/satellites.xml
+[ -f /etc/tuxbox/satellites_extra.xml ] && sed '/<satellites>/ r /etc/tuxbox/satellites_extra.xml' /etc/tuxbox/satellites.xml > /tmp/s.xml
+cp -rf /tmp/s.xml /etc/tuxbox/satellites.xml
+rm /tmp/s.xml
 rm -rf /tmp/dreambox.zip
 echo "$(gettext "Done!")"
 }

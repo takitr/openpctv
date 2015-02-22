@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-18 22:25+0800\n"
+"POT-Creation-Date: 2015-02-22 12:49+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: packages/setup/scripts/audio-config:8
 #: packages/setup/scripts/audio-config:48
-#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:108
+#: packages/setup/scripts/audio-config:67 packages/setup/scripts/setup.sh:111
 msgid "Sound card Configuration"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgid "Would you like to enable SoftCAM (OScam) on this machine?"
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:18
-#: packages/setup/scripts/setup.sh:93 packages/setup/scripts/setup.sh:122
+#: packages/setup/scripts/setup.sh:96 packages/setup/scripts/setup.sh:125
 msgid "Reboot"
 msgstr ""
 
@@ -466,7 +466,7 @@ msgid ""
 msgstr ""
 
 #: packages/setup/scripts/install-drivers:125
-#: packages/setup/scripts/setup.sh:105
+#: packages/setup/scripts/setup.sh:108
 msgid "Install additional DVB driver"
 msgstr ""
 
@@ -787,7 +787,7 @@ msgid "Submit"
 msgstr ""
 
 #: packages/setup/scripts/monitor.sh:19 packages/setup/scripts/monitor.sh:33
-#: packages/setup/scripts/setup.sh:107
+#: packages/setup/scripts/setup.sh:110
 msgid "Set the monitor's best resolution"
 msgstr ""
 
@@ -963,7 +963,7 @@ msgid "This step is not necessary, because we provide a normal list."
 msgstr ""
 
 #: packages/setup/scripts/select-plugins:29
-#: packages/setup/scripts/setup.sh:112
+#: packages/setup/scripts/setup.sh:115
 msgid "Select VDR-plugins"
 msgstr ""
 
@@ -971,7 +971,7 @@ msgstr ""
 msgid "You can enable or disable VDR-plugins on the list."
 msgstr ""
 
-#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:103
+#: packages/setup/scripts/select-target:8 packages/setup/scripts/setup.sh:106
 msgid "Set the default target"
 msgstr ""
 
@@ -1001,85 +1001,70 @@ msgstr ""
 msgid "or 3 seconds later enter"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:88
-msgid "Configure VDR"
-msgstr ""
-
-#: packages/setup/scripts/setup.sh:88
-msgid "Configure VDR later"
-msgstr ""
-
-#: packages/setup/scripts/setup.sh:88
-msgid ""
-"The following configuration is for the VDR (note the KODI uses VDR as a PVR "
-"backend), if you only use Engima2, then you do not need to configure or re-"
-"configure VDR later."
-msgstr ""
-
-#: packages/setup/scripts/setup.sh:93 packages/setup/scripts/setup.sh:101
+#: packages/setup/scripts/setup.sh:96 packages/setup/scripts/setup.sh:104
 msgid "Main menu"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:93
+#: packages/setup/scripts/setup.sh:96
 msgid ""
 "Now, you have completed the most configurations of VDR(for Enigma2 need to "
 "be in its OSD menu) . Now you can select 'Reboot' or 'Main Menu' to continue "
 "the configuration."
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:101
+#: packages/setup/scripts/setup.sh:104
 msgid "configuration"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:102
+#: packages/setup/scripts/setup.sh:105
 msgid "Set global location and language"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:104
+#: packages/setup/scripts/setup.sh:107
 msgid "Configure Network Environment"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:109
+#: packages/setup/scripts/setup.sh:112
 msgid "Update Satellite Transponders"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:110
+#: packages/setup/scripts/setup.sh:113
 msgid "Update EPG data"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:111
+#: packages/setup/scripts/setup.sh:114
 msgid "Select the default PVR backend"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:113
+#: packages/setup/scripts/setup.sh:116
 msgid "Select a software emulated CAM"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:114
+#: packages/setup/scripts/setup.sh:117
 msgid "DiSEqC configuration"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:115
+#: packages/setup/scripts/setup.sh:118
 msgid "Auto scan channels"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:117
+#: packages/setup/scripts/setup.sh:120
 msgid "Start KODI pvr with VDR/TVheadend backend"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:118
+#: packages/setup/scripts/setup.sh:121
 msgid "Start VDR frontend"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:119
+#: packages/setup/scripts/setup.sh:122
 msgid "Start Enigam2 frontend"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:120
+#: packages/setup/scripts/setup.sh:123
 msgid "Install OpenPCTV to your hard disk"
 msgstr ""
 
-#: packages/setup/scripts/setup.sh:121
+#: packages/setup/scripts/setup.sh:124
 msgid "Exit to login shell"
 msgstr ""
 
@@ -1133,7 +1118,7 @@ msgid "Convert transponders data sheet and update transponders for scan-s2..."
 msgstr ""
 
 #: packages/setup/scripts/update-transponders:25
-#: packages/setup/scripts/update-transponders:36
+#: packages/setup/scripts/update-transponders:38
 msgid "Done!"
 msgstr ""
 
@@ -1145,7 +1130,7 @@ msgstr ""
 msgid "Update /etc/enigma2/satellites.xml..."
 msgstr ""
 
-#: packages/setup/scripts/update-transponders:39
+#: packages/setup/scripts/update-transponders:41
 msgid ""
 "Do you want to update the satellite transponders from fastsatfinder.com? If "
 "you do not update it, your transponder parameters may not be the latest."

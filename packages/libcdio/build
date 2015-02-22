@@ -18,5 +18,6 @@ do_configure \
             --without-iso-read \
             --without-versioned-libs \
 
+sed -i 's/\-R.*//' *.pc
 make
 make_install
