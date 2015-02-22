@@ -112,7 +112,10 @@ cp $ROOT/$PACKAGES/$1/scripts/systemd-machine-id-setup $INSTALL/usr/bin
 rm -rf $INSTALL/lib/systemd/system/console-*.service
 rm -rf $INSTALL/lib/systemd/system/debug-shell.service
 
-[ "$TARGET_ARCH" = arm ] && rm $INSTALL/lib/systemd/system/autovt@.service
+if [ "$TARGET_ARCH" = arm ]; then
+  rm $INSTALL/lib/systemd/system/autovt@.service
+  ln -sf /dev/null $INSTALL/etc/systemd/system/getty.target.wants/getty@tty1.service
+fi
 
 # provide 'halt', 'shutdown', 'reboot' & co.
 mkdir -p $INSTALL/sbin
@@ -129,14 +132,14 @@ for TTY in 2 3; do
     $INSTALL/etc/systemd/system/getty.target.wants/getty@tty$TTY.service
 done
 
-[ -n "$MEDIA_CENTER_FRONTEND" ] && \
-  DEFAULT_SYSTEMD_TARGET=$MEDIA_CENTER_FRONTEND
+#[ -n "$MEDIA_CENTER_FRONTEND" ] && \
+#  DEFAULT_SYSTEMD_TARGET=$MEDIA_CENTER_FRONTEND
 
-if [ -n "$DEFAULT_SYSTEMD_TARGET" ]; then
-  mkdir -p $INSTALL/etc/systemd/system
-  ln -s /lib/systemd/system/${DEFAULT_SYSTEMD_TARGET}.target \
-    $INSTALL/etc/systemd/system/default.target
-fi
+#if [ -n "$DEFAULT_SYSTEMD_TARGET" ]; then
+#  mkdir -p $INSTALL/etc/systemd/system
+#  ln -s /lib/systemd/system/${DEFAULT_SYSTEMD_TARGET}.target \
+#    $INSTALL/etc/systemd/system/default.target
+#fi
 
 # reduce verbosity a bit
 sed -i -e "s/#LogLevel=info/LogLevel=notice/" $INSTALL/etc/systemd/system.conf

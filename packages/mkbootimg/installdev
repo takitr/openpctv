@@ -3,5 +3,6 @@
 . config/options
 
 mkdir -p $INSTALL/bin
-cp -P $BUILD/$1*/mkbootimg $INSTALL/bin
-cp -P $BUILD/$1*/unpackbootimg $INSTALL/bin
+for i in mkbootimg unpackbootimg; do
+  cp $BUILD/$1*/$i $INSTALL/bin
+done

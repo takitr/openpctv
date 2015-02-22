@@ -14,15 +14,18 @@ cp $ROOT/$BUILD/wireless-regdb*/db.txt net/wireless/db.txt
 
 [ "$TARGET_MACHINE" = wetek ] && make wetek_play.dtd; make wetek_play.dtb
 
-mkdir -p out
-$PLATFORM_PACKAGES/$1/scripts/dtbTool -o out/dt.img -p scripts/dtc/ arch/arm/boot/dts/amlogic/
+#mkdir -p out
+#$PLATFORM_PACKAGES/$1/scripts/dtbTool -o out/dt.img -p scripts/dtc/ arch/arm/boot/dts/amlogic/
+
+(cd $PLATFORM_PACKAGES/$1/config/initramfs; find . | cpio -H newc -ov -R 0:0 > $(kernel_path)/rootfs.cpio)
+[ -f rootfs.cpio.gz ] && rm rootfs.cpio.gz
+gzip -9 rootfs.cpio
+#sed -i -e "s|^CONFIG_INITRAMFS_SOURCE=.*$|CONFIG_INITRAMFS_SOURCE=\"rootfs.cpio\"|" .config
 
 make uImage-dtb SVN_REV=0
 
-(cd $PLATFORM_PACKAGES/$1/config/initramfs; find . | cpio -H newc -ov -R 0:0 > $(kernel_path)/rootfs.cpio)
+#cp arch/arm/boot/uImage-dtb boot.img
 
-[ -f rootfs.cpio.gz ] && rm rootfs.cpio.gz
-gzip -9 rootfs.cpio
 #$ROOT/$TOOLCHAIN/bin/mkbootimg --kernel ./arch/arm/boot/uImage-dtb --ramdisk ./rootfs.cpio.gz --second ./arch/arm/boot/dts/amlogic/wetek_play.dtb --output ./boot.img
 $ROOT/$TOOLCHAIN/bin/mkbootimg --kernel ./arch/arm/boot/uImage-dtb --ramdisk ./rootfs.cpio.gz --output ./boot.img
 

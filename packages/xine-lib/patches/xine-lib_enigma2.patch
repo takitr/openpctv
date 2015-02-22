@@ -1,893 +1,6 @@
-diff -urN xine-lib-1.2/debian/dh_xine.in xine-lib-1.2.enigmaw/debian/dh_xine.in
---- xine-lib-1.2/debian/dh_xine.in	2014-11-09 17:50:35.630622073 +0100
-+++ xine-lib-1.2.enigmaw/debian/dh_xine.in	2013-08-10 04:21:19.000000000 +0200
-@@ -27,7 +27,7 @@
- recommendations (almost) at will.  If you don't specify any, then 'x' and
- 'console' are used, generating xine-x:Depends and xine-console:Depends.
- 
--'-' generates xine:Depends which contains a dependency on libxine2 which is
-+'-' generates xine:Depends which contains a dependency on libxine1 which is
- suitable for use by out-of-tree plugins.
- 
- =head1 EXAMPLES
-@@ -67,10 +67,10 @@
-   foreach my $suffix (@suffix) {
-     if ($suffix eq '-') {
-       delsubstvar($package, "xine:Depends");
--      addsubstvar ($package, "xine:Depends", "libxine2 (>= @VERSION@)");
-+      addsubstvar ($package, "xine:Depends", "libxine1 (>= @VERSION@)");
-     } else {
-       delsubstvar($package, "xine-$suffix:Depends");
--      addsubstvar ($package, "xine-$suffix:Depends", "libxine2-$suffix");
-+      addsubstvar ($package, "xine-$suffix:Depends", "libxine1-$suffix");
-     }
-   }
- }
-I file binari xine-lib-1.2/.hg/dirstate e xine-lib-1.2.enigmaw/.hg/dirstate sono diversi
-diff -urN xine-lib-1.2/include/configure.h.in xine-lib-1.2.enigmaw/include/configure.h.in
---- xine-lib-1.2/include/configure.h.in	1970-01-01 01:00:00.000000000 +0100
-+++ xine-lib-1.2.enigmaw/include/configure.h.in	2013-08-10 04:21:19.000000000 +0200
-@@ -0,0 +1,857 @@
-+/* include/configure.h.in.  Generated from configure.ac by autoheader.  */
-+
-+#ifndef __XINE_LIB_CONFIG_H__
-+#define __XINE_LIB_CONFIG_H__ 1
-+
-+
-+#ifndef _XINE_CONFIGURE_H_
-+#define _XINE_CONFIGURE_H_
-+
-+
-+/* Define if building universal (internal helper macro) */
-+#undef AC_APPLE_UNIVERSAL_BUILD
-+
-+/* Define this if you're running Alpha architecture */
-+#undef ARCH_ALPHA
-+
-+/* Define this if you're running ARM architecture */
-+#undef ARCH_ARM
-+
-+/* Define this if you're running PowerPC architecture */
-+#undef ARCH_PPC
-+
-+/* Define this if you're running SPARC architecture */
-+#undef ARCH_SPARC
-+
-+/* Define this if you're running x86 architecture */
-+#undef ARCH_X86
-+
-+/* Define this if you're running x86 architecture 32 bits */
-+#undef ARCH_X86_32
-+
-+/* Define this if you're running x86 architecture 64 bits */
-+#undef ARCH_X86_64
-+
-+/* define if '.align n' means alignment to (1 << n) - byte boundaries */
-+#undef ASMALIGN_1SLN
-+
-+/* Define the highest alignment supported */
-+#undef ATTRIBUTE_ALIGNED_MAX
-+
-+/* Define this if built on Mac OS X/Darwin */
-+#undef CONFIG_DARWIN
-+
-+/* what to put between the brackets for empty arrays */
-+#undef EMPTY_ARRAY_SIZE
-+
-+/* Define this if you want to use altivec on PowerPC CPUs */
-+#undef ENABLE_ALTIVEC
-+
-+/* Define this to 1 to enable font antialising. */
-+#undef ENABLE_ANTIALIASING
-+
-+/* Enable this when IPv6 is requested */
-+#undef ENABLE_IPV6
-+
-+/* Define to 1 if translation of program messages to the user's native
-+   language is requested. */
-+#undef ENABLE_NLS
-+
-+/* Define this if you have Sun UltraSPARC CPU */
-+#undef ENABLE_VIS
-+
-+/* Mark a symbol as being exported if visibility is changed */
-+#undef EXPORTED
-+
-+/* Get of rid system libcdio build configuration */
-+#undef EXTERNAL_LIBCDIO_CONFIG_H
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_64BIT
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_ARM
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_DEFAULT
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_INTEL
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_MIPS
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_PPC
-+
-+/* Define to select libmad fixed point arithmetic implementation */
-+#undef FPM_SPARC
-+
-+/* Define to 1 if you have the <a52dec/a52.h> header file. */
-+#undef HAVE_A52DEC_A52_H
-+
-+/* Define to 1 if you have the <alloca.h> header file. */
-+#undef HAVE_ALLOCA_H
-+
-+/* Define this if you have ALSA installed */
-+#undef HAVE_ALSA
-+
-+/* Define to 1 if you have the <asm/types.h> header file. */
-+#undef HAVE_ASM_TYPES_H
-+
-+/* Define to 1 if you have the `asprintf' function. */
-+#undef HAVE_ASPRINTF
-+
-+/* Define to 1 if you have the <assert.h> header file. */
-+#undef HAVE_ASSERT_H
-+
-+/* Define to 1 if `output_muted' is a member of `audio_info_t'. */
-+#undef HAVE_AUDIO_INFO_T_OUTPUT_MUTED
-+
-+/* define if compiler supports avx inline assembler */
-+#undef HAVE_AVX
-+
-+/* Define to 1 if you have the `basename' function. */
-+#undef HAVE_BASENAME
-+
-+/* Define to 1 if you have the <byteswap.h> header file. */
-+#undef HAVE_BYTESWAP_H
-+
-+/* Define to 1 if you have the `bzero' function. */
-+#undef HAVE_BZERO
-+
-+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
-+   CoreFoundation framework. */
-+#undef HAVE_CFLOCALECOPYCURRENT
-+
-+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
-+   the CoreFoundation framework. */
-+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
-+
-+/* Define if the GNU dcgettext() function is already present or preinstalled.
-+   */
-+#undef HAVE_DCGETTEXT
-+
-+/* Define this if you have DirectX */
-+#undef HAVE_DIRECTX
-+
-+/* Define to 1 if you have the <dirent.h> header file. */
-+#undef HAVE_DIRENT_H
-+
-+/* Define to 1 if you have the <dlfcn.h> header file. */
-+#undef HAVE_DLFCN_H
-+
-+/* Define this if you have a suitable version of libdvdnav */
-+#undef HAVE_DVDNAV
-+
-+/* Define to 1 if you have the environ symbol. */
-+#undef HAVE_ENVIRON
-+
-+/* Define to 1 if you have the <errno.h> header file. */
-+#undef HAVE_ERRNO_H
-+
-+/* Define to 1 if you have the <execinfo.h> header file. */
-+#undef HAVE_EXECINFO_H
-+
-+/* Define to 1 if you have the <fame.h> header file. */
-+#undef HAVE_FAME_H
-+
-+/* Define this if you have linux framebuffer support */
-+#undef HAVE_FB
-+
-+/* Define to 1 if you have the <fcntl.h> header file. */
-+#undef HAVE_FCNTL_H
-+
-+/* Define this if you have ffmpeg library */
-+#undef HAVE_FFMPEG
-+
-+/* Define to 1 if you have the <ffmpeg/avutil.h> header file. */
-+#undef HAVE_FFMPEG_AVUTIL_H
-+
-+/* Define to 1 if you have the <FLAC/stream_decoder.h> header file. */
-+#undef HAVE_FLAC_STREAM_DECODER_H
-+
-+/* Define this if you have fontconfig library */
-+#undef HAVE_FONTCONFIG
-+
-+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-+#undef HAVE_FSEEKO
-+
-+/* Define this if you have freetype2 library */
-+#undef HAVE_FT2
-+
-+/* Define this if you have GNU getopt_long() implemented */
-+#undef HAVE_GETOPT_LONG
-+
-+/* Define to 1 if you have the `getpwuid_r' function. */
-+#undef HAVE_GETPWUID_R
-+
-+/* Define if the GNU gettext() function is already present or preinstalled. */
-+#undef HAVE_GETTEXT
-+
-+/* Define to 1 if you have the `gettimeofday' function. */
-+#undef HAVE_GETTIMEOFDAY
-+
-+/* Define to 1 if you have the <glob.h> header file. */
-+#undef HAVE_GLOB_H
-+
-+/* Define this if you have GLU support available */
-+#undef HAVE_GLU
-+
-+/* Define to 1 if you have the <GL/glu.h> header file. */
-+#undef HAVE_GL_GLU_H
-+
-+/* Define to 1 if you have the <GL/gl.h> header file. */
-+#undef HAVE_GL_GL_H
-+
-+/* Define this if you have GraphicsMagick installed */
-+#undef HAVE_GRAPHICSMAGICK
-+
-+/* Define to 1 if you have 'hstrerror' in <netdb.h> */
-+#undef HAVE_HSTRERROR
-+
-+/* Define if you have the iconv() function and it works. */
-+#undef HAVE_ICONV
-+
-+/* Define to 1 if you have the <inttypes.h> header file. */
-+#undef HAVE_INTTYPES_H
-+
-+/* Define this if you have a usable IRIX al interface available */
-+#undef HAVE_IRIXAL
-+
-+/* Supports ISO _Pragma() macro */
-+#undef HAVE_ISOC99_PRAGMA
-+
-+/* Define to 1 if you have the <jpeglib.h> header file. */
-+#undef HAVE_JPEGLIB_H
-+
-+/* Define this if you have kernel statistics available via kstat interface */
-+#undef HAVE_KSTAT
-+
-+/* Define to 1 if you have the <libavutil/avutil.h> header file. */
-+#undef HAVE_LIBAVUTIL_AVUTIL_H
-+
-+/* Define to 1 if you have the <libavutil/sha1.h> header file. */
-+#undef HAVE_LIBAVUTIL_SHA1_H
-+
-+/* Define to 1 if you have the <libavutil/sha.h> header file. */
-+#undef HAVE_LIBAVUTIL_SHA_H
-+
-+/* Define this if you have libfame mpeg encoder installed (fame.sf.net) */
-+#undef HAVE_LIBFAME
-+
-+/* Define to 1 if you have the <libgen.h> header file. */
-+#undef HAVE_LIBGEN_H
-+
-+/* Define to 1 if you have the <libmng.h> header file. */
-+#undef HAVE_LIBMNG_H
-+
-+/* Define to 1 if you have the `posix4' library (-lposix4). */
-+#undef HAVE_LIBPOSIX4
-+
-+/* Define this if you have librte mpeg encoder installed (zapping.sf.net) */
-+#undef HAVE_LIBRTE
-+
-+/* Define to 1 if you have the <libsmbclient.h> header file. */
-+#undef HAVE_LIBSMBCLIENT_H
-+
-+/* Define this if you have libv4l installed */
-+#undef HAVE_LIBV4L2_H
-+
-+/* Define to 1 if you have the `vdpau' library (-lvdpau). */
-+#undef HAVE_LIBVDPAU
-+
-+/* Define 1 if you have Linux-type CD-ROM support */
-+#undef HAVE_LINUX_CDROM
-+
-+/* Define to 1 if you have the <linux/cdrom.h> header file. */
-+#undef HAVE_LINUX_CDROM_H
-+
-+/* Define 1 if timeout is in cdrom_generic_command struct */
-+#undef HAVE_LINUX_CDROM_TIMEOUT
-+
-+/* Define to 1 if you have the <linux/fb.h> header file. */
-+#undef HAVE_LINUX_FB_H
-+
-+/* Define to 1 if you have the <linux/videodev2.h> header file. */
-+#undef HAVE_LINUX_VIDEODEV2_H
-+
-+/* Define to 1 if you have the <linux/videodev.h> header file. */
-+#undef HAVE_LINUX_VIDEODEV_H
-+
-+/* Define this if the 'lrintf' function is declared in math.h */
-+#undef HAVE_LRINTF
-+
-+/* Define to 1 if you have the `lstat' function. */
-+#undef HAVE_LSTAT
-+
-+/* Define to 1 if you have the <machine/soundcard.h> header file. */
-+#undef HAVE_MACHINE_SOUNDCARD_H
-+
-+/* Define to 1 if you have the <mad.h> header file. */
-+#undef HAVE_MAD_H
-+
-+/* Define to 1 if you have the <malloc.h> header file. */
-+#undef HAVE_MALLOC_H
-+
-+/* Define to 1 if you have 'MAX' macro in sys/param.h */
-+#undef HAVE_MAX_MACRO
-+
-+/* Define to 1 if you have the `memalign' function. */
-+#undef HAVE_MEMALIGN
-+
-+/* Define to 1 if you have the `memcpy' function. */
-+#undef HAVE_MEMCPY
-+
-+/* Define to 1 if you have the `memmem' function. */
-+#undef HAVE_MEMMEM
-+
-+/* Define to 1 if you have the <memory.h> header file. */
-+#undef HAVE_MEMORY_H
-+
-+/* Define to 1 if you have the `memset' function. */
-+#undef HAVE_MEMSET
-+
-+/* Define to 1 if you have 'MIN' macro in sys/param.h */
-+#undef HAVE_MIN_MACRO
-+
-+/* Define this if you have mlib installed */
-+#undef HAVE_MLIB
-+
-+/* Define to 1 if you have the <mlib_video.h> header file. */
-+#undef HAVE_MLIB_VIDEO_H
-+
-+/* Define to 1 if you have the `mmap' function. */
-+#undef HAVE_MMAP
-+
-+/* Define this if you can compile MMX asm instructions */
-+#undef HAVE_MMX
-+
-+/* Define to 1 if you have the <mpcdec/mpcdec.h> header file. */
-+#undef HAVE_MPCDEC_MPCDEC_H
-+
-+/* Define to 1 if you have the <mpc/mpcdec.h> header file. */
-+#undef HAVE_MPC_MPCDEC_H
-+
-+/* Define to 1 if you have the `nanosleep' function. */
-+#undef HAVE_NANOSLEEP
-+
-+/* Define to 1 if you have the <neaacdec.h> header file. */
-+#undef HAVE_NEAACDEC_H
-+
-+/* Define to 1 if you have the <netdb.h> header file. */
-+#undef HAVE_NETDB_H
-+
-+/* Define this if you have libfame 0.8.10 or above */
-+#undef HAVE_NEW_LIBFAME
-+
-+/* Define to 1 if you have the `nl_langinfo' function. */
-+#undef HAVE_NL_LANGINFO
-+
-+/* Define to 1 if you have 'opendir' function */
-+#undef HAVE_OPENDIR
-+
-+/* Define this if you have POSIX timers. */
-+#undef HAVE_POSIX_TIMERS
-+
-+/* Define to 1 if you have 'pthread_mutex_timedlock' in <pthread.h> */
-+#undef HAVE_PTHREAD_MUTEX_TIMEDLOCK
-+
-+/* define this if you have pulseaudio >= 0.9.7 */
-+#undef HAVE_PULSEAUDIO_0_9_7
-+
-+/* Define to 1 if you have the `readlink' function. */
-+#undef HAVE_READLINK
-+
-+/* Define to 1 if you have the <rte.h> header file. */
-+#undef HAVE_RTE_H
-+
-+/* Define to 1 if you have the `setenv' function. */
-+#undef HAVE_SETENV
-+
-+/* Define to 1 if you have the `sigaction' function. */
-+#undef HAVE_SIGACTION
-+
-+/* Define to 1 if you have the `sigset' function. */
-+#undef HAVE_SIGSET
-+
-+/* Define to 1 if you have the `snprintf' function. */
-+#undef HAVE_SNPRINTF
-+
-+/* Define to 1 if you have the <soundcard.h> header file. */
-+#undef HAVE_SOUNDCARD_H
-+
-+/* Define this if you have speex */
-+#undef HAVE_SPEEX
-+
-+/* Define to 1 if you have the <stdbool.h> header file. */
-+#undef HAVE_STDBOOL_H
-+
-+/* Define to 1 if you have the stderr symbol. */
-+#undef HAVE_STDERR
-+
-+/* Define to 1 if you have the <stdint.h> header file. */
-+#undef HAVE_STDINT_H
-+
-+/* Define to 1 if you have the <stdio.h> header file. */
-+#undef HAVE_STDIO_H
-+
-+/* Define to 1 if you have the <stdlib.h> header file. */
-+#undef HAVE_STDLIB_H
-+
-+/* Define to 1 if you have the `strcasecmp' function. */
-+#undef HAVE_STRCASECMP
-+
-+/* Define to 1 if you have the `strcasestr' function. */
-+#undef HAVE_STRCASESTR
-+
-+/* Define to 1 if you have the `strchr' function. */
-+#undef HAVE_STRCHR
-+
-+/* Define to 1 if you have the <strings.h> header file. */
-+#undef HAVE_STRINGS_H
-+
-+/* Define to 1 if you have the <string.h> header file. */
-+#undef HAVE_STRING_H
-+
-+/* Define to 1 if you have the `strncasecmp' function. */
-+#undef HAVE_STRNCASECMP
-+
-+/* Define to 1 if you have the `strndup' function. */
-+#undef HAVE_STRNDUP
-+
-+/* Define to 1 if you have the `strpbrk' function. */
-+#undef HAVE_STRPBRK
-+
-+/* Define to 1 if you have the `strsep' function. */
-+#undef HAVE_STRSEP
-+
-+/* Define to 1 if you have the `strtok_r' function. */
-+#undef HAVE_STRTOK_R
-+
-+/* Define to 1 if you have the <sys/cdio.h> header file. */
-+#undef HAVE_SYS_CDIO_H
-+
-+/* Define to 1 if you have the <sys/dvdio.h> header file. */
-+#undef HAVE_SYS_DVDIO_H
-+
-+/* Define to 1 if you have the <sys/fbio.h> header file. */
-+#undef HAVE_SYS_FBIO_H
-+
-+/* Define to 1 if you have the <sys/ioctl.h> header file. */
-+#undef HAVE_SYS_IOCTL_H
-+
-+/* Define to 1 if you have the <sys/mixer.h> header file. */
-+#undef HAVE_SYS_MIXER_H
-+
-+/* Define to 1 if you have the <sys/mman.h> header file. */
-+#undef HAVE_SYS_MMAN_H
-+
-+/* Define to 1 if you have the <sys/param.h> header file. */
-+#undef HAVE_SYS_PARAM_H
-+
-+/* Define to 1 if you have the <sys/scsiio.h> header file. */
-+#undef HAVE_SYS_SCSIIO_H
-+
-+/* Define to 1 if you have the <sys/soundcard.h> header file. */
-+#undef HAVE_SYS_SOUNDCARD_H
-+
-+/* Define to 1 if you have the <sys/stat.h> header file. */
-+#undef HAVE_SYS_STAT_H
-+
-+/* Define to 1 if you have the <sys/times.h> header file. */
-+#undef HAVE_SYS_TIMES_H
-+
-+/* Define to 1 if you have the <sys/types.h> header file. */
-+#undef HAVE_SYS_TYPES_H
-+
-+/* Define to 1 if you have the <sys/videodev2.h> header file. */
-+#undef HAVE_SYS_VIDEODEV2_H
-+
-+/* Define to 1 if you have the <sys/videoio.h> header file. */
-+#undef HAVE_SYS_VIDEOIO_H
-+
-+/* Define to 1 if you have the <sys/wait.h> header file. */
-+#undef HAVE_SYS_WAIT_H
-+
-+/* Define this if you have theora */
-+#undef HAVE_THEORA
-+
-+/* Define to 1 if you have the `timegm' function. */
-+#undef HAVE_TIMEGM
-+
-+/* Define if struct tm has the tm_gmtoff member. */
-+#undef HAVE_TM_GMTOFF
-+
-+/* Define to 1 if you have the <ucontext.h> header file. */
-+#undef HAVE_UCONTEXT_H
-+
-+/* Define to 1 if you have the <unistd.h> header file. */
-+#undef HAVE_UNISTD_H
-+
-+/* Define to 1 if you have the `unsetenv' function. */
-+#undef HAVE_UNSETENV
-+
-+/* Define to 1 if you have the `va_copy' function. */
-+#undef HAVE_VA_COPY
-+
-+/* Define this if you use external libcdio/libvcdinfo */
-+#undef HAVE_VCDNAV
-+
-+/* Define to 1 if you have the <vdpau/vdpau_x11.h> header file. */
-+#undef HAVE_VDPAU_VDPAU_X11_H
-+
-+/* Define if you have vldXvMC.h */
-+#undef HAVE_VLDXVMC
-+
-+/* Define this if you have vorbis */
-+#undef HAVE_VORBIS
-+
-+/* Define to 1 if you have the `vsnprintf' function. */
-+#undef HAVE_VSNPRINTF
-+
-+/* Define to 1 if you have the `vsscanf' function. */
-+#undef HAVE_VSSCANF
-+
-+/* Define this if you have X11R6 installed */
-+#undef HAVE_X11
-+
-+/* Define to 1 if you have the <X11/extensions/vldXvMC.h> header file. */
-+#undef HAVE_X11_EXTENSIONS_VLDXVMC_H
-+
-+/* Define to 1 if you have the <X11/extensions/XShm.h> header file. */
-+#undef HAVE_X11_EXTENSIONS_XSHM_H
-+
-+/* Define to 1 if you have the <X11/extensions/XvMC.h> header file. */
-+#undef HAVE_X11_EXTENSIONS_XVMC_H
-+
-+/* Define this if you have libXinerama installed */
-+#undef HAVE_XINERAMA
-+
-+/* Define this if you have libXv installed */
-+#undef HAVE_XV
-+
-+/* Define this if you have an XvMC library and XvMC.h installed. */
-+#undef HAVE_XVMC
-+
-+/* Define to 1 if you have the _environ symbol. */
-+#undef HAVE__ENVIRON
-+
-+/* Define to 1 if you have the `_snprintf' function. */
-+#undef HAVE__SNPRINTF
-+
-+/* Define to 1 if you have the `_stricmp' function. */
-+#undef HAVE__STRICMP
-+
-+/* Define to 1 if you have the `_strnicmp' function. */
-+#undef HAVE__STRNICMP
-+
-+/* Define to 1 if you have the `_vsnprintf' function. */
-+#undef HAVE__VSNPRINTF
-+
-+/* Define to 1 if you have the __ctype_b symbol. */
-+#undef HAVE___CTYPE_B
-+
-+/* Define to 1 if you have the __environ symbol. */
-+#undef HAVE___ENVIRON
-+
-+/* Define to 1 if you have the __stderrp symbol. */
-+#undef HAVE___STDERRP
-+
-+/* Define to 1 if you have the ___brk_addr symbol. */
-+#undef HAVE____BRK_ADDR
-+
-+/* Define this if built on Mac OS X/Darwin */
-+#undef HOST_OS_DARWIN
-+
-+/* Define as const if the declaration of iconv() needs const. */
-+#undef ICONV_CONST
-+
-+/* Type of the request parameter for ioctl() */
-+#undef IOCTL_REQUEST_TYPE
-+
-+/* Get of rid system libcdio build configuration */
-+#undef LIBCDIO_CONFIG_H
-+
-+/* Define this if you have mlib installed */
-+#undef LIBMPEG2_MLIB
-+
-+/* The soname of libX11, needed for dlopen() */
-+#undef LIBX11_SO
-+
-+/* The soname of libXv, needed for dlopen() */
-+#undef LIBXV_SO
-+
-+/* Define to the sub-directory in which libtool stores uninstalled libraries.
-+   */
-+#undef LT_OBJDIR
-+
-+/* Define this if you want to load mlib lazily */
-+#undef MLIB_LAZYLOAD
-+
-+/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-+#undef NO_MINUS_C_MINUS_O
-+
-+/* Name of package */
-+#undef PACKAGE
-+
-+/* Define to the address where bug reports for this package should be sent. */
-+#undef PACKAGE_BUGREPORT
-+
-+/* Define to the full name of this package. */
-+#undef PACKAGE_NAME
-+
-+/* Define to the full name and version of this package. */
-+#undef PACKAGE_STRING
-+
-+/* Define to the one symbol short name of this package. */
-+#undef PACKAGE_TARNAME
-+
-+/* Define to the home page for this package. */
-+#undef PACKAGE_URL
-+
-+/* Define to the version of this package. */
-+#undef PACKAGE_VERSION
-+
-+/* Default path in which to find Real binary codecs */
-+#undef REAL_CODEC_PATH
-+
-+/* The size of `int', as computed by sizeof. */
-+#undef SIZEOF_INT
-+
-+/* The size of `long', as computed by sizeof. */
-+#undef SIZEOF_LONG
-+
-+/* Define to 1 if you have the ANSI C header files. */
-+#undef STDC_HEADERS
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([weak, alias],
-+   , [alias], [weak, alias]) )) */
-+#undef SUPPORT_ATTRIBUTE_ALIAS
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], , [const],
-+   []) )) */
-+#undef SUPPORT_ATTRIBUTE_CONST
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], ,
-+   [deprecated], []) )) */
-+#undef SUPPORT_ATTRIBUTE_DEPRECATED
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([format(printf,
-+   n, n)], , [format], [format(printf, n, n)]) )) */
-+#undef SUPPORT_ATTRIBUTE_FORMAT
-+
-+/* Define this if the compiler supports __attribute__((
-+   ifelse([format_arg(printf)], , [format_arg], [format_arg(printf)]) )) */
-+#undef SUPPORT_ATTRIBUTE_FORMAT_ARG
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], , [malloc],
-+   []) )) */
-+#undef SUPPORT_ATTRIBUTE_MALLOC
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], , [packed],
-+   []) )) */
-+#undef SUPPORT_ATTRIBUTE_PACKED
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], ,
-+   [sentinel], []) )) */
-+#undef SUPPORT_ATTRIBUTE_SENTINEL
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], , [unused],
-+   []) )) */
-+#undef SUPPORT_ATTRIBUTE_UNUSED
-+
-+/* Define this if the compiler supports __attribute__((
-+   ifelse([visibility("default")], , [visibility_default],
-+   [visibility("default")]) )) */
-+#undef SUPPORT_ATTRIBUTE_VISIBILITY_DEFAULT
-+
-+/* Define this if the compiler supports __attribute__((
-+   ifelse([visibility("internal")], , [visibility_internal],
-+   [visibility("internal")]) )) */
-+#undef SUPPORT_ATTRIBUTE_VISIBILITY_INTERNAL
-+
-+/* Define this if the compiler supports __attribute__((
-+   ifelse([visibility("protected")], , [visibility_protected],
-+   [visibility("protected")]) )) */
-+#undef SUPPORT_ATTRIBUTE_VISIBILITY_PROTECTED
-+
-+/* Define this if the compiler supports __attribute__(( ifelse([], , [weak],
-+   []) )) */
-+#undef SUPPORT_ATTRIBUTE_WEAK
-+
-+/* Define this if the compiler supports the -fvisibility flag */
-+#undef SUPPORT_FLAG_VISIBILITY
-+
-+/* Enable extensions on AIX 3, Interix.  */
-+#ifndef _ALL_SOURCE
-+# undef _ALL_SOURCE
-+#endif
-+/* Enable GNU extensions on systems that have them.  */
-+#ifndef _GNU_SOURCE
-+# undef _GNU_SOURCE
-+#endif
-+/* Enable threading extensions on Solaris.  */
-+#ifndef _POSIX_PTHREAD_SEMANTICS
-+# undef _POSIX_PTHREAD_SEMANTICS
-+#endif
-+/* Enable extensions on HP NonStop.  */
-+#ifndef _TANDEM_SOURCE
-+# undef _TANDEM_SOURCE
-+#endif
-+/* Enable general extensions on Solaris.  */
-+#ifndef __EXTENSIONS__
-+# undef __EXTENSIONS__
-+#endif
-+
-+
-+/* Version number of package */
-+#undef VERSION
-+
-+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-+   significant byte first (like Motorola and SPARC, unlike Intel). */
-+#if defined AC_APPLE_UNIVERSAL_BUILD
-+# if defined __BIG_ENDIAN__
-+#  define WORDS_BIGENDIAN 1
-+# endif
-+#else
-+# ifndef WORDS_BIGENDIAN
-+#  undef WORDS_BIGENDIAN
-+# endif
-+#endif
-+
-+/* Path where aclocal m4 files will be. */
-+#undef XINE_ACFLAGS
-+
-+/* Define this to osd fonts dir location */
-+#undef XINE_FONTDIR
-+
-+/* Path where catalog files will be. */
-+#undef XINE_LOCALEDIR
-+
-+/* xine interface version age */
-+#undef XINE_LT_AGE
-+
-+/* xine interface version number */
-+#undef XINE_LT_CURRENT
-+
-+/* Define this if a universal binary is being built for Mac OS X */
-+#undef XINE_MACOSX_UNIVERSAL_BINARY
-+
-+/* xine major version number */
-+#undef XINE_MAJOR
-+
-+/* xine minor version number */
-+#undef XINE_MINOR
-+
-+/* xine patch version number */
-+#undef XINE_PATCH
-+
-+/* Define this to soecific plugins directory location */
-+#undef XINE_PLUGINDIR
-+
-+/* Define this to general plugins directory location */
-+#undef XINE_PLUGINROOT
-+
-+/* Define this to font directory relative to prefix */
-+#undef XINE_REL_FONTDIR
-+
-+/* Define this to font directory relative to prefix */
-+#undef XINE_REL_LOCALEDIR
-+
-+/* Define this to specific plugin directory relative to execution prefix */
-+#undef XINE_REL_PLUGINDIR
-+
-+/* Define this to general plugin directory relative to execution prefix */
-+#undef XINE_REL_PLUGINROOT
-+
-+/* xine sub version number */
-+#undef XINE_SUB
-+
-+/* catalog message text domain */
-+#undef XINE_TEXTDOMAIN
-+
-+/* Define to 1 if the X Window System is missing or not being used. */
-+#undef X_DISPLAY_MISSING
-+
-+/* Number of bits in a file offset, on hosts where this is settable. */
-+#undef _FILE_OFFSET_BITS
-+
-+/* Define this if you are ISO C9X compliant */
-+#undef _ISOC9X_SOURCE
-+
-+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
-+#undef _LARGEFILE_SOURCE
-+
-+/* Define for large files, on AIX-style hosts. */
-+#undef _LARGE_FILES
-+
-+/* Define to 1 if on MINIX. */
-+#undef _MINIX
-+
-+/* Define to 2 if the system does not provide POSIX.1 features except with
-+   this defined. */
-+#undef _POSIX_1_SOURCE
-+
-+/* Define to 1 if you need to in order for `stat' and other things to work. */
-+#undef _POSIX_SOURCE
-+
-+/* Define to empty if `const' does not conform to ANSI C. */
-+#undef const
-+
-+/* Define to `__inline__' or `__inline' if that's what the C compiler
-+   calls it, or to nothing if 'inline' is not supported under any name.  */
-+#ifndef __cplusplus
-+#undef inline
-+#endif
-+
-+/* Define to `long int' if <sys/types.h> does not define. */
-+#undef off_t
-+
-+/* Define to the equivalent of the C99 'restrict' keyword, or to
-+   nothing if this is not supported.  Do not define if restrict is
-+   supported directly.  */
-+#undef restrict
-+/* Work around a bug in Sun C++: it does not support _Restrict or
-+   __restrict__, even though the corresponding Sun C compiler ends up with
-+   "#define restrict _Restrict" or "#define restrict __restrict__" in the
-+   previous line.  Perhaps some future version of Sun C++ will work with
-+   restrict; if so, hopefully it defines __RESTRICT like Sun C does.  */
-+#if defined __SUNPRO_CC && !defined __RESTRICT
-+# define _Restrict
-+# define __restrict__
-+#endif
-+
-+/* Define to `unsigned int' if <sys/types.h> does not define. */
-+#undef size_t
-+
-+/* Define the real type of socklen_t */
-+#undef socklen_t
-+
-+/* define ssize_t to __int64 if it's missing in default includes */
-+#undef ssize_t
-+
-+#ifdef ASMALIGN_1SLN
-+# define ASMALIGN(ZEROBITS) ".align " #ZEROBITS "\n\t"
-+#else
-+# define ASMALIGN(ZEROBITS) ".align 1<<" #ZEROBITS "\n\t"
-+#endif
-+
-+#endif  /* __XINE_LIB_CONFIG_H__ */
-+
-+
-+
-+#if defined (__FreeBSD__) && !defined (__FreeBSD_kernel__)
-+#define __FreeBSD_kernel__ __FreeBSD__
-+#endif
-+
-+#if defined (__FreeBSD_kernel__)
-+#include <sys/param.h>
-+# if defined (__FreeBSD_version) && !defined (__FreeBSD_kernel_version)
-+# define __FreeBSD_kernel_version __FreeBSD_version
-+# endif
-+#endif
-+
-+
-+#endif
-+
-diff -urN xine-lib-1.2/include/xine/audio_decoder.h xine-lib-1.2.enigmaw/include/xine/audio_decoder.h
---- xine-lib-1.2/include/xine/audio_decoder.h	2014-11-09 17:50:35.650622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/audio_decoder.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/audio_decoder.h b/include/xine/audio_decoder.h
+--- a/include/xine/audio_decoder.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/audio_decoder.h	2015-02-22 18:07:40.769888514 +0800
 @@ -44,7 +44,7 @@
    /*
     * open a new instance of this plugin class
@@ -935,9 +48,9 @@ diff -urN xine-lib-1.2/include/xine/audio_decoder.h xine-lib-1.2.enigmaw/include
  
    /**
     * @brief Pointer to the loaded plugin node.
-diff -urN xine-lib-1.2/include/xine/broadcaster.h xine-lib-1.2.enigmaw/include/xine/broadcaster.h
---- xine-lib-1.2/include/xine/broadcaster.h	2014-11-09 17:50:35.650622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/broadcaster.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/broadcaster.h b/include/xine/broadcaster.h
+--- a/include/xine/broadcaster.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/broadcaster.h	2015-02-22 18:07:40.769888514 +0800
 @@ -30,8 +30,8 @@
  typedef struct broadcaster_s broadcaster_t;
  
@@ -949,9 +62,9 @@ diff -urN xine-lib-1.2/include/xine/broadcaster.h xine-lib-1.2.enigmaw/include/x
  
  
  #ifdef __cplusplus
-diff -urN xine-lib-1.2/include/xine/demux.h xine-lib-1.2.enigmaw/include/xine/demux.h
---- xine-lib-1.2/include/xine/demux.h	2014-11-09 17:50:35.654622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/demux.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/demux.h b/include/xine/demux.h
+--- a/include/xine/demux.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/demux.h	2015-02-22 18:07:40.769888514 +0800
 @@ -49,7 +49,7 @@
    /*
     * open a new instance of this plugin class
@@ -1041,9 +154,9 @@ diff -urN xine-lib-1.2/include/xine/demux.h xine-lib-1.2.enigmaw/include/xine/de
  
  /*
   * possible capabilites a demux plugin can have:
-diff -urN xine-lib-1.2/include/xine/input_plugin.h xine-lib-1.2.enigmaw/include/xine/input_plugin.h
---- xine-lib-1.2/include/xine/input_plugin.h	2014-11-09 17:50:35.654622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/input_plugin.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/input_plugin.h b/include/xine/input_plugin.h
+--- a/include/xine/input_plugin.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/input_plugin.h	2015-02-22 18:07:40.769888514 +0800
 @@ -43,7 +43,7 @@
     * create a new instance of this plugin class
     * return NULL if the plugin does'nt handle the given mrl
@@ -1196,9 +309,9 @@ diff -urN xine-lib-1.2/include/xine/input_plugin.h xine-lib-1.2.enigmaw/include/
  
    /*
     * "backward" link to input plugin class struct
-diff -urN xine-lib-1.2/include/xine/osd.h xine-lib-1.2.enigmaw/include/xine/osd.h
---- xine-lib-1.2/include/xine/osd.h	2014-11-09 17:50:35.654622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/osd.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/osd.h b/include/xine/osd.h
+--- a/include/xine/osd.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/osd.h	2015-02-22 18:07:40.769888514 +0800
 @@ -91,7 +91,7 @@
     * A default palette is initialized (i sugest keeping color 0 as transparent
     * for the sake of simplicity)
@@ -1228,9 +341,9 @@ diff -urN xine-lib-1.2/include/xine/osd.h xine-lib-1.2.enigmaw/include/xine/osd.
    /*
     * see xine.h for defined XINE_OSD_CAP_ values.
     */
-diff -urN xine-lib-1.2/include/xine/scratch.h xine-lib-1.2.enigmaw/include/xine/scratch.h
---- xine-lib-1.2/include/xine/scratch.h	2014-11-09 17:50:35.658622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/scratch.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/scratch.h b/include/xine/scratch.h
+--- a/include/xine/scratch.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/scratch.h	2015-02-22 18:07:40.773888513 +0800
 @@ -33,11 +33,11 @@
  struct scratch_buffer_s {
  
@@ -1246,9 +359,9 @@ diff -urN xine-lib-1.2/include/xine/scratch.h xine-lib-1.2.enigmaw/include/xine/
  
    char         **lines;
    char         **ordered;
-diff -urN xine-lib-1.2/include/xine/spu_decoder.h xine-lib-1.2.enigmaw/include/xine/spu_decoder.h
---- xine-lib-1.2/include/xine/spu_decoder.h	2014-11-09 17:50:35.658622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/spu_decoder.h	2013-08-10 04:21:19.000000000 +0200
+diff -uNr a/include/xine/spu_decoder.h b/include/xine/spu_decoder.h
+--- a/include/xine/spu_decoder.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/spu_decoder.h	2015-02-22 18:07:40.773888513 +0800
 @@ -45,7 +45,7 @@
    /*
     * open a new instance of this plugin class
@@ -1305,9 +418,9 @@ diff -urN xine-lib-1.2/include/xine/spu_decoder.h xine-lib-1.2.enigmaw/include/x
  
    /*
     * When the SPU decoder also handles menu overlays for user inter-
-diff -urN xine-lib-1.2/include/xine/video_decoder.h xine-lib-1.2.enigmaw/include/xine/video_decoder.h
---- xine-lib-1.2/include/xine/video_decoder.h	2014-11-09 17:50:35.658622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/video_decoder.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/video_decoder.h b/include/xine/video_decoder.h
+--- a/include/xine/video_decoder.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/video_decoder.h	2015-02-22 18:07:40.773888513 +0800
 @@ -45,7 +45,7 @@
    /*
     * open a new instance of this plugin class
@@ -1361,9 +474,9 @@ diff -urN xine-lib-1.2/include/xine/video_decoder.h xine-lib-1.2.enigmaw/include
  
    /**
     * @brief Pointer to the loaded plugin node.
-diff -urN xine-lib-1.2/include/xine/video_out.h xine-lib-1.2.enigmaw/include/xine/video_out.h
---- xine-lib-1.2/include/xine/video_out.h	2014-11-09 17:50:35.658622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/video_out.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/video_out.h b/include/xine/video_out.h
+--- a/include/xine/video_out.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/video_out.h	2015-02-22 18:07:40.773888513 +0800
 @@ -268,7 +268,10 @@
  #define VO_PROP_BUFS_FREE             27 /* read-only */
  #define VO_PROP_MAX_VIDEO_WIDTH       28 /* read-only */
@@ -1376,9 +489,9 @@ diff -urN xine-lib-1.2/include/xine/video_out.h xine-lib-1.2.enigmaw/include/xin
  
  /* number of colors in the overlay palette. Currently limited to 256
     at most, because some alphablend functions use an 8-bit index into
-diff -urN xine-lib-1.2/include/xine/xine_internal.h xine-lib-1.2.enigmaw/include/xine/xine_internal.h
---- xine-lib-1.2/include/xine/xine_internal.h	2014-11-09 17:50:35.662622074 +0100
-+++ xine-lib-1.2.enigmaw/include/xine/xine_internal.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine/xine_internal.h b/include/xine/xine_internal.h
+--- a/include/xine/xine_internal.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine/xine_internal.h	2015-02-22 18:07:40.773888513 +0800
 @@ -495,7 +495,7 @@
   * load a specific video output plugin
   */
@@ -1388,9 +501,9 @@ diff -urN xine-lib-1.2/include/xine/xine_internal.h xine-lib-1.2.enigmaw/include
  					 char *id, int visual_type, void *visual) XINE_PROTECTED;
  
  /*
-diff -urN xine-lib-1.2/include/xine.h xine-lib-1.2.enigmaw/include/xine.h
---- xine-lib-1.2/include/xine.h	2014-11-09 17:50:35.650622073 +0100
-+++ xine-lib-1.2.enigmaw/include/xine.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/include/xine.h b/include/xine.h
+--- a/include/xine.h	2014-12-30 00:34:25.000000000 +0800
++++ b/include/xine.h	2015-02-22 18:07:40.773888513 +0800
 @@ -1750,6 +1750,7 @@
  #define XINE_EVENT_MRL_REFERENCE_EXT     13 /* demuxer->frontend: MRL reference(s) for the real stream */
  #define XINE_EVENT_AUDIO_AMP_LEVEL       14 /* report current audio amp level (l/r/mute) */
@@ -1441,9 +554,442 @@ diff -urN xine-lib-1.2/include/xine.h xine-lib-1.2.enigmaw/include/xine.h
  void        xine_osd_hide          (xine_osd_t *self, int64_t vpts) XINE_PROTECTED;
  /* empty drawing area */
  void        xine_osd_clear         (xine_osd_t *self) XINE_PROTECTED;
-diff -urN xine-lib-1.2/src/demuxers/demux_ts.c xine-lib-1.2.enigmaw/src/demuxers/demux_ts.c
---- xine-lib-1.2/src/demuxers/demux_ts.c	2014-11-09 17:50:35.894622078 +0100
-+++ xine-lib-1.2.enigmaw/src/demuxers/demux_ts.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/misc/Makefile.plugins b/misc/Makefile.plugins
+--- a/misc/Makefile.plugins	1970-01-01 08:00:00.000000000 +0800
++++ b/misc/Makefile.plugins	2015-02-22 18:07:40.777888513 +0800
+@@ -0,0 +1 @@
++DESTDIR:=$(if $(DESTDIR),$(DESTDIR),/)
+diff -uNr a/src/combined/ffmpeg/avcodec_video.list b/src/combined/ffmpeg/avcodec_video.list
+--- a/src/combined/ffmpeg/avcodec_video.list	1970-01-01 08:00:00.000000000 +0800
++++ b/src/combined/ffmpeg/avcodec_video.list	2015-02-22 18:07:40.777888513 +0800
+@@ -0,0 +1,166 @@
++CODEC_ID_MPEG1VIDEO
++CODEC_ID_MPEG2VIDEO
++CODEC_ID_MPEG2VIDEO_XVMC
++CODEC_ID_H261
++CODEC_ID_H263
++CODEC_ID_RV10
++CODEC_ID_RV20
++CODEC_ID_MJPEG
++CODEC_ID_MJPEGB
++CODEC_ID_LJPEG
++CODEC_ID_SP5X
++CODEC_ID_JPEGLS
++CODEC_ID_MPEG4
++CODEC_ID_RAWVIDEO
++CODEC_ID_MSMPEG4V1
++CODEC_ID_MSMPEG4V2
++CODEC_ID_MSMPEG4V3
++CODEC_ID_WMV1
++CODEC_ID_WMV2
++CODEC_ID_H263P
++CODEC_ID_H263I
++CODEC_ID_FLV1
++CODEC_ID_SVQ1
++CODEC_ID_SVQ3
++CODEC_ID_DVVIDEO
++CODEC_ID_HUFFYUV
++CODEC_ID_CYUV
++CODEC_ID_H264
++CODEC_ID_INDEO3
++CODEC_ID_VP3
++CODEC_ID_THEORA
++CODEC_ID_ASV1
++CODEC_ID_ASV2
++CODEC_ID_FFV1
++CODEC_ID_4XM
++CODEC_ID_VCR1
++CODEC_ID_CLJR
++CODEC_ID_MDEC
++CODEC_ID_ROQ
++CODEC_ID_INTERPLAY_VIDEO
++CODEC_ID_XAN_WC3
++CODEC_ID_XAN_WC4
++CODEC_ID_RPZA
++CODEC_ID_CINEPAK
++CODEC_ID_WS_VQA
++CODEC_ID_MSRLE
++CODEC_ID_MSVIDEO1
++CODEC_ID_IDCIN
++CODEC_ID_8BPS
++CODEC_ID_SMC
++CODEC_ID_FLIC
++CODEC_ID_TRUEMOTION1
++CODEC_ID_VMDVIDEO
++CODEC_ID_MSZH
++CODEC_ID_ZLIB
++CODEC_ID_QTRLE
++CODEC_ID_SNOW
++CODEC_ID_TSCC
++CODEC_ID_ULTI
++CODEC_ID_QDRAW
++CODEC_ID_VIXL
++CODEC_ID_QPEG
++CODEC_ID_PNG
++CODEC_ID_PPM
++CODEC_ID_PBM
++CODEC_ID_PGM
++CODEC_ID_PGMYUV
++CODEC_ID_PAM
++CODEC_ID_FFVHUFF
++CODEC_ID_RV30
++CODEC_ID_RV40
++CODEC_ID_VC1
++CODEC_ID_WMV3
++CODEC_ID_LOCO
++CODEC_ID_WNV1
++CODEC_ID_AASC
++CODEC_ID_INDEO2
++CODEC_ID_FRAPS
++CODEC_ID_TRUEMOTION2
++CODEC_ID_BMP
++CODEC_ID_CSCD
++CODEC_ID_MMVIDEO
++CODEC_ID_ZMBV
++CODEC_ID_AVS
++CODEC_ID_SMACKVIDEO
++CODEC_ID_NUV
++CODEC_ID_KMVC
++CODEC_ID_FLASHSV
++CODEC_ID_CAVS
++CODEC_ID_JPEG2000
++CODEC_ID_VMNC
++CODEC_ID_VP5
++CODEC_ID_VP6
++CODEC_ID_VP6F
++CODEC_ID_TARGA
++CODEC_ID_DSICINVIDEO
++CODEC_ID_TIERTEXSEQVIDEO
++CODEC_ID_TIFF
++CODEC_ID_GIF
++CODEC_ID_FFH264
++CODEC_ID_DXA
++CODEC_ID_DNXHD
++CODEC_ID_THP
++CODEC_ID_SGI
++CODEC_ID_C93
++CODEC_ID_BETHSOFTVID
++CODEC_ID_PTX
++CODEC_ID_TXD
++CODEC_ID_VP6A
++CODEC_ID_AMV
++CODEC_ID_VB
++CODEC_ID_PCX
++CODEC_ID_SUNRAST
++CODEC_ID_INDEO4
++CODEC_ID_INDEO5
++CODEC_ID_MIMIC
++CODEC_ID_RL2
++CODEC_ID_8SVX_EXP
++CODEC_ID_8SVX_FIB
++CODEC_ID_ESCAPE124
++CODEC_ID_DIRAC
++CODEC_ID_BFI
++CODEC_ID_CMV
++CODEC_ID_MOTIONPIXELS
++CODEC_ID_TGV
++CODEC_ID_TGQ
++CODEC_ID_TQI
++CODEC_ID_AURA
++CODEC_ID_AURA2
++CODEC_ID_V210X
++CODEC_ID_TMV
++CODEC_ID_V210
++CODEC_ID_DPX
++CODEC_ID_MAD
++CODEC_ID_FRWU
++CODEC_ID_FLASHSV2
++CODEC_ID_CDGRAPHICS
++CODEC_ID_R210
++CODEC_ID_ANM
++CODEC_ID_BINKVIDEO
++CODEC_ID_IFF_ILBM
++CODEC_ID_IFF_BYTERUN1
++CODEC_ID_KGV1
++CODEC_ID_YOP
++CODEC_ID_VP8
++CODEC_ID_PICTOR
++CODEC_ID_ANSI
++CODEC_ID_A64_MULTI
++CODEC_ID_A64_MULTI5
++CODEC_ID_R10K
++CODEC_ID_MXPEG
++CODEC_ID_LAGARITH
++CODEC_ID_PRORES
++CODEC_ID_JV
++CODEC_ID_DFA
++CODEC_ID_WMV3IMAGE
++CODEC_ID_VC1IMAGE
++CODEC_ID_G723_1
++CODEC_ID_G729
++CODEC_ID_UTVIDEO
++CODEC_ID_BMV_VIDEO
++CODEC_ID_VBLE
++CODEC_ID_DXTORY
++CODEC_ID_V410
++CODEC_ID_FIRST_AUDIO 
++CODEC_ID_PCM_S16LE 
+diff -uNr a/src/combined/ffmpeg/ff_audio_list.h b/src/combined/ffmpeg/ff_audio_list.h
+--- a/src/combined/ffmpeg/ff_audio_list.h	1970-01-01 08:00:00.000000000 +0800
++++ b/src/combined/ffmpeg/ff_audio_list.h	2015-02-22 18:07:40.777888513 +0800
+@@ -0,0 +1,81 @@
++#ifndef AV_VERSION_INT
++# define AV_VERSION_INT(a,b,c) 0x7FFFFFFF
++#endif
++static const ff_codec_t ff_audio_lookup[] = {
++  { BUF_AUDIO_WMAV1, CODEC_ID_WMAV1, "MS Windows Media Audio 1 (ffmpeg)" },
++  { BUF_AUDIO_WMAV2, CODEC_ID_WMAV2, "MS Windows Media Audio 2 (ffmpeg)" },
++  { BUF_AUDIO_WMAPRO, CODEC_ID_WMAPRO, "MS Windows Media Audio Professional (ffmpeg)" },
++  { BUF_AUDIO_28_8, CODEC_ID_RA_288, "Real 28.8 (ffmpeg)" },
++  { BUF_AUDIO_MPEG, CODEC_ID_MP3, "MP3 (ffmpeg)" },
++  { BUF_AUDIO_MP3ADU, CODEC_ID_MP3ADU, "MPEG-3 adu (ffmpeg)" },
++  { BUF_AUDIO_MSADPCM, CODEC_ID_ADPCM_MS, "MS ADPCM (ffmpeg)" },
++  { BUF_AUDIO_MSIMAADPCM, CODEC_ID_ADPCM_IMA_WAV, "MS IMA ADPCM (ffmpeg)" },
++  { BUF_AUDIO_DK3ADPCM, CODEC_ID_ADPCM_IMA_DK3, "Duck DK3 ADPCM (ffmpeg)" },
++  { BUF_AUDIO_DK4ADPCM, CODEC_ID_ADPCM_IMA_DK4, "Duck DK4 ADPCM (ffmpeg)" },
++  { BUF_AUDIO_VQA_IMA, CODEC_ID_ADPCM_IMA_WS, "Westwood Studios IMA (ffmpeg)" },
++  { BUF_AUDIO_SMJPEG_IMA, CODEC_ID_ADPCM_IMA_SMJPEG, "SMJPEG IMA (ffmpeg)" },
++  { BUF_AUDIO_XA_ADPCM, CODEC_ID_ADPCM_XA, "CD-ROM/XA ADPCM (ffmpeg)" },
++  { BUF_AUDIO_4X_ADPCM, CODEC_ID_ADPCM_4XM, "4X ADPCM (ffmpeg)" },
++  { BUF_AUDIO_EA_ADPCM, CODEC_ID_ADPCM_EA, "Electronic Arts ADPCM (ffmpeg)" },
++  { BUF_AUDIO_MULAW, CODEC_ID_PCM_MULAW, "mu-law logarithmic PCM (ffmpeg)" },
++  { BUF_AUDIO_ALAW, CODEC_ID_PCM_ALAW, "A-law logarithmic PCM (ffmpeg)" },
++  { BUF_AUDIO_INTERPLAY, CODEC_ID_INTERPLAY_DPCM, "Interplay DPCM (ffmpeg)" },
++  { BUF_AUDIO_MAC3, CODEC_ID_MACE3, "MACE 3:1 (ffmpeg)" },
++  { BUF_AUDIO_MAC6, CODEC_ID_MACE6, "MACE 6:1 (ffmpeg)" },
++  { BUF_AUDIO_XAN_DPCM, CODEC_ID_XAN_DPCM, "Origin Xan DPCM (ffmpeg)" },
++  { BUF_AUDIO_VMD, CODEC_ID_VMDAUDIO, "Sierra VMD Audio (ffmpeg)" },
++  { BUF_AUDIO_FLAC, CODEC_ID_FLAC, "FLAC (ffmpeg)" },
++  { BUF_AUDIO_SHORTEN, CODEC_ID_SHORTEN, "Shorten (ffmpeg)" },
++  { BUF_AUDIO_ALAC, CODEC_ID_ALAC, "ALAC (ffmpeg)" },
++  { BUF_AUDIO_QDESIGN2, CODEC_ID_QDM2, "QDesign (ffmpeg)" },
++  { BUF_AUDIO_COOK, CODEC_ID_COOK, "RealAudio Cooker (ffmpeg)" },
++  { BUF_AUDIO_TRUESPEECH, CODEC_ID_TRUESPEECH, "TrueSpeech (ffmpeg)" },
++  { BUF_AUDIO_TTA, CODEC_ID_TTA, "True Audio Lossless (ffmpeg)" },
++  { BUF_AUDIO_SMACKER, CODEC_ID_SMACKAUDIO, "Smacker (ffmpeg)" },
++  { BUF_AUDIO_FLVADPCM, CODEC_ID_ADPCM_SWF, "Flash ADPCM (ffmpeg)" },
++  { BUF_AUDIO_WAVPACK, CODEC_ID_WAVPACK, "WavPack (ffmpeg)" },
++  { BUF_AUDIO_AMR_WB, CODEC_ID_AMR_WB, "AMR wide band (ffmpeg)" },
++  { BUF_AUDIO_EAC3, CODEC_ID_EAC3, "E-AC-3 (ffmpeg)" },
++  { BUF_AUDIO_AAC, CODEC_ID_AAC, "MPEG4 (ffmpeg)" },
++  { BUF_AUDIO_AAC_LATM, CODEC_ID_AAC_LATM, "AAC LATM (ffmpeg)" },
++};
++
++static uint32_t supported_audio_types[] = {
++  BUF_AUDIO_WMAV1,
++  BUF_AUDIO_WMAV2,
++  BUF_AUDIO_WMAPRO,
++  BUF_AUDIO_28_8,
++  BUF_AUDIO_MPEG,
++  BUF_AUDIO_MP3ADU,
++  BUF_AUDIO_MSADPCM,
++  BUF_AUDIO_MSIMAADPCM,
++  BUF_AUDIO_DK3ADPCM,
++  BUF_AUDIO_DK4ADPCM,
++  BUF_AUDIO_VQA_IMA,
++  BUF_AUDIO_SMJPEG_IMA,
++  BUF_AUDIO_XA_ADPCM,
++  BUF_AUDIO_4X_ADPCM,
++  BUF_AUDIO_EA_ADPCM,
++  BUF_AUDIO_MULAW,
++  BUF_AUDIO_ALAW,
++  BUF_AUDIO_INTERPLAY,
++  BUF_AUDIO_MAC3,
++  BUF_AUDIO_MAC6,
++  BUF_AUDIO_XAN_DPCM,
++  BUF_AUDIO_VMD,
++  BUF_AUDIO_FLAC,
++  BUF_AUDIO_SHORTEN,
++  BUF_AUDIO_ALAC,
++  BUF_AUDIO_QDESIGN2,
++  BUF_AUDIO_COOK,
++  BUF_AUDIO_TRUESPEECH,
++  BUF_AUDIO_TTA,
++  BUF_AUDIO_SMACKER,
++  BUF_AUDIO_FLVADPCM,
++  BUF_AUDIO_WAVPACK,
++  BUF_AUDIO_AMR_WB,
++  BUF_AUDIO_EAC3,
++  BUF_AUDIO_AAC,
++  BUF_AUDIO_AAC_LATM,
++  0,
++};
+diff -uNr a/src/combined/ffmpeg/ff_video_list.h b/src/combined/ffmpeg/ff_video_list.h
+--- a/src/combined/ffmpeg/ff_video_list.h	1970-01-01 08:00:00.000000000 +0800
++++ b/src/combined/ffmpeg/ff_video_list.h	2015-02-22 18:07:40.777888513 +0800
+@@ -0,0 +1,169 @@
++#ifndef AV_VERSION_INT
++# define AV_VERSION_INT(a,b,c) 0x7FFFFFFF
++#endif
++static const ff_codec_t ff_video_lookup[] = {
++  { BUF_VIDEO_MSMPEG4_V1, CODEC_ID_MSMPEG4V1, "Microsoft MPEG-4 v1 (ffmpeg)" },
++  { BUF_VIDEO_MSMPEG4_V2, CODEC_ID_MSMPEG4V2, "Microsoft MPEG-4 v2 (ffmpeg)" },
++  { BUF_VIDEO_MSMPEG4_V3, CODEC_ID_MSMPEG4V3, "Microsoft MPEG-4 v3 (ffmpeg)" },
++  { BUF_VIDEO_WMV7, CODEC_ID_WMV1, "MS Windows Media Video 7 (ffmpeg)" },
++  { BUF_VIDEO_WMV8, CODEC_ID_WMV2, "MS Windows Media Video 8 (ffmpeg)" },
++  { BUF_VIDEO_WMV9, CODEC_ID_WMV3, "MS Windows Media Video 9 (ffmpeg)" },
++  { BUF_VIDEO_VC1, CODEC_ID_VC1, "MS Windows Media Video VC-1 (ffmpeg)" },
++  { BUF_VIDEO_MPEG4, CODEC_ID_MPEG4, "ISO MPEG-4 (ffmpeg)" },
++  { BUF_VIDEO_XVID, CODEC_ID_MPEG4, "ISO MPEG-4 (XviD) (ffmpeg)" },
++  { BUF_VIDEO_DIVX5, CODEC_ID_MPEG4, "ISO MPEG-4 (DivX5) (ffmpeg)" },
++  { BUF_VIDEO_3IVX, CODEC_ID_MPEG4, "ISO MPEG-4 (3ivx) (ffmpeg)" },
++  { BUF_VIDEO_JPEG, CODEC_ID_MJPEG, "Motion JPEG (ffmpeg)" },
++  { BUF_VIDEO_MJPEG, CODEC_ID_MJPEG, "Motion JPEG (ffmpeg)" },
++  { BUF_VIDEO_MJPEG_B, CODEC_ID_MJPEGB, "Motion JPEG B (ffmpeg)" },
++  { BUF_VIDEO_I263, CODEC_ID_H263I, "ITU H.263 (ffmpeg)" },
++  { BUF_VIDEO_H263, CODEC_ID_H263, "H.263 (ffmpeg)" },
++  { BUF_VIDEO_RV10, CODEC_ID_RV10, "Real Video 1.0 (ffmpeg)" },
++  { BUF_VIDEO_RV20, CODEC_ID_RV20, "Real Video 2.0 (ffmpeg)" },
++  { BUF_VIDEO_RV30, CODEC_ID_RV30, "Real Video 3.0 (ffmpeg)" },
++  { BUF_VIDEO_RV40, CODEC_ID_RV40, "Real Video 4.0 (ffmpeg)" },
++  { BUF_VIDEO_IV31, CODEC_ID_INDEO3, "Indeo Video 3.1 (ffmpeg)" },
++  { BUF_VIDEO_IV32, CODEC_ID_INDEO3, "Indeo Video 3.2 (ffmpeg)" },
++  { BUF_VIDEO_SORENSON_V1, CODEC_ID_SVQ1, "Sorenson Video 1 (ffmpeg)" },
++  { BUF_VIDEO_SORENSON_V3, CODEC_ID_SVQ3, "Sorenson Video 3 (ffmpeg)" },
++  { BUF_VIDEO_DV, CODEC_ID_DVVIDEO, "DV (ffmpeg)" },
++  { BUF_VIDEO_HUFFYUV, CODEC_ID_HUFFYUV, "HuffYUV (ffmpeg)" },
++  { BUF_VIDEO_VP31, CODEC_ID_VP3, "On2 VP3.1 (ffmpeg)" },
++  { BUF_VIDEO_VP5, CODEC_ID_VP5, "On2 VP5 (ffmpeg)" },
++  { BUF_VIDEO_VP6, CODEC_ID_VP6, "On2 VP6 (ffmpeg)" },
++  { BUF_VIDEO_VP6F, CODEC_ID_VP6F, "On2 VP6 (ffmpeg)" },
++  { BUF_VIDEO_VP8, CODEC_ID_VP8, "On2 VP8 (ffmpeg)" },
++  { BUF_VIDEO_4XM, CODEC_ID_4XM, "4X Video (ffmpeg)" },
++  { BUF_VIDEO_CINEPAK, CODEC_ID_CINEPAK, "Cinepak (ffmpeg)" },
++  { BUF_VIDEO_MSVC, CODEC_ID_MSVIDEO1, "Microsoft Video 1 (ffmpeg)" },
++  { BUF_VIDEO_MSRLE, CODEC_ID_MSRLE, "Microsoft RLE (ffmpeg)" },
++  { BUF_VIDEO_RPZA, CODEC_ID_RPZA, "Apple Quicktime Video/RPZA (ffmpeg)" },
++  { BUF_VIDEO_CYUV, CODEC_ID_CYUV, "Creative YUV (ffmpeg)" },
++  { BUF_VIDEO_ROQ, CODEC_ID_ROQ, "Id Software RoQ (ffmpeg)" },
++  { BUF_VIDEO_IDCIN, CODEC_ID_IDCIN, "Id Software CIN (ffmpeg)" },
++  { BUF_VIDEO_WC3, CODEC_ID_XAN_WC3, "Xan (ffmpeg)" },
++  { BUF_VIDEO_VQA, CODEC_ID_WS_VQA, "Westwood Studios VQA (ffmpeg)" },
++  { BUF_VIDEO_INTERPLAY, CODEC_ID_INTERPLAY_VIDEO, "Interplay MVE (ffmpeg)" },
++  { BUF_VIDEO_FLI, CODEC_ID_FLIC, "FLIC Video (ffmpeg)" },
++  { BUF_VIDEO_8BPS, CODEC_ID_8BPS, "Planar RGB (ffmpeg)" },
++  { BUF_VIDEO_SMC, CODEC_ID_SMC, "Apple Quicktime Graphics/SMC (ffmpeg)" },
++  { BUF_VIDEO_DUCKTM1, CODEC_ID_TRUEMOTION1, "Duck TrueMotion v1 (ffmpeg)" },
++  { BUF_VIDEO_DUCKTM2, CODEC_ID_TRUEMOTION2, "Duck TrueMotion v2 (ffmpeg)" },
++  { BUF_VIDEO_VMD, CODEC_ID_VMDVIDEO, "Sierra VMD Video (ffmpeg)" },
++  { BUF_VIDEO_ZLIB, CODEC_ID_ZLIB, "ZLIB Video (ffmpeg)" },
++  { BUF_VIDEO_MSZH, CODEC_ID_MSZH, "MSZH Video (ffmpeg)" },
++  { BUF_VIDEO_ASV1, CODEC_ID_ASV1, "ASV v1 Video (ffmpeg)" },
++  { BUF_VIDEO_ASV2, CODEC_ID_ASV2, "ASV v2 Video (ffmpeg)" },
++  { BUF_VIDEO_ATIVCR1, CODEC_ID_VCR1, "ATI VCR-1 (ffmpeg)" },
++  { BUF_VIDEO_FLV1, CODEC_ID_FLV1, "Flash Video (ffmpeg)" },
++  { BUF_VIDEO_QTRLE, CODEC_ID_QTRLE, "Apple Quicktime Animation/RLE (ffmpeg)" },
++  { BUF_VIDEO_H264, CODEC_ID_H264, "H.264/AVC (ffmpeg)" },
++  { BUF_VIDEO_H261, CODEC_ID_H261, "H.261 (ffmpeg)" },
++  { BUF_VIDEO_AASC, CODEC_ID_AASC, "Autodesk Video (ffmpeg)" },
++  { BUF_VIDEO_LOCO, CODEC_ID_LOCO, "LOCO (ffmpeg)" },
++  { BUF_VIDEO_QDRW, CODEC_ID_QDRAW, "QuickDraw (ffmpeg)" },
++  { BUF_VIDEO_QPEG, CODEC_ID_QPEG, "Q-Team QPEG (ffmpeg)" },
++  { BUF_VIDEO_TSCC, CODEC_ID_TSCC, "TechSmith Video (ffmpeg)" },
++  { BUF_VIDEO_ULTI, CODEC_ID_ULTI, "IBM UltiMotion (ffmpeg)" },
++  { BUF_VIDEO_WNV1, CODEC_ID_WNV1, "Winnow Video (ffmpeg)" },
++  { BUF_VIDEO_XL, CODEC_ID_VIXL, "Miro/Pinnacle VideoXL (ffmpeg)" },
++  { BUF_VIDEO_RT21, CODEC_ID_INDEO2, "Indeo/RealTime 2 (ffmpeg)" },
++  { BUF_VIDEO_FPS1, CODEC_ID_FRAPS, "Fraps (ffmpeg)" },
++  { BUF_VIDEO_MPEG, CODEC_ID_MPEG1VIDEO, "MPEG 1/2 (ffmpeg)" },
++  { BUF_VIDEO_CSCD, CODEC_ID_CSCD, "CamStudio (ffmpeg)" },
++  { BUF_VIDEO_AVS, CODEC_ID_AVS, "AVS (ffmpeg)" },
++  { BUF_VIDEO_ALGMM, CODEC_ID_MMVIDEO, "American Laser Games MM (ffmpeg)" },
++  { BUF_VIDEO_ZMBV, CODEC_ID_ZMBV, "Zip Motion Blocks Video (ffmpeg)" },
++  { BUF_VIDEO_SMACKER, CODEC_ID_SMACKVIDEO, "Smacker (ffmpeg)" },
++  { BUF_VIDEO_NUV, CODEC_ID_NUV, "NuppelVideo (ffmpeg)" },
++  { BUF_VIDEO_KMVC, CODEC_ID_KMVC, "Karl Morton's Video Codec (ffmpeg)" },
++  { BUF_VIDEO_FLASHSV, CODEC_ID_FLASHSV, "Flash Screen Video (ffmpeg)" },
++  { BUF_VIDEO_CAVS, CODEC_ID_CAVS, "Chinese AVS (ffmpeg)" },
++  { BUF_VIDEO_VMNC, CODEC_ID_VMNC, "VMware Screen Codec (ffmpeg)" },
++  { BUF_VIDEO_THEORA_RAW, CODEC_ID_THEORA, "Theora (ffmpeg)" },
++  { BUF_VIDEO_SNOW, CODEC_ID_SNOW, "Snow (ffmpeg)" },
++};
++
++static uint32_t supported_video_types[] = {
++  BUF_VIDEO_MSMPEG4_V1,
++  BUF_VIDEO_MSMPEG4_V2,
++  BUF_VIDEO_MSMPEG4_V3,
++  BUF_VIDEO_WMV7,
++  BUF_VIDEO_WMV8,
++  BUF_VIDEO_WMV9,
++  BUF_VIDEO_VC1,
++  BUF_VIDEO_MPEG4,
++  BUF_VIDEO_XVID,
++  BUF_VIDEO_DIVX5,
++  BUF_VIDEO_3IVX,
++  BUF_VIDEO_JPEG,
++  BUF_VIDEO_MJPEG,
++  BUF_VIDEO_MJPEG_B,
++  BUF_VIDEO_I263,
++  BUF_VIDEO_H263,
++  BUF_VIDEO_RV10,
++  BUF_VIDEO_RV20,
++  BUF_VIDEO_RV30,
++  BUF_VIDEO_RV40,
++  BUF_VIDEO_IV31,
++  BUF_VIDEO_IV32,
++  BUF_VIDEO_SORENSON_V1,
++  BUF_VIDEO_SORENSON_V3,
++  BUF_VIDEO_DV,
++  BUF_VIDEO_HUFFYUV,
++  BUF_VIDEO_VP31,
++  BUF_VIDEO_VP5,
++  BUF_VIDEO_VP6,
++  BUF_VIDEO_VP6F,
++  BUF_VIDEO_VP8,
++  BUF_VIDEO_4XM,
++  BUF_VIDEO_CINEPAK,
++  BUF_VIDEO_MSVC,
++  BUF_VIDEO_MSRLE,
++  BUF_VIDEO_RPZA,
++  BUF_VIDEO_CYUV,
++  BUF_VIDEO_ROQ,
++  BUF_VIDEO_IDCIN,
++  BUF_VIDEO_WC3,
++  BUF_VIDEO_VQA,
++  BUF_VIDEO_INTERPLAY,
++  BUF_VIDEO_FLI,
++  BUF_VIDEO_8BPS,
++  BUF_VIDEO_SMC,
++  BUF_VIDEO_DUCKTM1,
++  BUF_VIDEO_DUCKTM2,
++  BUF_VIDEO_VMD,
++  BUF_VIDEO_ZLIB,
++  BUF_VIDEO_MSZH,
++  BUF_VIDEO_ASV1,
++  BUF_VIDEO_ASV2,
++  BUF_VIDEO_ATIVCR1,
++  BUF_VIDEO_FLV1,
++  BUF_VIDEO_QTRLE,
++  BUF_VIDEO_H264,
++  BUF_VIDEO_H261,
++  BUF_VIDEO_AASC,
++  BUF_VIDEO_LOCO,
++  BUF_VIDEO_QDRW,
++  BUF_VIDEO_QPEG,
++  BUF_VIDEO_TSCC,
++  BUF_VIDEO_ULTI,
++  BUF_VIDEO_WNV1,
++  BUF_VIDEO_XL,
++  BUF_VIDEO_RT21,
++  BUF_VIDEO_FPS1,
++  BUF_VIDEO_MPEG,
++  BUF_VIDEO_CSCD,
++  BUF_VIDEO_AVS,
++  BUF_VIDEO_ALGMM,
++  BUF_VIDEO_ZMBV,
++  BUF_VIDEO_SMACKER,
++  BUF_VIDEO_NUV,
++  BUF_VIDEO_KMVC,
++  BUF_VIDEO_FLASHSV,
++  BUF_VIDEO_CAVS,
++  BUF_VIDEO_VMNC,
++  BUF_VIDEO_THEORA_RAW,
++  BUF_VIDEO_SNOW,
++  0,
++};
+diff -uNr a/src/demuxers/demux_ts.c b/src/demuxers/demux_ts.c
+--- a/src/demuxers/demux_ts.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/demuxers/demux_ts.c	2015-02-22 18:07:40.777888513 +0800
 @@ -792,27 +792,6 @@
    demux_ts_send_buffer(m, BUF_FLAG_FRAME_END);
  }
@@ -1574,9 +1120,9 @@ diff -urN xine-lib-1.2/src/demuxers/demux_ts.c xine-lib-1.2.enigmaw/src/demuxers
  
      }
  
-diff -urN xine-lib-1.2/src/input/combined_enigma.c xine-lib-1.2.enigmaw/src/input/combined_enigma.c
---- xine-lib-1.2/src/input/combined_enigma.c	1970-01-01 01:00:00.000000000 +0100
-+++ xine-lib-1.2.enigmaw/src/input/combined_enigma.c	2013-08-10 04:21:19.000000000 +0200
+diff -uNr a/src/input/combined_enigma.c b/src/input/combined_enigma.c
+--- a/src/input/combined_enigma.c	1970-01-01 08:00:00.000000000 +0800
++++ b/src/input/combined_enigma.c	2015-02-22 18:07:40.777888513 +0800
 @@ -0,0 +1,44 @@
 +/*
 + * Copyright (C) 2000-2004 the xine project
@@ -1622,9 +1168,9 @@ diff -urN xine-lib-1.2/src/input/combined_enigma.c xine-lib-1.2.enigmaw/src/inpu
 +  { PLUGIN_NONE ,   0, ""         , 0                , NULL                   , NULL }
 +};
 +
-diff -urN xine-lib-1.2/src/input/combined_enigma.h xine-lib-1.2.enigmaw/src/input/combined_enigma.h
---- xine-lib-1.2/src/input/combined_enigma.h	1970-01-01 01:00:00.000000000 +0100
-+++ xine-lib-1.2.enigmaw/src/input/combined_enigma.h	2013-08-10 04:21:19.000000000 +0200
+diff -uNr a/src/input/combined_enigma.h b/src/input/combined_enigma.h
+--- a/src/input/combined_enigma.h	1970-01-01 08:00:00.000000000 +0800
++++ b/src/input/combined_enigma.h	2015-02-22 18:07:40.781888513 +0800
 @@ -0,0 +1,81 @@
 +/*
 + * Copyright (C) 2000-2004 the xine project
@@ -1707,9 +1253,9 @@ diff -urN xine-lib-1.2/src/input/combined_enigma.h xine-lib-1.2.enigmaw/src/inpu
 +
 +#endif /* __COMBINED_ENIGMA_H */
 +
-diff -urN xine-lib-1.2/src/input/input_dvb.c xine-lib-1.2.enigmaw/src/input/input_dvb.c
---- xine-lib-1.2/src/input/input_dvb.c	2014-11-09 17:50:35.930622078 +0100
-+++ xine-lib-1.2.enigmaw/src/input/input_dvb.c	2014-11-09 17:22:55.834593000 +0100
+diff -uNr a/src/input/input_dvb.c b/src/input/input_dvb.c
+--- a/src/input/input_dvb.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/input/input_dvb.c	2015-02-22 18:07:40.781888513 +0800
 @@ -1420,7 +1420,7 @@
     EPG OSD of all channels found in the currently tuned stream. */
  static void load_epg_data(dvb_input_plugin_t *this)
@@ -1728,9 +1274,9 @@ diff -urN xine-lib-1.2/src/input/input_dvb.c xine-lib-1.2.enigmaw/src/input/inpu
      section_len = (unsigned int)getbits(eit, 12, 12);
      n = read(this->tuner->fd_pidfilter[EITFILTER], eit + 3, section_len);
      if (n != section_len) {
-diff -urN xine-lib-1.2/src/input/input_enigma.c xine-lib-1.2.enigmaw/src/input/input_enigma.c
---- xine-lib-1.2/src/input/input_enigma.c	1970-01-01 01:00:00.000000000 +0100
-+++ xine-lib-1.2.enigmaw/src/input/input_enigma.c	2013-08-10 04:21:19.000000000 +0200
+diff -uNr a/src/input/input_enigma.c b/src/input/input_enigma.c
+--- a/src/input/input_enigma.c	1970-01-01 08:00:00.000000000 +0800
++++ b/src/input/input_enigma.c	2015-02-22 18:07:40.781888513 +0800
 @@ -0,0 +1,640 @@
 +/*
 + * Copyright (C) 2000-2003 the xine project
@@ -2372,9 +1918,9 @@ diff -urN xine-lib-1.2/src/input/input_enigma.c xine-lib-1.2.enigmaw/src/input/i
 +  { PLUGIN_NONE, 0, "", 0, NULL, NULL }
 +};
 +*/
-diff -urN xine-lib-1.2/src/input/Makefile.am xine-lib-1.2.enigmaw/src/input/Makefile.am
---- xine-lib-1.2/src/input/Makefile.am	2014-11-09 17:50:35.918622078 +0100
-+++ xine-lib-1.2.enigmaw/src/input/Makefile.am	2014-11-09 17:22:55.834593000 +0100
+diff -uNr a/src/input/Makefile.am b/src/input/Makefile.am
+--- a/src/input/Makefile.am	2014-12-30 00:34:25.000000000 +0800
++++ b/src/input/Makefile.am	2015-02-22 18:07:40.781888513 +0800
 @@ -88,7 +88,8 @@
  	$(in_pvr) \
  	$(in_dvb) \
@@ -2393,9 +1939,9 @@ diff -urN xine-lib-1.2/src/input/Makefile.am xine-lib-1.2.enigmaw/src/input/Make
 +xineplug_inp_enigma_la_SOURCES = combined_enigma.c combined_enigma.h input_enigma.c net_buf_ctrl.c post_enigma_video.c
 +xineplug_vdr_la_CFLAGS = $(AM_CFLAGS) -fno-strict-aliasing
 +xineplug_inp_enigma_la_LIBADD = $(XINE_LIB) $(PTHREAD_LIBS) $(LTLIBINTL)
-diff -urN xine-lib-1.2/src/input/net_buf_ctrl.c xine-lib-1.2.enigmaw/src/input/net_buf_ctrl.c
---- xine-lib-1.2/src/input/net_buf_ctrl.c	2014-11-09 17:50:35.986622079 +0100
-+++ xine-lib-1.2.enigmaw/src/input/net_buf_ctrl.c	2014-11-09 17:22:55.834593000 +0100
+diff -uNr a/src/input/net_buf_ctrl.c b/src/input/net_buf_ctrl.c
+--- a/src/input/net_buf_ctrl.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/input/net_buf_ctrl.c	2015-02-22 18:07:40.781888513 +0800
 @@ -40,60 +40,12 @@
  
  #include "net_buf_ctrl.h"
@@ -2587,9 +2133,9 @@ diff -urN xine-lib-1.2/src/input/net_buf_ctrl.c xine-lib-1.2.enigmaw/src/input/n
  			buf_element_t *buf, void *this_gen) {
    nbc_t *this = (nbc_t*)this_gen;
  
-diff -urN xine-lib-1.2/src/input/net_buf_ctrl.h xine-lib-1.2.enigmaw/src/input/net_buf_ctrl.h
---- xine-lib-1.2/src/input/net_buf_ctrl.h	2014-11-09 17:50:35.986622079 +0100
-+++ xine-lib-1.2.enigmaw/src/input/net_buf_ctrl.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/input/net_buf_ctrl.h b/src/input/net_buf_ctrl.h
+--- a/src/input/net_buf_ctrl.h	2014-12-30 00:34:25.000000000 +0800
++++ b/src/input/net_buf_ctrl.h	2015-02-22 18:07:40.781888513 +0800
 @@ -25,10 +25,71 @@
  
  #include <xine/xine_internal.h>
@@ -2662,9 +2208,9 @@ diff -urN xine-lib-1.2/src/input/net_buf_ctrl.h xine-lib-1.2.enigmaw/src/input/n
 +#define DEFAULT_HIGH_WATER_MARK 5000 /* in 1/1000 s */
  
  #endif
-diff -urN xine-lib-1.2/src/input/post_enigma_video.c xine-lib-1.2.enigmaw/src/input/post_enigma_video.c
---- xine-lib-1.2/src/input/post_enigma_video.c	1970-01-01 01:00:00.000000000 +0100
-+++ xine-lib-1.2.enigmaw/src/input/post_enigma_video.c	2013-08-10 04:21:19.000000000 +0200
+diff -uNr a/src/input/post_enigma_video.c b/src/input/post_enigma_video.c
+--- a/src/input/post_enigma_video.c	1970-01-01 08:00:00.000000000 +0800
++++ b/src/input/post_enigma_video.c	2015-02-22 18:07:40.781888513 +0800
 @@ -0,0 +1,507 @@
 +/*
 + * Copyright (C) 2000-2004 the xine project
@@ -3173,9 +2719,9 @@ diff -urN xine-lib-1.2/src/input/post_enigma_video.c xine-lib-1.2.enigmaw/src/in
 +
 +  return skip;
 +}
-diff -urN xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in xine-lib-1.2.enigmaw/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in
---- xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in	2014-11-09 17:50:36.122622081 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in	1970-01-01 01:00:00.000000000 +0100
+diff -uNr a/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in b/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in
+--- a/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in	1970-01-01 08:00:00.000000000 +0800
 @@ -1,10 +0,0 @@
 -prefix=@prefix@
 -exec_prefix=@exec_prefix@
@@ -3187,9 +2733,9 @@ diff -urN xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2convert.pc.in 
 -Version: @VERSION@
 -Libs: -L${libdir} -lmpeg2convert
 -Cflags: -I${includedir}/@PACKAGE@
-diff -urN xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in xine-lib-1.2.enigmaw/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in
---- xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in	2014-11-09 17:50:36.122622081 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in	1970-01-01 01:00:00.000000000 +0100
+diff -uNr a/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in b/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in
+--- a/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in	1970-01-01 08:00:00.000000000 +0800
 @@ -1,10 +0,0 @@
 -prefix=@prefix@
 -exec_prefix=@exec_prefix@
@@ -3201,9 +2747,9 @@ diff -urN xine-lib-1.2/src/video_dec/libmpeg2new/libmpeg2/libmpeg2.pc.in xine-li
 -Version: @VERSION@
 -Libs: -L${libdir} -lmpeg2
 -Cflags: -I${includedir}/@PACKAGE@
-diff -urN xine-lib-1.2/src/video_dec/libvdpau/alterh264_decode.c xine-lib-1.2.enigmaw/src/video_dec/libvdpau/alterh264_decode.c
---- xine-lib-1.2/src/video_dec/libvdpau/alterh264_decode.c	2014-11-09 17:50:36.126622081 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libvdpau/alterh264_decode.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_dec/libvdpau/alterh264_decode.c b/src/video_dec/libvdpau/alterh264_decode.c
+--- a/src/video_dec/libvdpau/alterh264_decode.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libvdpau/alterh264_decode.c	2015-02-22 18:07:40.781888513 +0800
 @@ -26,7 +26,7 @@
  
  
@@ -3233,9 +2779,9 @@ diff -urN xine-lib-1.2/src/video_dec/libvdpau/alterh264_decode.c xine-lib-1.2.en
      xine_event_send (vd->stream, &event);
    }
  
-diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_h264.c xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_h264.c
---- xine-lib-1.2/src/video_dec/libvdpau/vdpau_h264.c	2014-11-09 17:50:36.134622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_h264.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_dec/libvdpau/vdpau_h264.c b/src/video_dec/libvdpau/vdpau_h264.c
+--- a/src/video_dec/libvdpau/vdpau_h264.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libvdpau/vdpau_h264.c	2015-02-22 18:07:40.781888513 +0800
 @@ -377,7 +377,18 @@
    event.data_length = sizeof(data);
    data.width = this->width;
@@ -3256,9 +2802,9 @@ diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_h264.c xine-lib-1.2.enigmaw/
    xine_event_send( this->stream, &event );
  
    switch(this->completed_pic->sps_nal->sps.profile_idc) {
-diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg12.c xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_mpeg12.c
---- xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg12.c	2014-11-09 17:50:36.134622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_mpeg12.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_dec/libvdpau/vdpau_mpeg12.c b/src/video_dec/libvdpau/vdpau_mpeg12.c
+--- a/src/video_dec/libvdpau/vdpau_mpeg12.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libvdpau/vdpau_mpeg12.c	2015-02-22 18:07:40.781888513 +0800
 @@ -405,7 +405,8 @@
      event.data_length = sizeof(data);
      data.width = sequence->coded_width;
@@ -3269,9 +2815,9 @@ diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg12.c xine-lib-1.2.enigma
      xine_event_send( this_gen->stream, &event );
    }
    else if ( sequence->have_header == 2 && sequence->reported_video_step != sequence->video_step ) {
-diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg4.c xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_mpeg4.c
---- xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg4.c	2014-11-09 17:50:36.134622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_mpeg4.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_dec/libvdpau/vdpau_mpeg4.c b/src/video_dec/libvdpau/vdpau_mpeg4.c
+--- a/src/video_dec/libvdpau/vdpau_mpeg4.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libvdpau/vdpau_mpeg4.c	2015-02-22 18:07:40.781888513 +0800
 @@ -321,7 +321,18 @@
    event.data_length = sizeof(data);
    data.width = sequence->coded_width;
@@ -3292,9 +2838,9 @@ diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_mpeg4.c xine-lib-1.2.enigmaw
    xine_event_send( this_gen->stream, &event );
  }
  
-diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_vc1.c xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_vc1.c
---- xine-lib-1.2/src/video_dec/libvdpau/vdpau_vc1.c	2014-11-09 17:50:36.134622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_dec/libvdpau/vdpau_vc1.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_dec/libvdpau/vdpau_vc1.c b/src/video_dec/libvdpau/vdpau_vc1.c
+--- a/src/video_dec/libvdpau/vdpau_vc1.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_dec/libvdpau/vdpau_vc1.c	2015-02-22 18:07:40.781888513 +0800
 @@ -239,7 +239,18 @@
      event.data_length = sizeof(data);
      data.width = sequence->coded_width;
@@ -3315,9 +2861,9 @@ diff -urN xine-lib-1.2/src/video_dec/libvdpau/vdpau_vc1.c xine-lib-1.2.enigmaw/s
      xine_event_send( this_gen->stream, &event );
    }
  }
-diff -urN xine-lib-1.2/src/video_out/video_out_fb.c xine-lib-1.2.enigmaw/src/video_out/video_out_fb.c
---- xine-lib-1.2/src/video_out/video_out_fb.c	2014-11-09 17:50:36.146622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/video_out_fb.c	2014-11-09 17:22:55.838593000 +0100
+diff -uNr a/src/video_out/video_out_fb.c b/src/video_out/video_out_fb.c
+--- a/src/video_out/video_out_fb.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/video_out_fb.c	2015-02-22 18:07:40.781888513 +0800
 @@ -97,6 +97,8 @@
  
    vo_scale_t         sc;
@@ -3327,9 +2873,9 @@ diff -urN xine-lib-1.2/src/video_out/video_out_fb.c xine-lib-1.2.enigmaw/src/vid
    yuv2rgb_t         *yuv2rgb;  /* yuv2rgb converter for this frame */
    uint8_t           *rgb_dst;
    int                yuv_stride;
-diff -urN xine-lib-1.2/src/video_out/video_out_opengl.c xine-lib-1.2.enigmaw/src/video_out/video_out_opengl.c
---- xine-lib-1.2/src/video_out/video_out_opengl.c	2014-11-09 17:50:36.150622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/video_out_opengl.c	2014-05-25 15:28:55.000000000 +0200
+diff -uNr a/src/video_out/video_out_opengl.c b/src/video_out/video_out_opengl.c
+--- a/src/video_out/video_out_opengl.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/video_out_opengl.c	2015-02-22 18:07:40.785888513 +0800
 @@ -139,6 +139,14 @@
  #define MY_PI                3.1415926
  #define MY_2PI               6.2831853
@@ -3717,9 +3263,9 @@ diff -urN xine-lib-1.2/src/video_out/video_out_opengl.c xine-lib-1.2.enigmaw/src
    this->xine                    = class->xine;
    this->config                  = config;
  
-diff -urN xine-lib-1.2/src/video_out/video_out_raw.c xine-lib-1.2.enigmaw/src/video_out/video_out_raw.c
---- xine-lib-1.2/src/video_out/video_out_raw.c	2014-11-09 17:50:36.154622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/video_out_raw.c	2014-11-09 17:22:55.842593000 +0100
+diff -uNr a/src/video_out/video_out_raw.c b/src/video_out/video_out_raw.c
+--- a/src/video_out/video_out_raw.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/video_out_raw.c	2015-02-22 18:07:40.785888513 +0800
 @@ -66,6 +66,7 @@
  
    int                width, height, format, flags;
@@ -3728,9 +3274,66 @@ diff -urN xine-lib-1.2/src/video_out/video_out_raw.c xine-lib-1.2.enigmaw/src/vi
    uint8_t           *rgb, *rgb_dst;
    yuv2rgb_t         *yuv2rgb; /* yuv2rgb converter set up for this frame */
  
-diff -urN xine-lib-1.2/src/video_out/video_out_xshm.c xine-lib-1.2.enigmaw/src/video_out/video_out_xshm.c
---- xine-lib-1.2/src/video_out/video_out_xshm.c	2014-11-09 17:50:36.170622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/video_out_xshm.c	2014-05-25 15:28:55.000000000 +0200
+diff -uNr a/src/video_out/video_out_vdpau.c b/src/video_out/video_out_vdpau.c
+--- a/src/video_out/video_out_vdpau.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/video_out_vdpau.c	2015-02-22 18:07:40.785888513 +0800
+@@ -188,8 +188,8 @@
+ static VdpDecoderRender *orig_vdp_decoder_render;
+ 
+ #ifdef LOCKDISPLAY
+-#define DO_LOCKDISPLAY          XLockDisplay(guarded_display)
+-#define DO_UNLOCKDISPLAY        XUnlockDisplay(guarded_display)
++#define DO_LOCKDISPLAY          if (guarded_display) XLockDisplay(guarded_display);
++#define DO_UNLOCKDISPLAY        if (guarded_display) XUnlockDisplay(guarded_display);
+ static Display *guarded_display;
+ #else
+ #define DO_LOCKDISPLAY
+@@ -746,7 +746,14 @@
+       this->ovl_video_dest_rect = vid_rect;
+     }
+ 
+-    if (!ovl->unscaled) {
++    if (ovl->unscaled==2) {
++      ovl_rect.x0 = 0;
++      ovl_rect.y0 = 0;
++      ovl_rect.x1 = this->sc.gui_width;
++      ovl_rect.y1 = this->sc.gui_height;
++      this->ovl_changed = 1;
++    }
++    else if (ovl->unscaled==0) {
+       double rx, ry;
+ 
+       if (zoom) {
+@@ -2178,6 +2185,12 @@
+       this->deinterlace = value;
+       vdpau_set_deinterlace( this_gen );
+       break;
++    case VO_PROP_DEINTERLACE_SD:
++      this->deinterlace_method_sd = value;
++      break;
++    case VO_PROP_DEINTERLACE_HD:
++      this->deinterlace_method_hd = value;
++      break;
+     case VO_PROP_ZOOM_X:
+       if ((value >= XINE_VO_ZOOM_MIN) && (value <= XINE_VO_ZOOM_MAX)) {
+         this->zoom_x = value;
+@@ -2651,7 +2664,12 @@
+     return NULL;
+ 
+ #ifdef LOCKDISPLAY
+-  guarded_display     = visual->display;
++  int buggy_xcb_workaround = config->register_bool( config, "video.output.vdpau_enable_buggy_xcb_workaround", 1,
++    _("vdpau: Use lock display synchronization for some vdpau calls (workaround for buggy libX11/xcb)"),
++    _("Enable this if you have a buggy libX11/xcb."),
++      10, NULL, this );
++  guarded_display     = buggy_xcb_workaround ? visual->display: NULL;
++  fprintf( stderr, "vo_vdpau: %s lock display synchronization for some vdpau calls\n", buggy_xcb_workaround ? "Use": "Do not use" );
+ #endif
+ 
+   this->display       = visual->display;
+diff -uNr a/src/video_out/video_out_xshm.c b/src/video_out/video_out_xshm.c
+--- a/src/video_out/video_out_xshm.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/video_out_xshm.c	2015-02-22 18:07:40.785888513 +0800
 @@ -128,6 +128,7 @@
    xshm_frame_t      *cur_frame;
    x11osd            *xoverlay;
@@ -3778,9 +3381,9 @@ diff -urN xine-lib-1.2/src/video_out/video_out_xshm.c xine-lib-1.2.enigmaw/src/v
  
    this->x11_old_error_handler = NULL;
    this->xine                  = class->xine;
-diff -urN xine-lib-1.2/src/video_out/x11osd.c xine-lib-1.2.enigmaw/src/video_out/x11osd.c
---- xine-lib-1.2/src/video_out/x11osd.c	2014-11-09 17:50:36.178622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/x11osd.c	2014-11-09 17:22:55.842593000 +0100
+diff -uNr a/src/video_out/x11osd.c b/src/video_out/x11osd.c
+--- a/src/video_out/x11osd.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/x11osd.c	2015-02-22 18:07:40.785888513 +0800
 @@ -44,6 +44,9 @@
  #include <X11/extensions/shape.h>
  #include <X11/Xatom.h>
@@ -4167,9 +3770,9 @@ diff -urN xine-lib-1.2/src/video_out/x11osd.c xine-lib-1.2.enigmaw/src/video_out
 +    }
 +  }
 +};
-diff -urN xine-lib-1.2/src/video_out/x11osd.h xine-lib-1.2.enigmaw/src/video_out/x11osd.h
---- xine-lib-1.2/src/video_out/x11osd.h	2014-11-09 17:50:36.178622082 +0100
-+++ xine-lib-1.2.enigmaw/src/video_out/x11osd.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/video_out/x11osd.h b/src/video_out/x11osd.h
+--- a/src/video_out/x11osd.h	2014-12-30 00:34:25.000000000 +0800
++++ b/src/video_out/x11osd.h	2015-02-22 18:07:40.785888513 +0800
 @@ -29,6 +29,7 @@
  #define X11OSD_H
  
@@ -4189,9 +3792,9 @@ diff -urN xine-lib-1.2/src/video_out/x11osd.h xine-lib-1.2.enigmaw/src/video_out
 +void x11osd_scale_line_mmx(uint32_t* src, uint32_t* dst, int width, int step);
 +
  #endif
-diff -urN xine-lib-1.2/src/xine-engine/load_plugins.c xine-lib-1.2.enigmaw/src/xine-engine/load_plugins.c
---- xine-lib-1.2/src/xine-engine/load_plugins.c	2014-11-09 17:50:36.206622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/load_plugins.c	2014-11-09 17:22:55.842593000 +0100
+diff -uNr a/src/xine-engine/load_plugins.c b/src/xine-engine/load_plugins.c
+--- a/src/xine-engine/load_plugins.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/load_plugins.c	2015-02-22 18:07:40.785888513 +0800
 @@ -1324,6 +1324,9 @@
    xine_list_delete (plugindirs);
    free(homedir);
@@ -4202,9 +3805,9 @@ diff -urN xine-lib-1.2/src/xine-engine/load_plugins.c xine-lib-1.2.enigmaw/src/x
    load_required_plugins (this);
  
    if ((_x_flags & XINE_FLAG_NO_WRITE_CACHE) == 0)
-diff -urN xine-lib-1.2/src/xine-engine/Makefile.am xine-lib-1.2.enigmaw/src/xine-engine/Makefile.am
---- xine-lib-1.2/src/xine-engine/Makefile.am	2014-11-09 17:50:36.182622082 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/Makefile.am	2014-06-12 05:14:28.000000000 +0200
+diff -uNr a/src/xine-engine/Makefile.am b/src/xine-engine/Makefile.am
+--- a/src/xine-engine/Makefile.am	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/Makefile.am	2015-02-22 18:07:40.785888513 +0800
 @@ -44,7 +44,8 @@
                      $(LIBXINEPOSIX) $(RT_LIBS) $(NET_LIBS) $(XDG_BASEDIR_LIBS) \
                      $(AVUTIL_LIBS) $(MLIB_LIBS)
@@ -4220,9 +3823,9 @@ diff -urN xine-lib-1.2/src/xine-engine/Makefile.am xine-lib-1.2.enigmaw/src/xine
  	rm -f "$(DESTDIR)$(libdir)"/libxine-interface.la
  	-rm -f $(DESTDIR)$(libdir)/$(DEF_FILE)
 +
-diff -urN xine-lib-1.2/src/xine-engine/osd.c xine-lib-1.2.enigmaw/src/xine-engine/osd.c
---- xine-lib-1.2/src/xine-engine/osd.c	2014-11-09 17:50:36.206622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/osd.c	2014-05-25 15:28:55.000000000 +0200
+diff -uNr a/src/xine-engine/osd.c b/src/xine-engine/osd.c
+--- a/src/xine-engine/osd.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/osd.c	2015-02-22 18:07:40.785888513 +0800
 @@ -511,6 +511,10 @@
    return _osd_show(osd, vpts, 1);
  }
@@ -4242,9 +3845,9 @@ diff -urN xine-lib-1.2/src/xine-engine/osd.c xine-lib-1.2.enigmaw/src/xine-engin
    this->get_capabilities   = osd_get_capabilities;
    this->set_extent         = osd_set_extent;
    this->set_video_window   = osd_set_video_window;
-diff -urN xine-lib-1.2/src/xine-engine/video_out.c xine-lib-1.2.enigmaw/src/xine-engine/video_out.c
---- xine-lib-1.2/src/xine-engine/video_out.c	2014-11-09 17:50:36.214622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/video_out.c	2014-11-09 17:22:55.842593000 +0100
+diff -uNr a/src/xine-engine/video_out.c b/src/xine-engine/video_out.c
+--- a/src/xine-engine/video_out.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/video_out.c	2015-02-22 18:07:40.785888513 +0800
 @@ -143,7 +143,7 @@
  
    /* pts value when decoder delivered last video frame */
@@ -4306,9 +3909,9 @@ diff -urN xine-lib-1.2/src/xine-engine/video_out.c xine-lib-1.2.enigmaw/src/xine
    /*
     * handle XINE_PARAM_xxx properties (convert from driver's range)
     */
-diff -urN xine-lib-1.2/src/xine-engine/vo_scale.c xine-lib-1.2.enigmaw/src/xine-engine/vo_scale.c
---- xine-lib-1.2/src/xine-engine/vo_scale.c	2014-11-09 17:50:36.214622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/vo_scale.c	2014-06-12 05:14:28.000000000 +0200
+diff -uNr a/src/xine-engine/vo_scale.c b/src/xine-engine/vo_scale.c
+--- a/src/xine-engine/vo_scale.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/vo_scale.c	2015-02-22 18:07:40.785888513 +0800
 @@ -79,7 +79,7 @@
        desired_ratio = 4.0 / 3.0;
      }
@@ -4318,9 +3921,9 @@ diff -urN xine-lib-1.2/src/xine-engine/vo_scale.c xine-lib-1.2.enigmaw/src/xine-
  
      _x_assert(this->gui_pixel_aspect != 0.0);
  
-diff -urN xine-lib-1.2/src/xine-engine/xine_interface.c xine-lib-1.2.enigmaw/src/xine-engine/xine_interface.c
---- xine-lib-1.2/src/xine-engine/xine_interface.c	2014-11-09 17:50:36.218622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-engine/xine_interface.c	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/xine-engine/xine_interface.c b/src/xine-engine/xine_interface.c
+--- a/src/xine-engine/xine_interface.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-engine/xine_interface.c	2015-02-22 18:07:40.785888513 +0800
 @@ -825,6 +825,10 @@
    this->osd.renderer->show_unscaled(&this->osd, vpts);
  }
@@ -4332,9 +3935,9 @@ diff -urN xine-lib-1.2/src/xine-engine/xine_interface.c xine-lib-1.2.enigmaw/src
  void xine_osd_hide(xine_osd_t *this, int64_t vpts) {
    this->osd.renderer->hide(&this->osd, vpts);
  }
-diff -urN xine-lib-1.2/src/xine-utils/color.c xine-lib-1.2.enigmaw/src/xine-utils/color.c
---- xine-lib-1.2/src/xine-utils/color.c	2014-11-09 17:50:36.218622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-utils/color.c	2014-11-09 17:22:55.846593000 +0100
+diff -uNr a/src/xine-utils/color.c b/src/xine-utils/color.c
+--- a/src/xine-utils/color.c	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-utils/color.c	2015-02-22 18:07:40.785888513 +0800
 @@ -62,10 +62,6 @@
   * instructions.
   */
@@ -4346,9 +3949,9 @@ diff -urN xine-lib-1.2/src/xine-utils/color.c xine-lib-1.2.enigmaw/src/xine-util
  #include <xine/xine_internal.h>
  #include "xine_mmx.h"
  
-diff -urN xine-lib-1.2/src/xine-utils/xine_mmx.h xine-lib-1.2.enigmaw/src/xine-utils/xine_mmx.h
---- xine-lib-1.2/src/xine-utils/xine_mmx.h	2014-11-09 17:50:36.226622083 +0100
-+++ xine-lib-1.2.enigmaw/src/xine-utils/xine_mmx.h	2014-01-11 15:34:05.000000000 +0100
+diff -uNr a/src/xine-utils/xine_mmx.h b/src/xine-utils/xine_mmx.h
+--- a/src/xine-utils/xine_mmx.h	2014-12-30 00:34:25.000000000 +0800
++++ b/src/xine-utils/xine_mmx.h	2015-02-22 18:07:40.789888513 +0800
 @@ -275,15 +275,15 @@
  
  #define	sfence() __asm__ __volatile__ ("sfence\n\t")
@@ -4374,3 +3977,15 @@ diff -urN xine-lib-1.2/src/xine-utils/xine_mmx.h xine-lib-1.2.enigmaw/src/xine-u
  	float			sf[4];	/* Single-precision (32-bit) value */
  } ATTR_ALIGN(16) sse_t;	/* On a 16 byte (128-bit) boundary */
  
+diff -uNr a/version.sh b/version.sh
+--- a/version.sh	2014-12-30 00:34:25.000000000 +0800
++++ b/version.sh	2015-02-22 18:07:40.789888513 +0800
+@@ -39,7 +39,7 @@
+ XINE_LT_REVISION=0
+ XINE_LT_AGE=5
+ 
+-test -f "`dirname $0`/.cvsversion" && XINE_VERSION_SUFFIX="hg"
++test -f "`dirname $0`/.cvsversion" && XINE_VERSION_SUFFIX="openpliPC-e2"
+ XINE_VERSION_SPEC="${XINE_VERSION_MAJOR}.${XINE_VERSION_MINOR}.${XINE_VERSION_SUB}${XINE_VERSION_PATCH}${XINE_VERSION_SUFFIX}"
+ 
+ ####

@@ -127,13 +127,13 @@ dialog --clear --title "$(gettext "Install additional DVB driver")" --menu \
  "Exit" "$(gettext "Need not install any drivers")" \
  "tbs-drivers" "$(gettext "Support all the TBS devices")" \
  "dvbsky-drivers" "$(gettext "Support all the DVBSky devices")" \
- "linux-media" "$(gettext "DVB drivers for Linux - Original code from LinuxTV org")" \
- "linux-media-tbs" "$(gettext "Open Source Drivers for TBS cards")" \
  "tbs-dvbc-drivers" "$(gettext "Support all the TBS DVB-C devices")" \
  "tbs-atsc-drivers" "$(gettext "Support all the TBS ATSC devices")" \
  "dvbsky-dvbc-drivers" "$(gettext "Support all the DVBSky DVB-C devices")" \
  "dvb3221-driver" "$(gettext "Support the DVB3221 DVB-C device")" 2> /tmp/driver.tmp
 # "s2-liplianin" "$(gettext "Support most of the devices,such as DVBWorld,Tevii,Prof...")" \
+# "linux-media" "$(gettext "DVB drivers for Linux - Original code from LinuxTV org")" \
+# "linux-media-tbs" "$(gettext "Open Source Drivers for TBS cards")" \
 
 case "$(cat /tmp/driver.tmp)" in
   s2-liplianin)	tar -czf /root/kernel_media_$(date +%Y%m%d%H%M%S)_backup.tgz /lib/modules/$kernelver/kernel/drivers/media

@@ -9,7 +9,5 @@ mkdir -p objdir-target
 cd objdir-target
 
 do_configure \
-	--disable-nls \
-	--host=$HOST_NAME \
-	--build=$HOST_NAME
+	--disable-nls
 make

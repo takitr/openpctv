@@ -234,4 +234,4 @@ if [ -n "$IMG" ] ; then
   rm -f $IMG
 fi
 
-put_msg "#### Done.\n
+put_msg "#### Done.\n"
