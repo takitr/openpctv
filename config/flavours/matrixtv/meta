@@ -14,9 +14,9 @@ config FRONTEND_enna
   bool \"Enna MediaCenter\"
   select PKG_enna
 
-config FRONTEND_xbmc
-  bool \"XBMC\"
-  select PKG_xbmc
+config FRONTEND_kodi
+  bool \"KODI\"
+  select PKG_kodi
 
 config FRONTEND_boxee
   bool \"Boxee\"
@@ -49,17 +49,21 @@ config FRONTEND_vdr
   bool \"VDR\"
   select PKG_vdr
 
+config FRONTEND_enigma2pc
+  bool \"Enigma2pc\"
+  select PKG_enigma2pc
 
 endchoice
 
 config OPT_MEDIA_CENTER_FRONTEND
   string
   default \"enna\" if FRONTEND_enna
-  default \"xbmc\" if FRONTEND_xbmc
+  default \"kodi\" if FRONTEND_kodi
   default \"boxee\" if FRONTEND_boxee
   default \"qtmediahub\" if FRONTEND_qtmediahub
   default \"freevo\" if FRONTEND_freevo
   default \"mythtv\" if FRONTEND_mythtv
   default \"showtime\" if FRONTEND_showtime
   default \"VDR\" if FRONTEND_vdr
+  default \"Enigma2pc\" if FRONTEND_enigma2pc
 "

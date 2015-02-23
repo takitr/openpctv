@@ -1,9 +1,9 @@
 FLAVOUR_NAME="openpctv"
 FLAVOUR_DISTRONAME="OpenPCTV"
 FLAVOUR_DEPENDS="base-files toolchain busybox util-linux-ng linux systemd opkg alsa"
-FLAVOUR_USE="alsa fb xorg egl opengl egl opengles openvg lirc mplayer bluray dab dvb dvd v4l wifi radio"
-FLAVOUR_SHORTDESC="OpenPCTV - A Linux distribution based enigma2/VDR/XBMC"
-FLAVOUR_LONGDESC="OpenPCTV is integrated with XBMC 12.2frodo,VDR 2.0.2,Enigma2PC."
+FLAVOUR_USE="alsa fb xorg opengl egl opengles openvg lirc bluray dab dvb dvd v4l wifi radio"
+FLAVOUR_SHORTDESC="OpenPCTV - A Linux distribution based enigma2/VDR/KODI"
+FLAVOUR_LONGDESC="OpenPCTV is integrated with KODI,VDR,Enigma2PC."
 FLAVOUR_KCONFIG="
 choice OPENPCTV_FRONTEND
   prompt \"Mediacenter frontend\"
