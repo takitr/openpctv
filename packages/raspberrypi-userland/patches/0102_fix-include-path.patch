@@ -1,0 +1,396 @@
+diff -uNr a/interface/vcos/vcos_atomic_flags.h b/interface/vcos/vcos_atomic_flags.h
+--- a/interface/vcos/vcos_atomic_flags.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_atomic_flags.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_atomic_flags.h
+diff -uNr a/interface/vcos/vcos_blockpool.h b/interface/vcos/vcos_blockpool.h
+--- a/interface/vcos/vcos_blockpool.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_blockpool.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+diff -uNr a/interface/vcos/vcos_cfg.h b/interface/vcos/vcos_cfg.h
+--- a/interface/vcos/vcos_cfg.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_cfg.h	2015-02-24 00:34:51.535305197 +0800
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ typedef struct opaque_vcos_cfg_buf_t    *VCOS_CFG_BUF_T;
+ typedef struct opaque_vcos_cfg_entry_t  *VCOS_CFG_ENTRY_T;
+diff -uNr a/interface/vcos/vcos_dlfcn.h b/interface/vcos/vcos_dlfcn.h
+--- a/interface/vcos/vcos_dlfcn.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_dlfcn.h	2015-02-24 00:34:51.539305197 +0800
+@@ -33,7 +33,7 @@
+ #define VCOS_DLFCN_H
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -uNr a/interface/vcos/vcos_event_flags.h b/interface/vcos/vcos_event_flags.h
+--- a/interface/vcos/vcos_event_flags.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_event_flags.h	2015-02-24 00:34:51.539305197 +0800
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #define VCOS_EVENT_FLAGS_SUSPEND    VCOS_SUSPEND
+ #define VCOS_EVENT_FLAGS_NO_SUSPEND VCOS_NO_SUSPEND
+diff -uNr a/interface/vcos/vcos_event.h b/interface/vcos/vcos_event.h
+--- a/interface/vcos/vcos_event.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_event.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** 
+   * \file
+diff -uNr a/interface/vcos/vcos.h b/interface/vcos/vcos.h
+--- a/interface/vcos/vcos.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos.h	2015-02-24 00:34:51.535305197 +0800
+@@ -113,7 +113,7 @@
+ 
+ #include "interface/vcos/vcos_assert.h"
+ #include "vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifndef VCOS_INIT_H
+ #include "interface/vcos/vcos_init.h"
+diff -uNr a/interface/vcos/vcos_init.h b/interface/vcos/vcos_init.h
+--- a/interface/vcos/vcos_init.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_init.h	2015-02-24 00:34:51.539305197 +0800
+@@ -31,7 +31,7 @@
+ 
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -uNr a/interface/vcos/vcos_isr.h b/interface/vcos/vcos_isr.h
+--- a/interface/vcos/vcos_isr.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_isr.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+   * \file vcos_isr.h
+diff -uNr a/interface/vcos/vcos_legacy_isr.h b/interface/vcos/vcos_legacy_isr.h
+--- a/interface/vcos/vcos_legacy_isr.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_legacy_isr.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_legacy_isr.h
+   *
+diff -uNr a/interface/vcos/vcos_logging.h b/interface/vcos/vcos_logging.h
+--- a/interface/vcos/vcos_logging.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_logging.h	2015-02-24 00:34:51.535305197 +0800
+@@ -39,7 +39,7 @@
+ #include <stdarg.h>
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #include "vcos_logging_control.h"
+ 
+ /**
+diff -uNr a/interface/vcos/vcos_lowlevel_thread.h b/interface/vcos/vcos_lowlevel_thread.h
+--- a/interface/vcos/vcos_lowlevel_thread.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_lowlevel_thread.h	2015-02-24 00:34:51.539305197 +0800
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /**
+diff -uNr a/interface/vcos/vcos_mem.h b/interface/vcos/vcos_mem.h
+--- a/interface/vcos/vcos_mem.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_mem.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+diff -uNr a/interface/vcos/vcos_mempool.h b/interface/vcos/vcos_mempool.h
+--- a/interface/vcos/vcos_mempool.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_mempool.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+diff -uNr a/interface/vcos/vcos_msgqueue.h b/interface/vcos/vcos_msgqueue.h
+--- a/interface/vcos/vcos_msgqueue.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_msgqueue.h	2015-02-24 00:34:51.539305197 +0800
+@@ -44,7 +44,7 @@
+ #endif
+ 
+ #include "vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #include "vcos_blockpool.h"
+ 
+ /**
+diff -uNr a/interface/vcos/vcos_mutex.h b/interface/vcos/vcos_mutex.h
+--- a/interface/vcos/vcos_mutex.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_mutex.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_mutex.h
+diff -uNr a/interface/vcos/vcos_named_semaphore.h b/interface/vcos/vcos_named_semaphore.h
+--- a/interface/vcos/vcos_named_semaphore.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_named_semaphore.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+diff -uNr a/interface/vcos/vcos_once.h b/interface/vcos/vcos_once.h
+--- a/interface/vcos/vcos_once.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_once.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_once.h
+diff -uNr a/interface/vcos/vcos_queue.h b/interface/vcos/vcos_queue.h
+--- a/interface/vcos/vcos_queue.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_queue.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_queue.h
+   *
+diff -uNr a/interface/vcos/vcos_quickslow_mutex.h b/interface/vcos/vcos_quickslow_mutex.h
+--- a/interface/vcos/vcos_quickslow_mutex.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_quickslow_mutex.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_quickslow_mutex.h
+diff -uNr a/interface/vcos/vcos_reentrant_mutex.h b/interface/vcos/vcos_reentrant_mutex.h
+--- a/interface/vcos/vcos_reentrant_mutex.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_reentrant_mutex.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+diff -uNr a/interface/vcos/vcos_semaphore.h b/interface/vcos/vcos_semaphore.h
+--- a/interface/vcos/vcos_semaphore.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_semaphore.h	2015-02-24 00:34:51.535305197 +0800
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /**
+diff -uNr a/interface/vcos/vcos_string.h b/interface/vcos/vcos_string.h
+--- a/interface/vcos/vcos_string.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_string.h	2015-02-24 00:34:51.535305197 +0800
+@@ -44,7 +44,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __KERNEL__
+ #include <linux/string.h>
+diff -uNr a/interface/vcos/vcos_thread.h b/interface/vcos/vcos_thread.h
+--- a/interface/vcos/vcos_thread.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_thread.h	2015-02-24 00:34:51.535305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_thread.h
+diff -uNr a/interface/vcos/vcos_timer.h b/interface/vcos/vcos_timer.h
+--- a/interface/vcos/vcos_timer.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_timer.h	2015-02-24 00:34:51.539305197 +0800
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /** \file vcos_timer.h
+diff -uNr a/interface/vcos/vcos_tls.h b/interface/vcos/vcos_tls.h
+--- a/interface/vcos/vcos_tls.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_tls.h	2015-02-24 00:34:51.539305197 +0800
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ 
+ /** Create a new thread local storage data key visible to all threads in
+diff -uNr a/interface/vcos/vcos_types.h b/interface/vcos/vcos_types.h
+--- a/interface/vcos/vcos_types.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vcos/vcos_types.h	2015-02-24 00:34:51.539305197 +0800
+@@ -35,7 +35,7 @@
+ #define VCOS_VERSION   1
+ 
+ #include <stddef.h>
+-#include "vcos_platform_types.h"
++#include "interface/vcos/pthreads/vcos_platform_types.h"
+ #include "interface/vcos/vcos_attr.h"
+ 
+ #if !defined(VCOSPRE_) || !defined(VCOSPOST_)
+diff -uNr a/interface/vmcs_host/vcfilesys.h b/interface/vmcs_host/vcfilesys.h
+--- a/interface/vmcs_host/vcfilesys.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vcfilesys.h	2015-02-24 00:34:51.547305196 +0800
+@@ -25,7 +25,7 @@
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "vcfilesys_defs.h"
+ #include "vc_fileservice_defs.h"
+ 
+diff -uNr a/interface/vmcs_host/vcgencmd.h b/interface/vmcs_host/vcgencmd.h
+--- a/interface/vmcs_host/vcgencmd.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vcgencmd.h	2015-02-24 00:34:51.547305196 +0800
+@@ -30,7 +30,7 @@
+ #ifndef GENCMD_H
+ #define GENCMD_H
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "interface/vchi/vchi.h"
+ 
+ VCHPRE_ void VCHPOST_ vc_vchi_gencmd_init(VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T **connections, uint32_t num_connections );
+diff -uNr a/interface/vmcs_host/vchost.h b/interface/vmcs_host/vchost.h
+--- a/interface/vmcs_host/vchost.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vchost.h	2015-02-24 00:34:51.547305196 +0800
+@@ -28,7 +28,7 @@
+ #ifndef VCHOST_H
+ #define VCHOST_H
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "vcfilesys_defs.h"
+ #include "interface/vcos/vcos.h" //for VCHPRE_ abd VCHPOST_ macro's for func declaration
+ #include "interface/vmcs_host/vc_fileservice_defs.h" // for VC_O_XXX file definitions
+diff -uNr a/interface/vmcs_host/vchostreq.h b/interface/vmcs_host/vchostreq.h
+--- a/interface/vmcs_host/vchostreq.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vchostreq.h	2015-02-24 00:34:51.547305196 +0800
+@@ -29,7 +29,7 @@
+ #define VCHOSTREQ_H
+ 
+ #include "vc_hostreq_defs.h"
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include <time.h>
+ 
+ #include "interface/vchi/vchi.h"
+diff -uNr a/interface/vmcs_host/vc_vchi_filesys.h b/interface/vmcs_host/vc_vchi_filesys.h
+--- a/interface/vmcs_host/vc_vchi_filesys.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vc_vchi_filesys.h	2015-02-24 00:34:51.547305196 +0800
+@@ -28,7 +28,7 @@
+ #ifndef VC_VCHI_VCFILESYS_H_
+ #define VC_VCHI_VCFILESYS_H_
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "vcfilesys_defs.h"
+ #include "vc_fileservice_defs.h"
+ #include "interface/vchi/vchi.h"
+diff -uNr a/interface/vmcs_host/vc_vchi_gencmd.h b/interface/vmcs_host/vc_vchi_gencmd.h
+--- a/interface/vmcs_host/vc_vchi_gencmd.h	2014-11-29 02:45:48.000000000 +0800
++++ b/interface/vmcs_host/vc_vchi_gencmd.h	2015-02-24 00:34:51.547305196 +0800
+@@ -27,7 +27,7 @@
+ 
+ #ifndef VC_VCHI_GENCMD_H
+ #define VC_VCHI_GENCMD_H
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "interface/vchi/vchi.h"
+ #include "interface/vcos/vcos.h" //for VCHPRE_ abd VCHPOST_ macro's for func declaration
+ 

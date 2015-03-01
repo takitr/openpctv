@@ -16,24 +16,27 @@ grep -E -q "BCM2708|A20" /proc/cpuinfo && sleep 1.5
 
 if grep -q -i arm /proc/cpuinfo; then
   ARCH=arm
-  echo -e -n "\e[31m$(gettext "Press any key to enter setup,")\e[0m \e[32m$(gettext "or 3 seconds later enter") ${DEFTARGET}.\e[0m"
-  read -s -n1 -t4
-  result=$?
-  if [ $result = 142 -o $result = 130 ]; then
-    if [ $DEFTARGET = "kodi" ]; then
-      systemctl start getty\@ttymxc0
-      systemctl start backend
-      systemctl start kodi
-      exit 0
-    elif [ $DEFTARGET = "vdr" ]; then
-      systemctl start vdr
-      exit 0
-    elif [ $DEFTARGET = "backend" ]; then
-      systemctl start backend
-      exit 0
-    fi
-  elif [ $result = 0 ]; then
+  if [ ! -f /etc/system.options ]; then
     clear
+  else 
+    echo -e -n "\e[31m$(gettext "Press any key to enter setup,")\e[0m \e[32m$(gettext "or 3 seconds later enter") ${DEFTARGET}.\e[0m"
+    read -s -n1 -t4
+    result=$?
+    if [ $result = 142 -o $result = 130 ]; then
+      if [ $DEFTARGET = "kodi" ]; then
+        systemctl start backend
+        systemctl start kodi
+        exit 0
+      elif [ $DEFTARGET = "vdr" ]; then
+        systemctl start vdr
+        exit 0
+      elif [ $DEFTARGET = "backend" ]; then
+        systemctl start backend
+        exit 0
+      fi
+    elif [ $result = 0 ]; then
+      clear
+    fi
   fi
 fi
 
@@ -178,8 +181,7 @@ case "$(cat $DIALOGOUT)" in
 		;;
     Enigma2)	systemctl start enigma2pc
 		;;
-    KODI)	[ -c /dev/ttymxc0 ] && systemctl start getty\@ttymxc0
-		systemctl start backend
+    KODI)	systemctl start backend
 		systemctl start kodi
 		;;
     Install)	$RUN_INSTALLER
@@ -187,8 +189,7 @@ case "$(cat $DIALOGOUT)" in
     Reboot)	reboot
 		;;
     Exit)	clear
-		systemctl start getty\@tty1
-		systemctl start getty\@ttymxc0
+		/bin/bash
     		exit 0
     		;;
 esac

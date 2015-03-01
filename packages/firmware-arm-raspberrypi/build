@@ -5,7 +5,8 @@
 cd $BUILD/$1*
 
 mkdir -p .install/boot
-cp -P boot/*.elf boot/*.dat boot/bootcode.bin .install/boot/
+cp -P -r boot/*.elf boot/*.dat boot/bootcode.bin boot/LICENCE.* boot/overlays/README .install/boot/
+
 echo "$DISTRONAME $TARGET_ARCH $DISTRO_VERSION $DISTRO_COPYRIGHT" \
   > .install/boot/issue.txt
 
@@ -17,12 +18,23 @@ fi
 cat > .install/boot/config.txt <<EOF
 sdtv_mode=$RPI_SDTV_MODE
 sdtv_aspect=$RPI_SDTV_ASPECT
-hdmi_group=1
-hdmi_mode=16
-disable_overscan=1
 sdtv_disable_colourburst=$no_colorburst
 
 #hdmi_ignore_cec_init=1
+
+#dtoverlay=ds1307-rtc-overlay
+#dtoverlay=hifiberry-amp-overlay
+#dtoverlay=hifiberry-dac-overlay
+#dtoverlay=hifiberry-dacplus-overlay
+#dtoverlay=hifiberry-digi-overlay
+#dtoverlay=iqaudio-dac-overlay
+#dtoverlay=iqaudio-dacplus-overlay
+dtoverlay=lirc-rpi-overlay
+#dtoverlay=pcf2127-rtc-overlay
+#dtoverlay=pcf8523-rtc-overlay
+#dtoverlay=pps-gpio-overlay
+#dtoverlay=w1-gpio-overlay
+#dtoverlay=w1-gpio-pullup-overlay
 
 EOF
 
@@ -38,50 +50,14 @@ else
   echo "#decode_WVC1=0x00000000" >> .install/boot/config.txt
 fi
 
-CMDLINE="dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 quiet root=/dev/mmcblk0p2 rootfstype=ext4 rootwait vt.global_cursor_default=0"
+CMDLINE="dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 quiet root=/dev/mmcblk0p2 rootfstype=ext4 rw rootwait splash systemd.show_status=0 vt.global_cursor_default=0"
 if [ "$RPI_USE_CMA" = yes ]; then
-  CMDLINE="$CMDLINE coherent_pool=2M cma=2M smsc95xx.turbo_mode=N"
+  CMDLINE="$CMDLINE coherent_pool=6M smsc95xx.turbo_mode=N"
   cat >> .install/boot/config.txt <<EOF
 
-gpu_mem_256=160
-gpu_mem_512=316
-cma_lwm=16
-cma_hwm=32
+gpu_mem_256=112
+gpu_mem_512=368
 EOF
 fi
-
-cat >> .install/boot/config.txt <<EOF
-## Some over clocking settings, govenor already set to ondemand
-
-##None
-#arm_freq=700
-#core_freq=250
-#sdram_freq=400
-#over_voltage=0
-
-##Modest
-#arm_freq=800
-#core_freq=250
-#sdram_freq=400
-#over_voltage=0
-
-##Medium
-#arm_freq=900
-#core_freq=250
-#sdram_freq=450
-#over_voltage=2
-
-##High
-#arm_freq=950
-#core_freq=250
-#sdram_freq=450
-#over_voltage=6
-
-##Turbo
-#arm_freq=1000
-#core_freq=500
-#sdram_freq=600
-#over_voltage=6
-EOF
 
 echo "$CMDLINE" > .install/boot/cmdline.txt

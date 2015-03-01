@@ -10,15 +10,17 @@ PKG_BUILD_DEPENDS="toolchain"
 PKG_RUN_DEPENDS="$TARGET_LIBC"
 PKG_DEPENDS="zlib ffmpeg freetype alsa-lib"
 
-PKG_USE="uclibc vaapi vdpau xorg sdl vdr mesa"
+PKG_USE="uclibc vaapi vdpau xorg sdl vdr mesa mmal"
 PKG_USE_NAME_vdr="VDR"
 PKG_DEPENDS_vdr="libjpeg-turbo"
 PKG_DEPENDS_uclibc="libiconv"
 PKG_DEPENDS_vaapi="libva"
 PKG_BUILD_DEPENDS_vdpau="libvdpau"
 PKG_BUILD_DEPENDS_mesa="libglu mesa"
+pkg_BUILD_DEPENDS_mmal="raspberrypi-userland"
 PKG_DEPENDS_xorg="libX11 libxcb libXext libXv"
 PKG_DEPENDS_sdl="SDL"
+PKG_USE_DESC_mmal="Enable libmmal HW decoder for Raspberry Pi"
 
 PKG_PRIORITY=optional
 PKG_SECTION=multimedia

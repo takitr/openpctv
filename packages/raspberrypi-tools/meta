@@ -1,0 +1,14 @@
+PKG_NAME=raspberrypi-tools
+#PKG_URL_REV=318aa31
+#PKG_VERSION=20150216+${PKG_URL_REV}
+#PKG_URL_PROTO=git
+#PKG_URL="git://github.com/raspberrypi/tools.git"
+PKG_VERSION=20150216+318aa31
+PKG_URL="$SFNET_SRCS/openpctv/sources/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_REV=1
+PKG_ARCH=arm
+PKG_DEPENDS="$TARGET_LIBC"
+PKG_BUILD_DEPENDS="toolchain"
+PKG_PRIORITY=optional
+PKG_SECTION=misc
+PKG_SHORTDESC="Raspberry PI tools"

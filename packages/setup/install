@@ -14,14 +14,14 @@ chmod 755 $INSTALL/sbin/*
 if [ "$TARGET_ARCH" = arm ]; then
   if [ "$TARGET_PLATFORM" = a20 -o "$TARGET_PLATFORM" = amlogic-m6 ]; then
     INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg get-vdrchannels"
+  elif [ "$TARGET_PLATFORM" = bcm2708 -o "$TARGET_PLATFORM" = bcm2709 ]; then
+    INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language videocache getcam select-target select-backend update-epg get-vdrchannels select-plugins"
   else
     INSTALL_SCRIPTS="diseqcsetup select-irdrv update-channels update-transponders netconfig select-language audio-config videocache getcam select-backend update-epg get-vdrchannels"
   fi
 else
   INSTALL_SCRIPTS="diseqcsetup monitor.sh update-channels update-dvbdevice update-transponders install-drivers netconfig select-irdrv select-language select-plugins audio-config videocache getcam select-target select-backend update-epg screenshot get-vdrchannels"
 fi
-
-[ "$TARGET_PLATFORM" = bcm2708 ] && INSTALL_SCRIPTS="$INSTALL_SCRIPTS select-plugins"
 
 mkdir -p $INSTALL/usr/bin
 for i in $INSTALL_SCRIPTS; do

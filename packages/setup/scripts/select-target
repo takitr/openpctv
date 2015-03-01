@@ -13,16 +13,16 @@ if [ -f /usr/bin/runenigma2 ]; then
   echo "enigma2pc \"$(gettext "Enigma2 is a series of DVB television receivers for Dreambox. It has been ported to PC.")\" \\" >> /tmp/menu.tmp
 fi
 
-if [ -f /usr/bin/runvdr ]; then
-  i=`expr $i + 1`
-  target=vdr
-  echo "vdr \"$(gettext "A digital video recorder using standard PC components.")\" \\" >> /tmp/menu.tmp
-fi
-
 if [ -f /usr/bin/runkodi ]; then
   i=`expr $i + 1`
   target=kodi
   echo "kodi \"$(gettext "A free and open source media player developed by the KODI Foundation")\" \\" >> /tmp/menu.tmp
+fi
+
+if [ -f /usr/bin/runvdr ]; then
+  i=`expr $i + 1`
+  target=vdr
+  echo "vdr \"$(gettext "A digital video recorder using standard PC components.")\" \\" >> /tmp/menu.tmp
 fi
 
 if [ -f /usr/bin/runbackend ]; then

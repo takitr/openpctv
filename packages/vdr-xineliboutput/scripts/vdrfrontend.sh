@@ -1,4 +1,5 @@
 #!/bin/sh
+sleep 3
 if lsmod | grep vmwgfx > /dev/null; then
    DRIVER="--video=xshm"
 fi
@@ -7,6 +8,11 @@ if lsmod | grep nvidia > /dev/null; then
 fi
 if lsmod | grep gma500_gfx > /dev/null; then
    DRIVER="--video=xshm"
+fi
+if lsmod | grep radeon > /dev/null; then
+   DRIVER="--video=vaapi"
+   export LIBVA_DRIVER_NAME=vdpau
+   export VDPAU_DRIVER=r600
 fi
 HUDOPTS=""
 XINELIBOUTPUTOPTS="$DRIVER --fullscreen --aspect=16:9 --reconnect --post tvtime:method=use_vo_driver --audio=alsa --syslog --silent --tcp --hud=xshape"

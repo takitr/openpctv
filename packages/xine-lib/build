@@ -51,6 +51,12 @@ else
   OPENGL_CONFIG="--disable-opengl"
 fi
 
+if pkg_uses $1 mmal; then
+  MMAL_CONFIG="--enable-mmal"
+else
+  MMAL_CONFIG="--disable-mmal"
+fi
+
 cd $BUILD/$1*
 export LDFLAGS="$LDFLAGS -lm -ldl -lavcodec -lavformat -lavutil -lpostproc -lswscale"
 [ "$TARGET_LIBC" = "uclibc" ] && export LDFLAGS="$LDFLAGS -lintl -liconv"
@@ -114,7 +120,8 @@ do_configure \
             $VAAPI_CONFIG \
             $VDPAU_CONFIG \
             $VDR_CONFIG \
-            $OPENGL_CONFIG
+            $OPENGL_CONFIG \
+            $MMAL_CONFIG
 make -j3
 make_install
 

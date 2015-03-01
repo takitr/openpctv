@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+mkdir -p .install/bin
+
+for i in imagetool-uncompressed.py knlinfo mkknlimg; do
+  cp mkimage/$i .install/bin
+done
+
+do_installdev bin toolchain

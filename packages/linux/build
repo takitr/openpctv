@@ -32,6 +32,12 @@ cp -R $ROOT/$PACKAGES/$1/firmware/* firmware/
 make $IMAGE
 make modules
 
+if [ -n "$MACHINE_DTS" ] ; then
+  for i in $MACHINE_DTS ; do
+    make $i.dtb
+  done
+fi
+
 install_dir="`pwd`/.install"
 debug_dir="`pwd`/.install-debuginfo/usr/lib/debug"
 rm -rf $install_dir $debug_dir
@@ -55,8 +61,18 @@ mkdir -p .install/boot
 case $TARGET_ARCH in
   arm|powepc64)
     if [ "$TARGET_PLATFORM" = bcm2708 ]; then
-      # add raspberry pi magic
-      cat first32k.bin arch/$TARGET_ARCH/boot/Image > .install/boot/kernel.img
+      # add raspberry pi magic for kernel rveisions below 3.18
+      #cat first32k.bin arch/$TARGET_ARCH/boot/Image > .install/boot/kernel.img
+
+      $ROOT/$TOOLCHAIN/bin/mkknlimg --dtok arch/$TARGET_ARCH/boot/$IMAGE .install/boot/kernel.img
+      mkdir -p .install/boot/overlays
+      cp -f arch/arm/boot/dts/*overlay.dtb .install/boot/overlays/
+      cp -f arch/arm/boot/dts/bcm2708-*.dtb .install/boot/
+    elif [ "$TARGET_PLATFORM" = bcm2709 ]; then
+      $ROOT/$TOOLCHAIN/bin/mkknlimg --dtok arch/$TARGET_ARCH/boot/$IMAGE .install/boot/kernel7.img
+      mkdir -p .install/boot/overlays
+      cp -f arch/arm/boot/dts/*overlay.dtb .install/boot/overlays/
+      cp -f arch/arm/boot/dts/bcm2709-*.dtb .install/boot/
     else
       cp arch/$TARGET_ARCH/boot/$IMAGE .install/boot
     fi

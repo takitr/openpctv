@@ -1,8 +1,10 @@
 PKG_NAME=raspberrypi-userland
-PKG_URL_PROTO=git
-PKG_URL_VERSION=3893680
-PKG_URL="git://github.com/raspberrypi/userland.git"
-PKG_VERSION=20150206+${PKG_URL_VERSION}
+#PKG_URL_PROTO=git
+#PKG_URL_VERSION=3893680
+#PKG_URL="git://github.com/raspberrypi/userland.git"
+#PKG_VERSION=20150206+${PKG_URL_VERSION}
+PKG_VERSION="20150227+0de0b20"
+PKG_URL="$DISTRO_SRCS/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_REV=1
 PKG_DEPENDS="$TARGET_LIBC"
 PKG_BUILD_DEPENDS="toolchain cmake"
