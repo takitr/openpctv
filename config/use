@@ -54,9 +54,9 @@ config EGL_PROVIDER_VC
   select PKG_raspberrypi-userland
 
 config EGL_PROVIDER_AML
-  bool \"Amlogic Meson6\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
-  select PKG_opengl-meson6
+  bool \"Amlogic Meson\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m8 )
+  select PKG_opengl-meson8
 
 endchoice
 
@@ -107,9 +107,9 @@ config GLES_PROVIDER_VC
   select PKG_raspberrypi-userland
 
 config GLES_PROVIDER_AML
-  bool \"Amlogic Meson6\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
-  select PKG_opengl-meson6
+  bool \"Amlogic Meson\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m8 )
+  select PKG_opengl-meson8
 
 endchoice
 
@@ -155,9 +155,9 @@ config OVG_PROVIDER_VC
   select PKG_raspberrypi-userland
 
 config OVG_PROVIDER_AML
-  bool \"Amlogic Meson6\"
-  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m6 )
-  select PKG_opengl-meson6
+  bool \"Amlogic Meson\"
+  depends on ( TAINT && TARGET_PLATFORM_arm_amlogic-m8 )
+  select PKG_opengl-meson8
 
 endchoice
 
@@ -342,7 +342,7 @@ PKG_USE_NAME_amremote="IR remote for Amlogic-based devices"
 PKG_USE_SECTION_amremote="input"
 PKG_USE_DEPENDS_amremote="amremote"
 PKG_USE_ARCH_amremote="arm"
-PKG_USE_PLATFORM_amremote="amlogic-m6"
+PKG_USE_PLATFORM_amremote="amlogic-m8"
 
 # live
 PKG_USE_NAME_live="LIVE555"
