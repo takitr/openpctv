@@ -1,0 +1,4 @@
+MACHINE_NAME=c90s
+MACHINE_DESC="Vigica C90S"
+MACHINE_HELP="Please refer to https"
+#MACHINE_UBOOT_CONFIG=m6_mbx_v1_config

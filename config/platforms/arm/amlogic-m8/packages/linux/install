@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. config/options
+get_meta $1
+
+cd $PKG_BUILD_DIR
+
+do_install lib/modules
+do_install firmware
+do_install boot
+do_install etc
+do_install usr/share
+
+mkdir -p $INSTALL/etc/modules-load.d
+echo "mali" > $INSTALL/etc/modules-load.d/mali.conf
+echo "dhd" > $INSTALL/etc/modules-load.d/wireless.conf

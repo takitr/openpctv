@@ -1,0 +1,39 @@
+diff -uNr uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/ddr_init_start.S uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/ddr_init_start.S
+--- uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/ddr_init_start.S	2015-02-03 22:18:39.187870870 +0800
++++ uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/ddr_init_start.S	2015-02-03 22:21:24.456690398 +0800
+@@ -238,4 +238,9 @@
+      AND     r0, r0, #0x03           @ Mask off, leaving the CPU ID field
+      BX      lr
+      .size   get_cpu_id, .-get_cpu_id
+-#endif
+\ 文件尾没有 newline 字符
++#endif
++
++.globl raise
++raise:
++   nop
++   mov pc, lr
+diff -uNr uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/rom_spl.S uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/rom_spl.S
+--- uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/rom_spl.S	2015-02-03 22:18:38.907869481 +0800
++++ uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/rom_spl.S	2015-02-03 22:21:24.640691312 +0800
+@@ -251,3 +251,8 @@
+      BX      lr
+      .size   get_cpu_id, .-get_cpu_id
+ #endif
++
++.globl raise
++raise:
++   nop
++   mov pc, lr
+diff -uNr uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/usb_fw_start.S uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/usb_fw_start.S
+--- uboot-2015-01-15-23a3562521.orig/arch/arm/cpu/aml_meson/common/firmware/usb_fw_start.S	2015-02-03 22:18:39.119870536 +0800
++++ uboot-2015-01-15-23a3562521/arch/arm/cpu/aml_meson/common/firmware/usb_fw_start.S	2015-02-03 22:21:24.676691489 +0800
+@@ -157,3 +157,8 @@
+      BX      lr
+      .size   get_cpu_id, .-get_cpu_id
+ #endif
++
++.globl raise
++raise:
++   nop
++   mov pc, lr
